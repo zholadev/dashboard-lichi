@@ -995,7 +995,6 @@ function ProductsPage(props) {
                         <TableRow>
                             {
                                 Object.entries(api_data_ex.table.head || {}).map(([key, value], index) => {
-                                    console.log(value)
                                     return (
                                         <TableHead key={index}>
                                             <h4 dangerouslySetInnerHTML={{__html: value.label}}/>

@@ -1,9 +1,11 @@
 'use client'
 
 import React from 'react';
+import dynamic from "next/dynamic";
 import {Button} from "@/components/shared/ui/button";
-import Chart from 'react-apexcharts';
 import {Heading} from "@/components/shared/uikit/heading";
+
+const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
 /**
  * @author Zholaman Zhumanov
@@ -94,33 +96,22 @@ function MainPage(props) {
 
                 <div className={"w-100 grid 2xl:grid-cols-2 grid-cols-1 gap-3 mb-6"}>
                     <div className={"rounded p-5 border"}>
-                        <h3 className={"text-xl mb-1"}>Overview Orders</h3>
-                        <Chart
-                            options={options}
-                            series={series}
-                            type="line"
+                        <ChartReact
+                            title={"Overview Orders"}
+                            optionsData={options}
+                            seriesData={series}
+                            type={"line"}
                             height={350}
                         />
-                        <div id="html-dist"></div>
                     </div>
                     <div className={"rounded p-5 border"}>
-                        <h3 className={"text-xl mb-1"}>Overview Returns</h3>
-                        <Chart
-                            options={options2}
-                            series={series}
-                            type="bar"
+                        <ChartReact
+                            title={"Overview Refund"}
+                            optionsData={options2}
+                            seriesData={series}
+                            type={"bar"}
                             height={350}
                         />
-                        <div id="html-dist"></div>
-                    </div>
-                </div>
-
-                <div className={"w-100 grid grid-cols-2 gap-3 mb-6"}>
-                    <div className={"rounded p-5 border"}>
-                        <h3 className={"text-xl mb-1"}>Best Selling Recent</h3>
-                    </div>
-                    <div className={"rounded p-5 border"}>
-                        <h3 className={"text-xl mb-1"}>Overview Returns</h3>
                     </div>
                 </div>
             </div>
