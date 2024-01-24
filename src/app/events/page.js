@@ -1,9 +1,9 @@
-'use client'
 
 import React from 'react';
 import {EventsPage} from "@/components/pages/events";
 import {Container} from "@/components/entities/container";
 import {PageBreadcrumbs} from "@/components/entities/breadcrumbs";
+import {redirect} from "next/navigation";
 
 /**
  * @author Zholaman Zhumanov
@@ -13,6 +13,11 @@ import {PageBreadcrumbs} from "@/components/entities/breadcrumbs";
  * @constructor
  */
 function Page(props) {
+    const accessDenied = true
+    if (accessDenied) {
+        redirect('/login')
+    }
+
     return (
         <Container>
             <PageBreadcrumbs page={"events"}/>

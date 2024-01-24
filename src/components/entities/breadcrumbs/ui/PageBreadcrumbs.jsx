@@ -64,6 +64,14 @@ function PageBreadcrumbs(props) {
                 "link": false
             }
         ],
+        "stock": [
+            firstPage,
+            {
+                "id": 2,
+                "title": "Состояние склада",
+                "link": false
+            }
+        ],
     }
 
     if (!page) {

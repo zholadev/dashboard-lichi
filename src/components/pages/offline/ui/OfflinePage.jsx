@@ -285,7 +285,7 @@ function OfflinePage(props) {
                                                 <Image
                                                     width={60}
                                                     height={90}
-                                                    src={value?.photo}
+                                                    src={'https://app3.lichishop.com/add-ons/get_image_by_art/?art=dr04795&size=xs'}
                                                     alt={value?.category}
                                                 />
                                             </TableCell>
@@ -339,7 +339,7 @@ function OfflinePage(props) {
                                                 <Image
                                                     width={60}
                                                     height={90}
-                                                    src={value?.photo}
+                                                    src={'https://app3.lichishop.com/add-ons/get_image_by_art/?art=dr04795&size=xs'}
                                                     alt={value?.category}
                                                 />
                                             </TableCell>
