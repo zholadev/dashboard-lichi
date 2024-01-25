@@ -1,10 +1,11 @@
 import {Montserrat} from "next/font/google";
 import "./globals.css";
 import {cn} from "@/lib/utils";
-import {ThemeProvider} from "@/components/shared/theme-provider";
+import 'react-toastify/dist/ReactToastify.css'
 import {Header} from "@/components/widgets/header";
-import {Footer} from "@/components/widgets/footer";
 import NextTopLoader from "nextjs-toploader";
+import {Slide, ToastContainer} from "react-toastify";
+import {ThemeProvider} from "@/components/shared/theme-provider";
 
 const inter = Montserrat({subsets: ["latin"]});
 
@@ -27,6 +28,20 @@ export default function RootLayout({children, params}) {
             color="#000"
             showSpinner={false}
             zIndex={10010}
+        />
+        <ToastContainer
+            position={'top-right'}
+            autoClose={3000}
+            hideProgressBar={true}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable={false}
+            pauseOnHover={false}
+            className="toast-container"
+            theme={"colored"}
+            transition={Slide}
         />
         <ThemeProvider
             attribute="class"

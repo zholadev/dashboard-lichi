@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookie from 'js-cookie'
 import {apiErrorHandler} from "./lib/apiErrorHandler";
 
 /**
@@ -8,27 +9,23 @@ import {apiErrorHandler} from "./lib/apiErrorHandler";
  */
 const AxiosInstance = axios.create({
     baseURL: 'https://dashboard.blackmonday.xyz/api/',
-    withCredentials: true,
+    withCredentials: true
 });
 
-export const api_client_get = async (params = {}) => {
+const getAuthHeaders = (isToken) => {
+    let headers = {}
+    if (isToken) {
+        headers["Authorization"] = `Bearer ${Cookie.get("token")}`
+    }
+    return headers
+}
+
+export const sendApiPostRequest = async (params = {}, isToken) => {
     try {
-        let api_data = false;
-
-        let response = await AxiosInstance.get('auth', {
-            params: {
-                ...params,
-            }
-        })
-
-        if (response) {
-            api_data = response
-        } else {
-            new Error('Error Getting Data.');
-        }
-
-        return api_data
+        const headers = getAuthHeaders(isToken)
+        const response = await AxiosInstance.post('', params, {headers})
+        return response
     } catch (error) {
-        return apiErrorHandler(error, method, params)
+        return apiErrorHandler(error, params)
     }
 }

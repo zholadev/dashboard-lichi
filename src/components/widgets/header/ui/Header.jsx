@@ -19,28 +19,30 @@ import {routerPagesList} from "@/components/entities/router/model/routerPagesLis
 import {cn} from "@/lib/utils";
 import {useScrollAction} from "@/components/shared/hooks";
 import {HamburgerMenuIcon} from "@radix-ui/react-icons";
-import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/shared/ui/sheet"
+import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/shared/ui/sheet"
 import {Button} from "@/components/shared/ui/button";
+import {usePathname, useRouter} from "next/navigation";
+import Cookie from "js-cookie";
 
 /**
  * @author Zholaman Zhumanov
  * @created 22.01.2024
+ * @todo refactoring
  * @param props
  * @returns {JSX.Element}
  * @constructor
  */
 function Header(props) {
 
+    const router = useRouter()
+    const pathname = usePathname()
+
     const isScroll = useScrollAction({position: 20})
+
+    const logoutHandle = () => {
+        Cookie.remove("dashboard-token")
+        router.push(routerPagesList.login)
+    }
 
     const menuList = [
         {
@@ -80,6 +82,10 @@ function Header(props) {
         },
 
     ]
+
+    if (pathname === routerPagesList.login) {
+        return null
+    }
 
     return (
         <>
@@ -167,9 +173,13 @@ function Header(props) {
                             </DropdownMenuGroup>
                             <DropdownMenuSeparator/>
                             <DropdownMenuItem>
-                               <Link href={routerPagesList.login}>
-                                   Log out
-                               </Link>
+                                <Button
+                                    type={"button"}
+                                    variant={'ghost'}
+                                    onClick={logoutHandle}
+                                >
+                                    Log out
+                                </Button>
                                 <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
