@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react';
-import {ModeToggle} from "@/components/shared/theme-switch";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/shared/ui/avatar";
-import {Input} from "@/components/shared/ui/input";
+import Link from "next/link";
+import Cookie from "js-cookie";
+import {cn} from "@/lib/utils";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,15 +14,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/components/shared/ui/dropdown-menu";
-import Link from "next/link";
-import {routerPagesList} from "@/components/entities/router/model/routerPagesList";
-import {cn} from "@/lib/utils";
-import {useScrollAction} from "@/components/shared/hooks";
-import {HamburgerMenuIcon} from "@radix-ui/react-icons";
-import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/shared/ui/sheet"
+import {Input} from "@/components/shared/ui/input";
 import {Button} from "@/components/shared/ui/button";
 import {usePathname, useRouter} from "next/navigation";
-import Cookie from "js-cookie";
+import {HamburgerMenuIcon} from "@radix-ui/react-icons";
+import {useScrollAction} from "@/components/shared/hooks";
+import {ModeToggle} from "@/components/shared/theme-switch";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/shared/ui/avatar";
+import {routerPagesList} from "@/components/entities/router/model/routerPagesList";
+import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/shared/ui/sheet"
 
 /**
  * @author Zholaman Zhumanov

@@ -18,7 +18,7 @@ function useApiRequest() {
                 messages.map((item) => toastMessage(item?.["text"], item?.["type"]));
             }
             if (exceptions) {
-                exceptions.map((item) => toastMessage(item?.["message"]));
+                toastMessage(exceptions, "error")
             }
         }
     }
@@ -42,9 +42,9 @@ function useApiRequest() {
 
                 const data = resData?.["data"]
                 const messages = resData?.["messages"]
-                const exceptions = resData?.["api_exception"]
+                const exceptions = resData?.["error"]
                 const success = resData?.["ok"]
-                const errorFields = resData?.["error_fields"]
+                const errorFields = resData?.["error"]
 
                 handleErrorMessage(messages, exceptions, options)
 

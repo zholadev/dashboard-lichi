@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import {EventsPage} from "@/components/pages/events";
 import {Container} from "@/components/entities/container";

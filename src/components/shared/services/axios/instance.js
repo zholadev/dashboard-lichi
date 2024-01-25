@@ -15,7 +15,7 @@ const AxiosInstance = axios.create({
 const getAuthHeaders = (isToken) => {
     let headers = {}
     if (isToken) {
-        headers["Authorization"] = `Bearer ${Cookie.get("token")}`
+        headers["Authorization"] = `Bearer ${Cookie.get("dashboard-token")}`
     }
     return headers
 }
