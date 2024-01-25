@@ -91,3 +91,77 @@ export const apiEditEventItem = async (data, id) => {
         true
     )
 }
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 25.01.2024
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetSupplyNetworkData = async () => {
+    return await sendApiPostRequest({
+            method: "get_network_list",
+            object: "supply",
+            params: {}
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 25.01.2024
+ * @param network_id
+ * @param date
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetSupplyKanbanData = async (network_id = 1, date = {}) => {
+    return await sendApiPostRequest({
+            method: "kanban_get",
+            object: "supply",
+            params: {
+                "network_id": network_id,
+                "date": date
+            }
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 25.01.2024
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ * @param data
+ * @param id
+ */
+export const apiUpdateSupplyKanbanData = async (data = {}, id) => {
+    return await sendApiPostRequest({
+            method: "kanban_update",
+            object: "supply",
+            params: {
+                "data": {
+                    [id]: data
+                }
+            }
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 25.01.2024
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetOfflineSchemaData = async () => {
+    return await sendApiPostRequest({
+            method: "schema_get",
+            object: "offline",
+            params: {}
+        },
+        true
+    )
+}
+
+
+

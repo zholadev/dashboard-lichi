@@ -1,7 +1,6 @@
 'use client'
 
 import React, {useEffect, useState} from 'react';
-import {Table, TableBody, TableHead, TableHeader, TableRow,} from "@/components/shared/ui/table"
 import {
     Pagination,
     PaginationContent,
@@ -11,15 +10,18 @@ import {
     PaginationNext,
     PaginationPrevious
 } from "@/components/shared/ui/pagination";
-import {Heading} from "@/components/shared/uikit/heading";
+import EventCard from "./components/EventCard";
 import {useApiRequest} from "@/components/shared/hooks";
+import {Heading} from "@/components/shared/uikit/heading";
+import EventAddFormModal from "./components/EventAddFormModal";
 import {apiGetEventsData} from "@/components/shared/services/axios/clientRequests";
-import EventCard from "@/components/pages/events/ui/components/EventCard";
-import EventAddFormModal from "@/components/pages/events/ui/components/EventAddFormModal";
+import {Table, TableBody, TableHead, TableHeader, TableRow,} from "@/components/shared/ui/table"
 
 /**
  * @author Zholaman Zhumanov
  * @created 23.01.2024
+ * @last-updated 25.01.2024 - Zholaman Zhumanov
+ * @update-description real data is added
  * @todo refactoring
  * @todo loader handler
  * @param props

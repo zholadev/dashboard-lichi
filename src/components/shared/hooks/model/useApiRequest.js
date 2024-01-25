@@ -1,6 +1,9 @@
 'use client'
 import {useState} from 'react';
 import useToastMessage from "./useToastMessage";
+import {useRouter} from "next/navigation";
+import Cookie from "js-cookie";
+import {routerPagesList} from "@/components/entities/router";
 
 /**
  * @author Zholaman Zhumanov
@@ -11,6 +14,8 @@ import useToastMessage from "./useToastMessage";
 function useApiRequest() {
     const [loading, setLoading] = useState(false)
     const toastMessage = useToastMessage()
+
+    const router = useRouter()
 
     const handleErrorMessage = (messages, exceptions, options) => {
         if (!options?.onDisabledMessage) {
@@ -28,6 +33,13 @@ function useApiRequest() {
             if (options.onSuccessCallbackFunc) {
                 options.onSuccessCallbackFunc()
             }
+        }
+    }
+
+    const userSessionEnd = (code) => {
+        if (code === 500) {
+            Cookie.remove("dashboard-token")
+            return router.push(routerPagesList.login)
         }
     }
 
@@ -51,6 +63,8 @@ function useApiRequest() {
                 options?.onGetData?.({data, errorFields, success, messages, totalData});
 
                 handleSuccessfulCase(options, success);
+
+                userSessionEnd(resData?.["code"])
 
             }).catch(error => {
                 console.log(`page: useApiRequest, event: ${options.name ?? "apiFetchFunc"}, error: ${error}`)
