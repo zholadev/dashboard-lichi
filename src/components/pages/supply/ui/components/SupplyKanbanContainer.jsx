@@ -30,6 +30,11 @@ function SupplyKanbanContainer(props) {
     const toggleHoverPut = () => setAnimateUpdate(!animateUpdate)
     const toggleButtonShow = () => setShowButton(!showButton)
 
+    const showButtonHandler = (id) => {
+        if (id === selectItem?.["data"]?.["id"]) return
+        setShowButton(true)
+    }
+
     const updateSupplyDataHandler = async (data) => {
         try {
             const id = data?.["id"]
@@ -85,7 +90,7 @@ function SupplyKanbanContainer(props) {
                             <div key={index}
                                  className={
                                      cn("w-full border cursor-pointer z-10 relative rounded p-4 h-full hover:shadow-md transition-shadow duration-400 will-change-auto ease-in-out",
-                                         animateUpdate ? "hover:scale-110 transition-all duration-300" : ""
+                                         animateUpdate ? "hover:scale-110 transition-all duration-300 ease-in-out" : ""
                                      )
                                  }
                                  onClick={() => {
@@ -132,7 +137,7 @@ function SupplyKanbanContainer(props) {
                                                         <Tooltip>
                                                             <TooltipTrigger>
                                                                 <Badge
-                                                                    className={cn("cursor-pointer select-none")}
+                                                                    className={cn("cursor-pointer select-none hover:scale-110 transition-transform duration-100 ease-in-out")}
                                                                     variant={"secondary"}
                                                                     onClick={() => {
                                                                         setSelectItem({
