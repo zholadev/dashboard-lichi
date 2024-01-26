@@ -3,8 +3,8 @@
 import React from 'react';
 import {Cross2Icon} from "@radix-ui/react-icons"
 import TableViewOptions from "./TableViewOptions";
-import {Input} from "@/components/shared/ui/input";
-import {Button} from "@/components/shared/ui/button";
+import {Input} from "@/components/shared/shadcn/ui/input";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import TableFacetedFilter from "./TableFacetedFilter";
 import {priorities, statuses} from "@/components/shared/data/table";
 

@@ -6,14 +6,14 @@ import {cn} from "@/lib/utils";
 import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form"
 import {ReloadIcon} from "@radix-ui/react-icons";
-import {Input} from "@/components/shared/ui/input";
-import {Button} from "@/components/shared/ui/button";
+import {Input} from "@/components/shared/shadcn/ui/input";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {zodResolver} from "@hookform/resolvers/zod"
 import {useApiRequest} from "@/components/shared/hooks";
 import {Heading} from "@/components/shared/uikit/heading";
 import {routerPagesList} from "@/components/entities/router";
 import {apiLogin} from "@/components/shared/services/axios/clientRequests";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/shared/ui/form";
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/shared/shadcn/ui/form";
 import Cookie from "js-cookie";
 
 /**

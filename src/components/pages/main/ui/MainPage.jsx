@@ -2,7 +2,7 @@
 
 import React from 'react';
 import dynamic from "next/dynamic";
-import {Button} from "@/components/shared/ui/button";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {Heading} from "@/components/shared/uikit/heading";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})

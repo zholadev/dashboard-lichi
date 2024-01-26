@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import {TableCell, TableRow} from "@/components/shared/ui/table";
+import {TableCell, TableRow} from "@/components/shared/shadcn/ui/table";
 import EventEditFormModal from "@/components/pages/events/ui/components/EventEditFormModal";
 import EventRemoveItem from "@/components/pages/events/ui/components/EventRemoveItem";
 

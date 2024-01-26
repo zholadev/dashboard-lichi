@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react';
-import {Badge} from "@/components/shared/ui/badge";
-import {Button} from "@/components/shared/ui/button";
+import {Badge} from "@/components/shared/shadcn/ui/badge";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {Separator} from "@radix-ui/react-dropdown-menu";
 import {
     Command,
@@ -12,9 +12,9 @@ import {
     CommandItem,
     CommandList,
     CommandSeparator
-} from "@/components/shared/ui/command";
+} from "@/components/shared/shadcn/ui/command";
 import {CheckIcon, PlusCircledIcon} from "@radix-ui/react-icons";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/ui/popover";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 
 /**
  * @author Zholaman Zhumanov

@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react';
-import {Button} from "@/components/shared/ui/button";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/ui/select";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
 import {ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon} from "@radix-ui/react-icons";
 
 /**

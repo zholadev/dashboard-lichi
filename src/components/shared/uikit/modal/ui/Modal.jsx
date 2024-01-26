@@ -8,8 +8,8 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger
-} from "@/components/shared/ui/dialog";
-import {Button} from "@/components/shared/ui/button";
+} from "@/components/shared/shadcn/ui/dialog";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {PlusIcon} from "@radix-ui/react-icons";
 
 /**

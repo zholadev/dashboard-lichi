@@ -1,6 +1,6 @@
 import React from 'react';
 import {cn} from "@/lib/utils";
-import {Skeleton} from "@/components/shared/ui/skeleton";
+import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 
 /**
  * @author Zholaman Zhumanov

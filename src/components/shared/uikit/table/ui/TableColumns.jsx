@@ -1,7 +1,7 @@
 import React from 'react';
-import {Badge} from "@/components/shared/ui/badge";
+import {Badge} from "@/components/shared/shadcn/ui/badge";
 import TableDataRowActions from "./TableDataRowActions";
-import {Checkbox} from "@/components/shared/ui/checkbox";
+import {Checkbox} from "@/components/shared/shadcn/ui/checkbox";
 import TableDataColumnHeader from "./TableDataColumnHeader";
 import {labels, priorities, statuses} from "@/components/shared/data/table";
 

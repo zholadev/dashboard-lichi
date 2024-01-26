@@ -12,8 +12,8 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger
-} from "@/components/shared/ui/dropdown-menu";
-import {Button} from "@/components/shared/ui/button";
+} from "@/components/shared/shadcn/ui/dropdown-menu";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {labels} from "@/components/shared/data/table";
 
 /**

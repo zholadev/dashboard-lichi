@@ -9,13 +9,13 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious
-} from "@/components/shared/ui/pagination";
+} from "@/components/shared/shadcn/ui/pagination";
 import EventCard from "./components/EventCard";
 import {useApiRequest} from "@/components/shared/hooks";
 import {Heading} from "@/components/shared/uikit/heading";
 import EventAddFormModal from "./components/EventAddFormModal";
 import {apiGetEventsData} from "@/components/shared/services/axios/clientRequests";
-import {Table, TableBody, TableHead, TableHeader, TableRow,} from "@/components/shared/ui/table"
+import {Table, TableBody, TableHead, TableHeader, TableRow,} from "@/components/shared/shadcn/ui/table"
 
 /**
  * @author Zholaman Zhumanov

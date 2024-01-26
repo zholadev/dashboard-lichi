@@ -6,8 +6,8 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger
-} from "@/components/shared/ui/dropdown-menu";
-import {Button} from "@/components/shared/ui/button";
+} from "@/components/shared/shadcn/ui/dropdown-menu";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {ArrowDownIcon, ArrowUpIcon, CaretSortIcon, EyeNoneIcon} from "@radix-ui/react-icons";
 
 /**

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Skeleton} from "@/components/shared/ui/skeleton";
+import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {Container} from "@/components/entities/container";
 
 function Loading(props) {

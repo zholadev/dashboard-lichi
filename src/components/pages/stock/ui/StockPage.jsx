@@ -4,14 +4,14 @@ import React, {useState} from 'react';
 import {Heading} from "@/components/shared/uikit/heading";
 import {TableData} from "@/components/shared/uikit/table";
 import {cn} from "@/lib/utils";
-import {Label} from "@/components/shared/ui/label";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/ui/popover";
-import {Button} from "@/components/shared/ui/button";
+import {Label} from "@/components/shared/shadcn/ui/label";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {CalendarIcon} from "lucide-react";
 import {addDays, format} from "date-fns";
-import {Calendar} from "@/components/shared/ui/calendar";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/ui/select";
-import {Input} from "@/components/shared/ui/input";
+import {Calendar} from "@/components/shared/shadcn/ui/calendar";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
+import {Input} from "@/components/shared/shadcn/ui/input";
 
 /**
  * @author Zholaman Zhumanov

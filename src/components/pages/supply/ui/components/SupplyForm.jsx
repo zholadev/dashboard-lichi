@@ -10,9 +10,9 @@ import {
     SelectLabel,
     SelectTrigger,
     SelectValue
-} from "@/components/shared/ui/select";
-import {Label} from "@/components/shared/ui/label";
-import {Button} from "@/components/shared/ui/button";
+} from "@/components/shared/shadcn/ui/select";
+import {Label} from "@/components/shared/shadcn/ui/label";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import SupplyKanbanContainer from "./SupplyKanbanContainer";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";

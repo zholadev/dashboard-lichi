@@ -14,7 +14,7 @@ import {
 } from "@tanstack/react-table"
 import TableToolbar from "./TableToolbar";
 
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/shared/ui/table'
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/shared/shadcn/ui/table'
 import TableDataPagination from "@/components/shared/uikit/table/ui/TableDataPagination";
 import {tableColumns} from "@/components/shared/uikit/table/ui/TableColumns";
 

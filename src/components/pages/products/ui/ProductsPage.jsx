@@ -4,11 +4,11 @@ import React, {useState} from 'react';
 import {cn} from "@/lib/utils";
 import {CalendarIcon} from "lucide-react";
 import {addDays, format} from "date-fns";
-import {Label} from "@/components/shared/ui/label";
-import {Input} from "@/components/shared/ui/input";
-import {Switch} from "@/components/shared/ui/switch";
-import {Button} from "@/components/shared/ui/button";
-import {Calendar} from "@/components/shared/ui/calendar";
+import {Label} from "@/components/shared/shadcn/ui/label";
+import {Input} from "@/components/shared/shadcn/ui/input";
+import {Switch} from "@/components/shared/shadcn/ui/switch";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {Heading} from "@/components/shared/uikit/heading";
 import {
     Pagination,
@@ -18,10 +18,10 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-} from "@/components/shared/ui/pagination"
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/ui/popover";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/ui/select";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/ui/table";
+} from "@/components/shared/shadcn/ui/pagination"
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/shadcn/ui/table";
 import Image from "next/image";
 
 /**

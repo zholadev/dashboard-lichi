@@ -6,11 +6,11 @@ import {cn} from "@/lib/utils";
 import {format} from "date-fns";
 import {useForm} from "react-hook-form";
 import {PlusIcon} from "@radix-ui/react-icons";
-import {Input} from "@/components/shared/ui/input";
+import {Input} from "@/components/shared/shadcn/ui/input";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Button} from "@/components/shared/ui/button";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {useApiRequest} from "@/components/shared/hooks";
-import {Checkbox} from "@/components/shared/ui/checkbox";
+import {Checkbox} from "@/components/shared/shadcn/ui/checkbox";
 import {
     Dialog,
     DialogClose,
@@ -18,13 +18,13 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger
-} from "@/components/shared/ui/dialog";
+} from "@/components/shared/shadcn/ui/dialog";
 import {CalendarIcon} from "lucide-react";
-import {Calendar} from "@/components/shared/ui/calendar";
+import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {LoaderButton} from "@/components/shared/uikit/loader";
 import {apiAddEventItem} from "@/components/shared/services/axios/clientRequests";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/ui/popover";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/shared/ui/form";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/shared/shadcn/ui/form";
 
 /**
  * @author Zholaman Zhumanov

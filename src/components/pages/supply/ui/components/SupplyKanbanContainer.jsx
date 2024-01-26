@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {cn} from "@/lib/utils";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/shared/ui/tooltip"
-import {Badge} from "@/components/shared/ui/badge";
-import {Button} from "@/components/shared/ui/button";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/shared/shadcn/ui/tooltip"
+import {Badge} from "@/components/shared/shadcn/ui/badge";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import SupplyKanbanLoading from "./SupplyKanbanLoading";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";

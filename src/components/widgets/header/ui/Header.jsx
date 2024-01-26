@@ -13,16 +13,16 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
-} from "@/components/shared/ui/dropdown-menu";
-import {Input} from "@/components/shared/ui/input";
-import {Button} from "@/components/shared/ui/button";
+} from "@/components/shared/shadcn/ui/dropdown-menu";
+import {Input} from "@/components/shared/shadcn/ui/input";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {usePathname, useRouter} from "next/navigation";
 import {HamburgerMenuIcon} from "@radix-ui/react-icons";
 import {useScrollAction} from "@/components/shared/hooks";
 import {ModeToggle} from "@/components/shared/theme-switch";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/shared/ui/avatar";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/shared/shadcn/ui/avatar";
 import {routerPagesList} from "@/components/entities/router/model/routerPagesList";
-import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/shared/ui/sheet"
+import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/shared/shadcn/ui/sheet"
 
 /**
  * @author Zholaman Zhumanov
@@ -100,7 +100,7 @@ function Header(props) {
                         <SheetTrigger asChild>
                             <HamburgerMenuIcon width={25} height={25}/>
                         </SheetTrigger>
-                        <SheetContent className={cn("outline-0")}>
+                        <SheetContent className={cn("outline-0 md:max-w-[600px] w-full")} side={"left"}>
                             <div className="grid gap-4 py-4">
                                 <ul className={"flex flex-col gap-8"}>
                                     {

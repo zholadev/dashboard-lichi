@@ -8,9 +8,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger
-} from "@/components/shared/ui/alert-dialog";
+} from "@/components/shared/shadcn/ui/alert-dialog";
 import {TrashIcon} from "@radix-ui/react-icons";
-import {Button} from "@/components/shared/ui/button";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {LoaderButton} from "@/components/shared/uikit/loader";
 import {apiRemoveEventItem} from "@/components/shared/services/axios/clientRequests";
 

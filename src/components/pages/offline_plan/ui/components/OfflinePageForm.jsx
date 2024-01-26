@@ -5,10 +5,10 @@ import {cn} from "@/lib/utils";
 import {format} from "date-fns";
 import {ru} from 'date-fns/locale'
 import {CalendarIcon} from "lucide-react";
-import {Button} from "@/components/shared/ui/button";
-import {Calendar} from "@/components/shared/ui/calendar";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/ui/popover";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/ui/select";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {Calendar} from "@/components/shared/shadcn/ui/calendar";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
 
 /**
  * @author Zholaman Zhumanov

@@ -5,15 +5,15 @@ import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
 import {addDays, format} from "date-fns";
 import {CalendarIcon} from "lucide-react";
-import {Input} from "@/components/shared/ui/input";
-import {Label} from "@/components/shared/ui/label";
-import {Button} from "@/components/shared/ui/button";
+import {Input} from "@/components/shared/shadcn/ui/input";
+import {Label} from "@/components/shared/shadcn/ui/label";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {Heading} from '@/components/shared/uikit/heading'
-import {Calendar} from "@/components/shared/ui/calendar";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/ui/popover";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/ui/select";
-import {Skeleton} from "@/components/shared/ui/skeleton";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/ui/table";
+import {Calendar} from "@/components/shared/shadcn/ui/calendar";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
+import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/shadcn/ui/table";
 import Image from "next/image";
 import {
     chartActive,
