@@ -2,6 +2,8 @@ import {
     apiAddEventItem,
     apiEditEventItem,
     apiGetEventsData,
+    apiGetOfflinePlanData,
+    apiGetOfflinePlanDetailData,
     apiGetOfflineSchemaData,
     apiGetProductsListData,
     apiGetSupplyKanbanData,
@@ -21,5 +23,7 @@ export {
     apiGetSupplyKanbanData,
     apiGetProductsListData,
     apiGetOfflineSchemaData,
-    apiUpdateSupplyKanbanData
+    apiUpdateSupplyKanbanData,
+    apiGetOfflinePlanData,
+    apiGetOfflinePlanDetailData
 }

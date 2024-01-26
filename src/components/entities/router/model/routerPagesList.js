@@ -7,5 +7,6 @@ export const routerPagesList = {
     "stock": "/stock",
     "supply": "/supply",
     "offline_plan": "/offline_plan",
-    "login": "/login"
+    "login": "/login",
+    'offline_plan_detail': "/offline_plan/detail"
 }

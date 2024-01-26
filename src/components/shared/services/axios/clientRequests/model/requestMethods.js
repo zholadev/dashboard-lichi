@@ -163,34 +163,63 @@ export const apiGetOfflineSchemaData = async () => {
     )
 }
 
-
-export const apiGetProductsListData = async (
-    category,
-    date = {
-        start: "19/01/2024", end: "26/01/2024"
-    },
-    download = 0,
-    limit = 20,
-    page = 1,
-    report = "by_articles",
-    sort_direction = -1
-) => {
+/**
+ * @author Zholaman Zhumanov
+ * @created 26.01.2024
+ * @returns {Promise<AxiosResponse<any>|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ * @param data
+ */
+export const apiGetProductsListData = async (data) => {
     return await sendApiPostRequest({
             method: "get",
             object: "products",
             params: {
-                category: category,
-                date: date,
-                download: download,
-                limit: limit,
-                page: page,
-                report: report,
-                sort_direction: sort_direction,
+                ...data
             }
         },
         true
     )
 }
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 26.01.2024
+ * @param country
+ * @param startDate
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetOfflinePlanData = async (country, startDate) => {
+    return await sendApiPostRequest({
+            method: "status",
+            object: "offline_plan",
+            params: {country: country, date: {start: startDate}}
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 26.01.2024
+ * @param store
+ * @param date
+ * @returns {Promise<AxiosResponse<any>|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetOfflinePlanDetailData = async (store, date) => {
+    return await sendApiPostRequest({
+            method: "detail",
+            object: "offline_plan",
+            params: {
+                date: date,
+                store: store
+            }
+        },
+        true
+    )
+}
+
+
+
 
 
 
