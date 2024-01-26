@@ -16,15 +16,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
  * @constructor
  */
 function ProductsData(props) {
-    const {formData, productsData, apiLoader} = useAppSelector(state => state.products)
-
-    const percentTotalChart = useCallback(() => {
-        try {
-
-        } catch (error) {
-
-        }
-    }, [productsData])
+    const {productsData, apiLoader} = useAppSelector(state => state.products)
 
     if (apiLoader) {
         return <div className={cn("w-full flex justify-center items-center my-4")}>
@@ -68,12 +60,18 @@ function ProductsData(props) {
                             return (
                                 <TableRow key={index}>
                                     <TableCell>
-                                        <Image
-                                            width={60}
-                                            height={90}
-                                            src={value.photo}
-                                            alt={value.category}
-                                        />
+                                        {
+                                            value?.["phtot"] ?
+                                                <Image
+                                                    width={60}
+                                                    height={90}
+                                                    src={value.photo}
+                                                    alt={value.category}
+                                                />
+                                                :
+                                                <Heading type={"h4"}>{value?.article}</Heading>
+                                        }
+
                                     </TableCell>
                                     <TableCell className="font-light w-[230px]">
                                         <Heading type={"h4"}>{value.article}</Heading>

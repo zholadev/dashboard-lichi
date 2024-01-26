@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import OfflinePageDetailForm from "./components/OfflinePageDetailForm";
 import OfflinePlanDetailData from "./components/OfflinePlanDetailData";

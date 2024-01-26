@@ -5,7 +5,6 @@ import ProductsForm from "./components/ProductsForm";
 import ProductsData from "./components/ProductsData";
 import {Heading} from "@/components/shared/uikit/heading";
 import ProductsPagination from "./components/ProductsPagination";
-import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 
 /**
  * @author Zholaman Zhumanov
@@ -17,10 +16,6 @@ import {useAppSelector} from "@/components/entities/store/hooks/hooks";
  * @constructor
  */
 function ProductsPage(props) {
-    const {formData, productsData, apiLoader} = useAppSelector(state => state.products)
-
-    console.log(apiLoader, productsData)
-
     return (
         <>
             <Heading type={"h1"}>Отчет по товарам</Heading>

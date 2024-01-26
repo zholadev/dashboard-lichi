@@ -5,6 +5,7 @@ import {
     apiGetOfflinePlanData,
     apiGetOfflinePlanDetailData,
     apiGetOfflineSchemaData,
+    apiGetOfflineSchemaDetail,
     apiGetProductsListData,
     apiGetSupplyKanbanData,
     apiGetSupplyNetworkData,
@@ -25,5 +26,6 @@ export {
     apiGetOfflineSchemaData,
     apiUpdateSupplyKanbanData,
     apiGetOfflinePlanData,
-    apiGetOfflinePlanDetailData
+    apiGetOfflinePlanDetailData,
+    apiGetOfflineSchemaDetail
 }

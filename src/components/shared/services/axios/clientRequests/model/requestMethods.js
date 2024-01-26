@@ -166,6 +166,30 @@ export const apiGetOfflineSchemaData = async () => {
 /**
  * @author Zholaman Zhumanov
  * @created 26.01.2024
+ * @param schema_type
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetOfflineSchemaDetail = async (schema_type) => {
+    return await sendApiPostRequest({
+            method: `report_${schema_type}`,
+            object: "offline",
+            params: {
+                "date": {
+                    "start": "19/01/2024",
+                    "end": "26/01/2024"
+                },
+                "date_group": "by_day",
+                "country": "0KDQvtGB0YHQuNGP",
+                "category": ""
+            }
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 26.01.2024
  * @returns {Promise<AxiosResponse<any>|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
  * @param data
  */

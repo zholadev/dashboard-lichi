@@ -31,6 +31,12 @@ import {
     resetOfflinePlanDetailData,
     toggleOfflinePlanDetailApiLoader
 } from "@/components/entities/store/model/reducers/offline_plan_detail";
+import {
+    getOffSchemaDataAction,
+    getOffSchemaDataWithReportDataAction,
+    getOffSchemaReportDataAction,
+    toggleOffSchemaApiLoaderAction
+} from "@/components/entities/store/model/reducers/offline";
 
 /**
  * @author Zholaman Zhumanov
@@ -64,9 +70,13 @@ function useDispatchActionHandle() {
         offlinePlanDateParams: (value) => dispatch(getOfflinePlanPlanDateParams(value)),
         offlinePlanApiLoader: (value) => dispatch(toggleOfflinePlanApiLoader(value)),
         offlinePlanDetailGetData: (data) => dispatch(getOfflinePlanDetailData(data)),
+        offSchemaGetData: (data) => dispatch(getOffSchemaDataAction(data)),
+        offSchemaReportGetData: (data) => dispatch(getOffSchemaReportDataAction(data)),
+        offSchemaDataWithReportGetData: (data) => dispatch(getOffSchemaDataWithReportDataAction(data)),
         offlinePlanDetailCategoryParams: (value) => dispatch(getOfflinePlanDetailCategoryParams(value)),
         offlinePlanDetailDateParams: (value) => dispatch(getOfflinePlanPlanDetailDateParams(value)),
         offlinePlanDetailApiLoader: (value) => dispatch(toggleOfflinePlanDetailApiLoader(value)),
+        offSchemaApiLoader: (value) => dispatch(toggleOffSchemaApiLoaderAction(value)),
         productsResetData: createDispatchHandler(dispatch, resetData, "resetProductsData"),
         offlinePlanResetData: createDispatchHandler(dispatch, resetOfflinePlanData, "resetOfflineData"),
         offlinePlanDetailResetData: createDispatchHandler(dispatch, resetOfflinePlanDetailData, "resetOfflinePlanDetailData"),
