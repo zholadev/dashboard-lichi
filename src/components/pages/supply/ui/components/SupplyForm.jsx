@@ -76,8 +76,10 @@ function SupplyForm(props) {
         )
     }
 
-    const fetchSupplyKanbanData = async (event) => {
-        event?.preventDefault()
+    const fetchSupplyKanbanData = async (event, disabledLoader) => {
+        if (event) {
+            event?.preventDefault()
+        }
 
         await apiFetchHandler(
             apiGetSupplyKanbanData,
@@ -95,7 +97,8 @@ function SupplyForm(props) {
                         events.supplyDateKanbanDataHandle(params.data)
                     }
                 },
-                disableLoading: false
+                disableLoading: false,
+                offLoader: disabledLoader
             }
         )
     }

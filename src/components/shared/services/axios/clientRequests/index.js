@@ -2,10 +2,13 @@ import {
     apiAddEventItem,
     apiEditEventItem,
     apiGetEventsData,
+    apiGetOfflineSchemaData,
+    apiGetProductsListData,
     apiGetSupplyKanbanData,
     apiGetSupplyNetworkData,
     apiLogin,
-    apiRemoveEventItem
+    apiRemoveEventItem,
+    apiUpdateSupplyKanbanData
 } from "./model/requestMethods";
 
 export {
@@ -15,5 +18,8 @@ export {
     apiRemoveEventItem,
     apiEditEventItem,
     apiGetSupplyNetworkData,
-    apiGetSupplyKanbanData
+    apiGetSupplyKanbanData,
+    apiGetProductsListData,
+    apiGetOfflineSchemaData,
+    apiUpdateSupplyKanbanData
 }

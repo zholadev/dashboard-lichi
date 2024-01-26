@@ -91,7 +91,7 @@ function Header(props) {
         <>
             <header className={
                 cn(
-                    "flex sticky top-0 justify-between z-50 py-4 md:px-7 px-2 items-center transition-all duration-200",
+                    "flex sticky top-0 justify-between z-50 py-4 md:px-7 px-5 items-center transition-all duration-200",
                     isScroll ? "bg-white/30 backdrop-blur-sm" : "bg-transparent"
                 )
             }>

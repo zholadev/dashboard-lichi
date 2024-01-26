@@ -46,7 +46,10 @@ function useApiRequest() {
     const apiFetchHandler = async (apiFetchFunc, params = [], loader, options) => {
         try {
             setLoading(true)
-            loader && loader(true)
+
+            if (!options.offLoader) {
+                loader && loader(true)
+            }
 
             await apiFetchFunc(...params).then(res => {
                 const totalData = res

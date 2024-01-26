@@ -5,8 +5,8 @@ import {Badge} from "@/components/shared/ui/badge";
 import {Button} from "@/components/shared/ui/button";
 import SupplyKanbanLoading from "./SupplyKanbanLoading";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
-import {apiUpdateSupplyKanbanData} from "@/components/shared/services/axios/clientRequests/model/requestMethods";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
+import {apiUpdateSupplyKanbanData} from "@/components/shared/services/axios/clientRequests";
 
 /**
  * @author Zholaman Zhumanov
@@ -61,11 +61,11 @@ function SupplyKanbanContainer(props) {
         await apiFetchHandler(
             apiUpdateSupplyKanbanData,
             [data, id],
-            events.supplyKanbanLoader,
+            false,
             {
                 onGetData: (params) => {
                     if (params.success) {
-                        updateKanbanData()
+                        updateKanbanData(false, true)
                     }
 
                     setAnimateUpdate(false)

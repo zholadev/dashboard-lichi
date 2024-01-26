@@ -164,4 +164,33 @@ export const apiGetOfflineSchemaData = async () => {
 }
 
 
+export const apiGetProductsListData = async (
+    category,
+    date = {
+        start: "19/01/2024", end: "26/01/2024"
+    },
+    download = 0,
+    limit = 20,
+    page = 1,
+    report = "by_articles",
+    sort_direction = -1
+) => {
+    return await sendApiPostRequest({
+            method: "get",
+            object: "products",
+            params: {
+                category: category,
+                date: date,
+                download: download,
+                limit: limit,
+                page: page,
+                report: report,
+                sort_direction: sort_direction,
+            }
+        },
+        true
+    )
+}
+
+
 
