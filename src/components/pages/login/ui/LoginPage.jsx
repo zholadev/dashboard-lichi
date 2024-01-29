@@ -70,11 +70,11 @@ function LoginPage(props) {
     }
 
     return (
-        <div className={cn("w-full flex flex-col justify-center content-center items-center mt-20")}>
+        <div className={cn("w-full flex flex-col justify-center items-center mt-20")}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}
-                      className={cn("px-10 py-20 w-[400px] flex border rounded flex-col justify-center items-center")}>
-                    <Heading type={"h1"} cls={cn("mb-10")}>Авторизуйтесь</Heading>
+                      className={cn("lg:px-10 px-5 py-20 md:max-w-[400px] w-full flex border rounded flex-col justify-center items-center")}>
+                    <Heading type={"h2"} cls={cn("mb-10")}>Авторизуйтесь</Heading>
                     <div className={cn("mb-5 w-full")}>
                         <FormField
                             control={form.control}
