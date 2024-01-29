@@ -2,13 +2,14 @@
 
 import React, {useMemo} from 'react';
 import {cn} from "@/lib/utils";
+import Image from 'next/image'
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/shadcn/ui/table";
 import {flexRender, getCoreRowModel, getPaginationRowModel, useReactTable} from "@tanstack/react-table";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {Button} from "@/components/shared/shadcn/ui/button";
-import {ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon} from "@radix-ui/react-icons";
+import {ChevronLeftIcon, ChevronRightIcon} from "@radix-ui/react-icons";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
 import {useDispatchActionHandle} from "@/components/shared/hooks";
 import {Heading} from "@/components/shared/uikit/heading";
@@ -25,16 +26,37 @@ function ProductsData() {
 
     const {report, category, page, detail_by_store, limit} = useAppSelector(state => state.products)
 
-    console.log(page)
-
     const events = useDispatchActionHandle()
 
     const getTableColumns = useMemo(() => {
         try {
             return Object.keys(productsData?.table?.head || {}).map((key) => {
-                return {
-                    "accessorKey": key,
-                    "header": productsData?.["table"]?.["head"]?.[key]?.["label"]
+                console.log(key)
+                if (key === 'photo') {
+                    return {
+                        "accessorKey": key,
+                        Cell: (row) => {
+                            return <Image
+                                width={60}
+                                height={90}
+                                src={row?.["original"]?.["photo"]}
+                                alt={'...'}
+                            />
+                        },
+                        // "accessorKey": <Image
+                        //     width={60}
+                        //     height={90}
+                        //     src={cell?.["row"]?.["original"]?.["photo"]}
+                        //     alt={'...'}
+                        // />,
+                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                    }
+                } else {
+                    return {
+                        "accessorKey": key,
+                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                    }
+
                 }
             })
         } catch (error) {
@@ -127,7 +149,8 @@ function ProductsData() {
                                                     {/*        flexRender(cell.column.columnDef.cell, cell.getContext())*/}
                                                     {/*    )*/}
                                                     {/*}*/}
-                                                    <Heading type={'h5'}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Heading>
+                                                    <Heading
+                                                        type={'h5'}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Heading>
                                                 </TableCell>
                                             )
                                         })}

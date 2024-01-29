@@ -1,11 +1,12 @@
 'use client'
 
-import React from 'react';
+import React, {useMemo} from 'react';
 import dynamic from "next/dynamic";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {cn} from "@/lib/utils";
 import {Heading} from "@/components/shared/uikit/heading";
+import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -25,6 +26,20 @@ function OfflinePlanDetailData(props) {
 
     const chartData = offlinePlanDetailData?.["report"]
     const planDataCounts = offlinePlanDetailData?.["$analytics"]
+
+    const getChartData = useMemo(() => {
+        try {
+            return {
+                "options": {
+                  ...chartData
+                },
+                "series": chartData?.["series"],
+                "chart": chartData?.["chart"]
+            }
+        } catch (error) {
+            errorHandler("offlinePageDetailData", "getChartData", error)
+        }
+    }, [chartData])
 
     if (offPlanDetailApiLoader) {
         return (
@@ -54,13 +69,13 @@ function OfflinePlanDetailData(props) {
             </div>
 
             <div className={"border rounded p-5"}>
-                {/*<ChartReact*/}
-                {/*    title={"Анализ продаж"}*/}
-                {/*    optionsData={chartData}*/}
-                {/*    seriesData={chartData?.series}*/}
-                {/*    type={chartData?.chart.type}*/}
-                {/*    height={chartData?.chart.height}*/}
-                {/*/>*/}
+                <ChartReact
+                    title={"Анализ продаж"}
+                    optionsData={getChartData}
+                    seriesData={getChartData?.series}
+                    type={getChartData?.chart.type}
+                    height={getChartData?.chart.height}
+                />
             </div>
         </div>
     );
