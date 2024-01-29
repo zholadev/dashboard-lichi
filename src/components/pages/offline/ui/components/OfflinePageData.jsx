@@ -1,16 +1,12 @@
 'use client'
 
-import React, {useCallback, useEffect} from 'react';
+import React, {Suspense, useCallback, useEffect, useMemo} from 'react';
 import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
-import {Heading} from "@/components/shared/uikit/heading";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
 import {apiGetOfflineSchemaData} from "@/components/shared/services/axios/clientRequests";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/shadcn/ui/table";
-import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
-import {Badge} from "@/components/shared/shadcn/ui/badge";
-import {Progress} from "@/components/shared/shadcn/ui/progress";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -28,7 +24,27 @@ function OfflinePageData(props) {
 
     const {apiFetchHandler} = useApiRequest()
 
-    const {offSchemaData, offSchemaReportData} = useAppSelector(state => state?.offline)
+    const {offSchemaData, offSchemaReportData, offSchemaRender} = useAppSelector(state => state?.offline)
+
+    const getChartDataSet = useCallback((data, index) => {
+        try {
+            return {
+                "options": {...data, "series": [], "chart": {...data?.["chart"], id: "chart" + index}, yaxis: {"title": ""}},
+                "series": data?.["series"],
+                "chart": data?.["chart"]
+            }
+        } catch (error) {
+            errorHandler("offlinePageData", "getChartDataSet", error)
+        }
+    }, [offSchemaReportData, offSchemaData])
+
+    const schemaDoneData = useMemo(() => {
+        try {
+            return offSchemaReportData
+        } catch (error) {
+            errorHandler("offlinePageData", "schemaDoneData", error)
+        }
+    }, [offSchemaReportData])
 
     const calculatePercentTotal = useCallback((total, sale) => {
         try {
@@ -60,10 +76,6 @@ function OfflinePageData(props) {
             }
         )
     }
-
-    console.log(
-        offSchemaReportData
-    )
 
     const setSchemaDataWithReport = () => {
         let dataIndex = 0;
@@ -125,178 +137,92 @@ function OfflinePageData(props) {
 
             <div className={cn("w-full")}>
                 {
-                    Object.entries(offSchemaReportData || {}).map(([key, value], id) => {
-                        // console.log(value)
+                    Object.values(schemaDoneData || {}).map((schemaData, schemaId) => {
                         return (
-                            value?.["table"] ? (
-                                <div className={"border rounded mb-20 grid mt-10 gap-5 p-4"}>
-                                    <Table className={cn("mb-3")}>
-                                        <TableHeader>
-                                            <TableRow>
-                                                {
-                                                    Object.entries(value?.["table"]?.["head"] || {}).map(([key, value], index) => {
-                                                        return (
-                                                            <TableHead key={index}>
-                                                                <Heading
-                                                                    type={"h4"}
-                                                                    dangerouslySetInnerHTML={{__html: value?.label}}
-                                                                />
-                                                            </TableHead>
-                                                        )
-                                                    })
-                                                }
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {
-                                                Object.entries(value?.["table"]?.["data"] || {}).map(([key, value], index) => {
-                                                    const refundTotalCount = calculateTotalSales(value?.["sale"], value?.["total"])
-                                                    const totalCount = calculatePercentTotal(value?.["total"], value?.["sale"])
-
-                                                    return (
-                                                        <TableRow key={index}>
-                                                            <TableCell>
-                                                                <Heading type={"h4"}>{value?.store}</Heading>
-                                                            </TableCell>
-                                                            <TableCell className="font-light w-[230px]">
-                                                                {/*<Heading type={"h4"}>{value?.total}</Heading>*/}
-                                                                <div
-                                                                    className={cn("w-full flex items-center md:flex-row flex-col justify-between mb-2")}>
-                                                                    <Heading
-                                                                        type={"h4"}>{value?.["total"]}</Heading>
-                                                                    <Badge>{totalCount} %</Badge>
-                                                                </div>
-                                                                <Progress className={cn("bg-red-500]")}
-                                                                          value={totalCount}/>
-                                                            </TableCell>
-                                                            <TableCell className="font-light">
-                                                                <div
-                                                                    className={cn("w-full flex items-center flex-col justify-between mb-2")}>
-                                                                    <Heading
-                                                                        type={"h4"}
-                                                                        cls={cn("mb-0")}
-                                                                    >
-                                                                        {value?.["sale"]}
-                                                                    </Heading>
-                                                                    <Badge
-                                                                        variant={'destructive'}>{-refundTotalCount}</Badge>
-                                                                </div>
-                                                                {/*<Progress className={cn("bg-red-500]")} value={percent}/>*/}
-                                                            </TableCell>
-                                                            <TableCell className="font-light">
-                                                                <Heading type={"h4"}>{value?.refund}</Heading>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )
-                                                })
-                                            }
-                                        </TableBody>
-                                    </Table>
-                                </div>
-                            ) : (
-                                <div className={cn("mb-20 grid 2xl:grid-cols-2 grid-cols-1 mt-5 gap-5")}>
+                            schemaData?.["report"] ? (
+                                <div className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")} key={schemaId}>
                                     <div className={"border rounded p-5"}>
-                                        {
-                                            !value?.["report"]?.["chart"] ?
-                                                <Table className={cn("mb-3")}>
-                                                    <TableHeader>
-                                                        <TableRow>
-                                                            {
-                                                                Object.entries(value?.["report"] || {}).map(([key, value], index) => {
-                                                                    return (
-                                                                        <TableHead key={index}>
-                                                                            <h4 dangerouslySetInnerHTML={{__html: value?.label}}/>
-                                                                        </TableHead>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        {
-                                                            Object.entries(value?.["report"] || {}).map(([key, value], index) => {
-                                                                return (
-                                                                    <TableRow key={index}>
-                                                                        <TableCell>
-                                                                            {/*<Image*/}
-                                                                            {/*    width={60}*/}
-                                                                            {/*    height={90}*/}
-                                                                            {/*    src={'https://app3.lichishop.com/add-ons/get_image_by_art/?art=dr04795&size=xs'}*/}
-                                                                            {/*    alt={value?.category}*/}
-                                                                            {/*/>*/}
-                                                                        </TableCell>
-                                                                        <TableCell className="font-light w-[230px]">
-                                                                            <Heading
-                                                                                type={"h4"}>{value?.article}</Heading>
-                                                                        </TableCell>
-                                                                        <TableCell className="font-light">
-                                                                            {/*<Heading type={"h4"}>{value?.sale}</Heading>*/}
-                                                                            {/*<div*/}
-                                                                            {/*    className={cn("w-full flex items-center flex-col justify-between mb-2")}>*/}
-                                                                            {/*    <Heading*/}
-                                                                            {/*        type={"h4"}>{value?.["sale"]}</Heading>*/}
-                                                                            {/*    <Badge>{refundTotalCount}</Badge>*/}
-                                                                            {/*</div>*/}
-                                                                            {/*/!*<Progress className={cn("bg-red-500]")} value={percent}/>*!/*/}
-                                                                        </TableCell>
-                                                                        <TableCell className="font-light">
-                                                                            <Heading
-                                                                                type={"h4"}>{value?.refund}</Heading>
-                                                                        </TableCell>
-                                                                        <TableCell className="font-light">
-                                                                            {/*<ChartReact*/}
-                                                                            {/*    optionsData={{*/}
-                                                                            {/*        ...value?.["report"]?.["chart"], yaxis: {*/}
-                                                                            {/*            labels: {*/}
-                                                                            {/*                formatter: {}*/}
-                                                                            {/*            }*/}
-                                                                            {/*        }*/}
-                                                                            {/*    }}*/}
-                                                                            {/*    seriesData={value?.["report"]?.chart?.series}*/}
-                                                                            {/*    type={value?.["report"]?.chart?.type}*/}
-                                                                            {/*    height={value?.["report"]?.chart?.height}*/}
-                                                                            {/*/>*/}
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                )
-                                                            })
-                                                        }
-                                                    </TableBody>
-                                                </Table>
-                                                : !value?.["report"]?.["yaxis"] ?
-                                                    <ChartReact
-                                                        optionsData={value?.["report"]}
-                                                        seriesData={value?.["report"]?.series}
-                                                        type={value?.["report"]?.chart?.type}
-                                                        height={value?.["report"]?.chart?.height}
-                                                    />
-                                                    : value?.["report"]?.["yaxis"]?.["formatter"] ?
-                                                        <ChartReact
-                                                            optionsData={{
-                                                                ...value?.["report"], yaxis: {
-                                                                    labels: {
-                                                                        formatter: {}
-                                                                    }
-                                                                }
-                                                            }}
-                                                            seriesData={value?.["report"]?.series}
-                                                            type={value?.["report"]?.chart?.type}
-                                                            height={value?.["report"]?.chart?.height}
-                                                        />
-                                                        :
-                                                        null
-                                        }
+                                        <Suspense fallback={"...loading"}>
+                                            <ChartReact
+                                                title={schemaData?.["report"]?.["yaxis"]?.[0]?.["title"]}
+                                                optionsData={getChartDataSet(schemaData?.["report"], schemaId).options}
+                                                seriesData={getChartDataSet(schemaData?.["report"], schemaId).series}
+                                                type={getChartDataSet(schemaData?.["report"], schemaId).chart?.["type"]}
+                                                height={getChartDataSet(schemaData?.["report"], schemaId).chart?.["height"]}
+                                            />
+                                        </Suspense>
                                     </div>
                                 </div>
-                            )
+                            ) : null
                         )
                     })
                 }
             </div>
 
-            <div>
+            {/*<div className={"border rounded mb-20 grid mt-10 gap-5 p-4"}>*/}
+            {/*    <Table className={cn("mb-3")}>*/}
+            {/*        <TableHeader>*/}
+            {/*            <TableRow>*/}
+            {/*                {*/}
+            {/*                    Object.entries(schemaData?.["table"]?.["head"] || {}).map(([key, value], index) => {*/}
+            {/*                        return (*/}
+            {/*                            <TableHead key={index}>*/}
+            {/*                                <Heading*/}
+            {/*                                    type={"h4"}*/}
+            {/*                                    dangerouslySetInnerHTML={{__html: value?.label}}*/}
+            {/*                                />*/}
+            {/*                            </TableHead>*/}
+            {/*                        )*/}
+            {/*                    })*/}
+            {/*                }*/}
+            {/*            </TableRow>*/}
+            {/*        </TableHeader>*/}
+            {/*        <TableBody>*/}
+            {/*            {*/}
+            {/*                Object.entries(schemaData?.["table"]?.["data"] || {}).map(([key, value], index) => {*/}
+            {/*                    const refundTotalCount = calculateTotalSales(value?.["sale"], value?.["total"])*/}
+            {/*                    const totalCount = calculatePercentTotal(value?.["total"], value?.["sale"])*/}
 
-            </div>
+            {/*                    return (*/}
+            {/*                        <TableRow key={index}>*/}
+            {/*                            <TableCell>*/}
+            {/*                                <Heading type={"h4"}>{value?.store}</Heading>*/}
+            {/*                            </TableCell>*/}
+            {/*                            <TableCell className="font-light w-[230px]">*/}
+            {/*                                /!*<Heading type={"h4"}>{value?.total}</Heading>*!/*/}
+            {/*                                <div*/}
+            {/*                                    className={cn("w-full flex items-center md:flex-row flex-col justify-between mb-2")}>*/}
+            {/*                                    <Heading*/}
+            {/*                                        type={"h4"}>{value?.["total"]}</Heading>*/}
+            {/*                                    <Badge>{totalCount} %</Badge>*/}
+            {/*                                </div>*/}
+            {/*                                <Progress className={cn("bg-red-500]")}*/}
+            {/*                                          value={totalCount}/>*/}
+            {/*                            </TableCell>*/}
+            {/*                            <TableCell className="font-light">*/}
+            {/*                                <div*/}
+            {/*                                    className={cn("w-full flex items-center flex-col justify-between mb-2")}>*/}
+            {/*                                    <Heading*/}
+            {/*                                        type={"h4"}*/}
+            {/*                                        cls={cn("mb-0")}*/}
+            {/*                                    >*/}
+            {/*                                        {value?.["sale"]}*/}
+            {/*                                    </Heading>*/}
+            {/*                                    <Badge*/}
+            {/*                                        variant={'destructive'}>{-refundTotalCount}</Badge>*/}
+            {/*                                </div>*/}
+            {/*                                /!*<Progress className={cn("bg-red-500]")} value={percent}/>*!/*/}
+            {/*                            </TableCell>*/}
+            {/*                            <TableCell className="font-light">*/}
+            {/*                                <Heading type={"h4"}>{value?.refund}</Heading>*/}
+            {/*                            </TableCell>*/}
+            {/*                        </TableRow>*/}
+            {/*                    )*/}
+            {/*                })*/}
+            {/*            }*/}
+            {/*        </TableBody>*/}
+            {/*    </Table>*/}
+            {/*</div>*/}
 
             {/*<div className={"border rounded mb-20 grid mt-10 gap-5 p-4"}>*/}
             {/*    <Heading type={"h3"}>Магазины</Heading>*/}
@@ -359,16 +285,6 @@ function OfflinePageData(props) {
             {/*            seriesData={chartSalesDynamic.series}*/}
             {/*            type={chartSalesDynamic.chart.type}*/}
             {/*            height={chartSalesDynamic.chart.height}*/}
-            {/*        />*/}
-            {/*    </div>*/}
-
-            {/*    <div className={"border rounded p-5"}>*/}
-            {/*        <ChartReact*/}
-            {/*            title={"Средний чек"}*/}
-            {/*            optionsData={chartAvg}*/}
-            {/*            seriesData={chartAvg.series}*/}
-            {/*            type={chartAvg.chart.type}*/}
-            {/*            height={chartAvg.chart.height}*/}
             {/*        />*/}
             {/*    </div>*/}
 
@@ -504,4 +420,4 @@ function OfflinePageData(props) {
     );
 }
 
-export default OfflinePageData;
+export default React.memo(OfflinePageData);

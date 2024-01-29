@@ -1,4 +1,6 @@
-import {useEffect, useState} from 'react';
+'use client'
+
+import {useCallback} from "react";
 
 /**
  * @author Zholaman Zhumanov
@@ -6,9 +8,7 @@ import {useEffect, useState} from 'react';
  * @returns {undefined}
  */
 function usePreviousFriday() {
-    const [previousFriday, setPreviousFriday] = useState();
-
-    useEffect(() => {
+    return useCallback(() => {
         const today = new Date();
         const dayOfWeek = today.getDay();
 
@@ -23,10 +23,8 @@ function usePreviousFriday() {
             lastFriday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - diff);
         }
 
-        setPreviousFriday(lastFriday);
+        return lastFriday;
     }, []);
-
-    return previousFriday;
 }
 
 export default usePreviousFriday;

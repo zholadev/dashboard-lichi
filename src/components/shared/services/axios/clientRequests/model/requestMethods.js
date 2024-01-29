@@ -242,6 +242,20 @@ export const apiGetOfflinePlanDetailData = async (store, date) => {
     )
 }
 
+/**
+ * @author Zholaman Zhumanov
+ * @param data
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetStockData = async (data) => {
+    return await sendApiPostRequest({
+            method: "get",
+            object: "stock",
+            params: data
+        },
+        true
+    )
+}
 
 
 

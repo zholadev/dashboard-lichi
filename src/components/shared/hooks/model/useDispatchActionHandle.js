@@ -35,8 +35,17 @@ import {
     getOffSchemaDataAction,
     getOffSchemaDataWithReportDataAction,
     getOffSchemaReportDataAction,
-    toggleOffSchemaApiLoaderAction
+    toggleOffSchemaApiLoaderAction, toggleOffSchemaRenderAction
 } from "@/components/entities/store/model/reducers/offline";
+import {
+    stockApiLoaderReducer,
+    stockGetDataReducer, stockParamsArticleReducer,
+    stockParamsGuidCategoryReducer,
+    stockParamsLimitReducer,
+    stockParamsNameReducer,
+    stockParamsPageReducer, stockParamsReportReducer, stockParamsSortDirectionReducer, stockParamsSortReducer,
+    stockStateResetReducer
+} from "@/components/entities/store/model/reducers/stock";
 
 /**
  * @author Zholaman Zhumanov
@@ -74,13 +83,26 @@ function useDispatchActionHandle() {
         offSchemaGetData: (data) => dispatch(getOffSchemaDataAction(data)),
         offSchemaReportGetData: (data) => dispatch(getOffSchemaReportDataAction(data)),
         offSchemaDataWithReportGetData: (data) => dispatch(getOffSchemaDataWithReportDataAction(data)),
+        offSchemaRenderToggle: (data) => dispatch(toggleOffSchemaRenderAction(data)),
         offlinePlanDetailCategoryParams: (value) => dispatch(getOfflinePlanDetailCategoryParams(value)),
         offlinePlanDetailDateParams: (value) => dispatch(getOfflinePlanPlanDetailDateParams(value)),
         offlinePlanDetailApiLoader: (value) => dispatch(toggleOfflinePlanDetailApiLoader(value)),
         offSchemaApiLoader: (value) => dispatch(toggleOffSchemaApiLoaderAction(value)),
+        // Stock actions
+        stockGetDataAction: (data) => dispatch(stockGetDataReducer(data)),
+        stockApiLoaderAction: (value) => dispatch(stockApiLoaderReducer(value)),
+        stockParamsPageAction: (value) => dispatch(stockParamsPageReducer(value)),
+        stockParamsLimitAction: (value) => dispatch(stockParamsLimitReducer(value)),
+        stockParamsGuidCategoryAction: (value) => dispatch(stockParamsGuidCategoryReducer(value)),
+        stockParamsNameAction: (value) => dispatch(stockParamsNameReducer(value)),
+        stockParamsReportAction: (value) => dispatch(stockParamsReportReducer(value)),
+        stockParamsSortAction: (value) => dispatch(stockParamsSortReducer(value)),
+        stockParamsSortDirectionAction: (value) => dispatch(stockParamsSortDirectionReducer(value)),
+        stockParamsArticleAction: (value) => dispatch(stockParamsArticleReducer(value)),
         productsResetData: createDispatchHandler(dispatch, resetData, "resetProductsData"),
         offlinePlanResetData: createDispatchHandler(dispatch, resetOfflinePlanData, "resetOfflineData"),
         offlinePlanDetailResetData: createDispatchHandler(dispatch, resetOfflinePlanDetailData, "resetOfflinePlanDetailData"),
+        stockStateResetAction: createDispatchHandler(dispatch, stockStateResetReducer, "stockStateResetAction"),
     }
 }
 

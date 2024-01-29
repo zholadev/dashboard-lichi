@@ -10,6 +10,7 @@ export const offlineSlice = createSlice({
         offPlanDetailApiLoader: false,
         offPlanDetailCategory: "",
         offPlanDetailDate: "",
+        offSchemaRender: false
     },
     reducers: {
         getOffSchemaDataAction: (state, action) => {
@@ -19,10 +20,14 @@ export const offlineSlice = createSlice({
             state.offSchemaApiLoader = action.payload
         },
         getOffSchemaReportDataAction: (state, action) => {
+            console.log(action.payload, state.offSchemaReportData?.[0])
             state.offSchemaReportData = [...state.offSchemaReportData, action.payload]
         },
         getOffSchemaDataWithReportDataAction: (state, action) => {
             state.offSchemaDataWithReport = action.payload
+        },
+        toggleOffSchemaRenderAction: (state, action) => {
+            state.offSchemaRender = action.payload
         },
         toggleOfflinePlanDetailApiLoader: (state, action) => {
             state.offPlanDetailApiLoader = action.payload
@@ -46,4 +51,5 @@ export const {
     toggleOffSchemaApiLoaderAction,
     getOffSchemaReportDataAction,
     getOffSchemaDataWithReportDataAction,
+    toggleOffSchemaRenderAction
 } = offlineSlice.actions;

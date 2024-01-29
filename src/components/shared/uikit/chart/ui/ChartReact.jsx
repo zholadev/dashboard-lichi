@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import Chart from "react-apexcharts";
+import ReactApexChart from "react-apexcharts";
 import {Heading} from "@/components/shared/uikit/heading";
 
 /**
@@ -21,12 +21,14 @@ function ChartReact(props) {
     return (
         <>
             {title && <Heading type={"h3"}>{title}</Heading>}
-            <Chart
-                type={type}
-                height={height}
-                series={seriesData}
-                options={optionsData}
-            />
+           <div id={"chart"}>
+               <ReactApexChart
+                   type={type}
+                   height={height}
+                   series={seriesData}
+                   options={optionsData}
+               />
+           </div>
         </>
     );
 }

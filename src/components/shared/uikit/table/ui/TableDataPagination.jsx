@@ -4,6 +4,7 @@ import React from 'react';
 import {Button} from "@/components/shared/shadcn/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
 import {ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon} from "@radix-ui/react-icons";
+import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 
 /**
  * @author Zholaman Zhumanov
@@ -12,13 +13,57 @@ import {ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRight
  * @returns {JSX.Element}
  * @constructor
  */
-function TableDataPagination({table}) {
+function TableDataPagination({table, changePageHandle, pageValue}) {
+    const prevPage = () => {
+        try {
+            table.previousPage()
+            if (changePageHandle) {
+                changePageHandle(pageValue + 1)
+            }
+        } catch (error) {
+            errorHandler("tablePageDataPagination", "prevPage", error)
+        }
+    }
+
+    const nextPage = () => {
+        try {
+            table.nextPage()
+            if (changePageHandle) {
+                changePageHandle(pageValue - 1)
+            }
+        } catch (error) {
+            errorHandler("tablePageDataPagination", "nextPage", error)
+        }
+    }
+
+    const selectFirstPage = () => {
+        try {
+            table.setPageIndex(0)
+            if (changePageHandle) {
+                changePageHandle(1)
+            }
+        } catch (error) {
+            errorHandler("tablePageDataPagination", "selectFirstPage", error)
+        }
+    }
+
+    const selectLastPage = () => {
+        try {
+            table.setPageIndex(table.getPageCount() - 1)
+            if (changePageHandle) {
+                changePageHandle(table.getPageCount())
+            }
+        } catch (error) {
+            errorHandler("tablePageDataPagination", "selectLastPage", error)
+        }
+    }
+
     return (
-        <div className="flex items-center justify-between px-2">
-            <div className="flex-1 text-sm text-muted-foreground">
-                {table?.getFilteredSelectedRowModel().rows.length} of{" "}
-                {table?.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
+        <div className="flex items-center lg:flex-row flex-col justify-end px-2 py-4 border-t">
+            {/*<div className="flex-1 text-sm text-muted-foreground">*/}
+            {/*    {table?.getFilteredSelectedRowModel().rows.length} of{" "}*/}
+            {/*    {table?.getFilteredRowModel().rows.length} row(s) selected.*/}
+            {/*</div>*/}
             <div className="flex items-center space-x-6 lg:space-x-8">
                 <div className="flex items-center space-x-2">
                     <p className="text-sm font-medium">Rows per page</p>
@@ -48,7 +93,7 @@ function TableDataPagination({table}) {
                     <Button
                         variant="outline"
                         className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => table.setPageIndex(0)}
+                        onClick={selectFirstPage}
                         disabled={!table.getCanPreviousPage()}
                     >
                         <span className="sr-only">Go to first page</span>
@@ -57,7 +102,7 @@ function TableDataPagination({table}) {
                     <Button
                         variant="outline"
                         className="h-8 w-8 p-0"
-                        onClick={() => table.previousPage()}
+                        onClick={prevPage}
                         disabled={!table.getCanPreviousPage()}
                     >
                         <span className="sr-only">Go to previous page</span>
@@ -66,7 +111,7 @@ function TableDataPagination({table}) {
                     <Button
                         variant="outline"
                         className="h-8 w-8 p-0"
-                        onClick={() => table.nextPage()}
+                        onClick={nextPage}
                         disabled={!table.getCanNextPage()}
                     >
                         <span className="sr-only">Go to next page</span>
@@ -75,7 +120,7 @@ function TableDataPagination({table}) {
                     <Button
                         variant="outline"
                         className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                        onClick={selectLastPage}
                         disabled={!table.getCanNextPage()}
                     >
                         <span className="sr-only">Go to last page</span>

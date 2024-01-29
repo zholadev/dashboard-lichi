@@ -7,13 +7,13 @@ import {CalendarIcon} from "lucide-react";
 import {Input} from "@/components/shared/shadcn/ui/input";
 import {Label} from "@/components/shared/shadcn/ui/label";
 import {Button} from "@/components/shared/shadcn/ui/button";
+import {LoaderButton} from "@/components/shared/uikit/loader";
 import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
 import {apiGetOfflineSchemaDetail} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
-import {LoaderButton} from "@/components/shared/uikit/loader";
 
 /**
  * @author Zholaman Zhumanov
@@ -37,18 +37,18 @@ function OfflinePageForm(props) {
 
     const fetchGetAllSchemaReportData = async (e) => {
         if (e) e.preventDefault()
+
         Object.values(offSchemaData?.["schema"] || {}).map((schema, index) => {
-            console.log(schema)
-            const timer = 200 * index
+            const timer = 400 * index
             Object.values(schema?.["content"] || {}).map((content) => {
                 setTimeout(() => {
-                    fetchOfflineSchema(e, content)
+                    fetchOfflineSchema(e, content, content)
                 }, timer)
             })
         })
     }
 
-    const fetchOfflineSchema = async (e, schema_type) => {
+    const fetchOfflineSchema = async (e, schema_type, name) => {
         if (e) e.preventDefault()
 
         await apiFetchHandler(
@@ -68,7 +68,7 @@ function OfflinePageForm(props) {
     return (
         <div className={cn("border mb-20 p-4 rounded mt-3")}>
             <form onSubmit={fetchGetAllSchemaReportData}
-                  className={cn("grid gap-10 2xl:grid-cols-4 md:grid-cols-3 grid-cols-1 mb-5 items-end")}>
+                  className={cn("grid gap-10 2xl:grid-cols-4 md:grid-cols-2 grid-cols-1 mb-5 items-end")}>
                 <div className={cn("w-full flex flex-col gap-3")}>
                     <Label>Отчетный период</Label>
                     <Popover>
@@ -176,7 +176,7 @@ function OfflinePageForm(props) {
                 <Button
                     disabled={offSchemaApiLoader || loading}
                     className={cn("w-full")}>
-                    <LoaderButton loading={offSchemaApiLoader || loading} />
+                    <LoaderButton loading={offSchemaApiLoader || loading}/>
                     Сформировать
                 </Button>
             </form>

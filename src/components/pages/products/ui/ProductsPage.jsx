@@ -21,7 +21,6 @@ function ProductsPage(props) {
             <Heading type={"h1"}>Отчет по товарам</Heading>
             <ProductsForm/>
             <ProductsData/>
-            {/*<ProductsPagination/>*/}
         </>
     );
 }

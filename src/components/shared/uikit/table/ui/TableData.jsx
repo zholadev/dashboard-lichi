@@ -25,11 +25,11 @@ import {tableColumns} from "@/components/shared/uikit/table/ui/TableColumns";
  * @returns {JSX.Element}
  * @constructor
  */
-function TableData({columns, data}) {
+function TableData({columns, data, pageValue, changePageHandler}) {
+    const [sorting, setSorting] = useState([])
     const [rowSelection, setRowSelection] = useState({})
-    const [columnVisibility, setColumnVisibility] = useState({})
     const [columnFilters, setColumnFilters] = useState([])
-    const [sorting, setSorting] = React.useState([])
+    const [columnVisibility, setColumnVisibility] = useState({})
 
     const table = useReactTable({
         data,

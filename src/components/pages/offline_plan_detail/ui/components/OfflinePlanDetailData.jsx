@@ -1,11 +1,11 @@
 'use client'
 
 import React, {useMemo} from 'react';
-import dynamic from "next/dynamic";
-import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {cn} from "@/lib/utils";
+import dynamic from "next/dynamic";
 import {Heading} from "@/components/shared/uikit/heading";
+import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
+import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
@@ -31,7 +31,7 @@ function OfflinePlanDetailData(props) {
         try {
             return {
                 "options": {
-                  ...chartData
+                    ...chartData
                 },
                 "series": chartData?.["series"],
                 "chart": chartData?.["chart"]
