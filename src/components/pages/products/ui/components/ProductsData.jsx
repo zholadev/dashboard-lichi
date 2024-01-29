@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useCallback} from 'react';
+import React from 'react';
 import {cn} from "@/lib/utils";
 import Image from "next/image";
 import {Heading} from "@/components/shared/uikit/heading";
@@ -43,74 +43,38 @@ function ProductsData(props) {
             <Table className={cn("mb-3")}>
                 <TableHeader>
                     <TableRow>
-                        {
-                            Object.entries(productsData?.table?.head || {}).map(([key, value], index) => {
-                                return (
-                                    <TableHead key={index}>
-                                        <h4 dangerouslySetInnerHTML={{__html: value.label}}/>
-                                    </TableHead>
-                                )
-                            })
-                        }
+                        {Object.keys(productsData?.table?.head || {}).map((key) => (
+                            <TableHead key={key}>
+                                <h4 dangerouslySetInnerHTML={{__html: productsData?.table?.head[key].label}}></h4>
+                            </TableHead>
+                        ))}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {
-                        Object.entries(productsData?.table?.data || {}).map(([key, value], index) => {
-                            return (
-                                <TableRow key={index}>
-                                    <TableCell>
-                                        {
-                                            value?.["phtot"] ?
-                                                <Image
-                                                    width={60}
-                                                    height={90}
-                                                    src={value.photo}
-                                                    alt={value.category}
-                                                />
-                                                :
-                                                <Heading type={"h4"}>{value?.article}</Heading>
-                                        }
-
-                                    </TableCell>
-                                    <TableCell className="font-light w-[230px]">
-                                        <Heading type={"h4"}>{value.article}</Heading>
-                                        <Heading type={"h4"}>{value.category}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.sale}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.refund}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.sale_ae}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.refund_ae}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.sale_ru}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.refund_ru}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.sale_kz}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.refund_kz}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.sale_im}</Heading>
-                                    </TableCell>
-                                    <TableCell className="font-light">
-                                        <Heading type={"h4"}>{value.refund_im}</Heading>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        })
-                    }
+                    {Object.values(productsData?.table?.data || {}).map((rowData) => {
+                        return (
+                            <TableRow key={rowData._id}>
+                                {Object.keys(productsData?.table?.head || {}).map((key) => {
+                                    return (
+                                        <TableCell key={key}>
+                                            {
+                                                key === 'photo' ? (
+                                                    <Image
+                                                        width={60}
+                                                        height={90}
+                                                        src={rowData[key]}
+                                                        alt={'...'}
+                                                    />
+                                                ) : (
+                                                    <Heading type={"h4"}>{rowData[key]}</Heading>
+                                                )
+                                            }
+                                        </TableCell>
+                                    )
+                                })}
+                            </TableRow>
+                        )
+                    })}
                 </TableBody>
             </Table>
         </div>
