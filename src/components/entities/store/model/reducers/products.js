@@ -9,6 +9,7 @@ export const productsSlice = createSlice({
         page: 1,
         report: "by_articles",
         download: 0,
+        limit: 10,
         category: "",
         detail_by_store: false,
     },
@@ -27,6 +28,9 @@ export const productsSlice = createSlice({
         },
         getCategoryParams: (state, action) => {
             state.category = action.payload;
+        },
+        getLimitParams: (state, action) => {
+            state.limit = action.payload;
         },
         getDetailByStoreParams: (state, action) => {
             state.detail_by_store = action.payload;
@@ -50,5 +54,6 @@ export const {
     getPageParams,
     getReportParams,
     getCategoryParams,
-    getDetailByStoreParams
+    getDetailByStoreParams,
+    getLimitParams,
 } = productsSlice.actions;

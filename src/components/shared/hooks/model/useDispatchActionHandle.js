@@ -10,7 +10,7 @@ import {
 } from "@/components/entities/store/model/reducers/supply";
 import {
     getCategoryParams,
-    getDetailByStoreParams,
+    getDetailByStoreParams, getLimitParams,
     getPageParams,
     getProductsData,
     getReportParams,
@@ -63,6 +63,7 @@ function useDispatchActionHandle() {
         productsPageParams: (value) => dispatch(getPageParams(value)),
         productsReportParams: (value) => dispatch(getReportParams(value)),
         productsCategoryParams: (value) => dispatch(getCategoryParams(value)),
+        productsLimitParams: (value) => dispatch(getLimitParams(value)),
         productsDetailByStoreParams: (value) => dispatch(getDetailByStoreParams(value)),
         productsGetProductsData: (data) => dispatch(getProductsData(data)),
         offlinePlanGetData: (data) => dispatch(getOfflinePlanData(data)),

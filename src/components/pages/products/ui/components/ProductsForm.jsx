@@ -39,7 +39,7 @@ function ProductsForm(props) {
     const {apiFetchHandler, loading} = useApiRequest()
     const lastFriday = usePreviousFriday();
 
-    const {report, category, page, detail_by_store} = useAppSelector(state => state.products)
+    const {report, category, page, detail_by_store, limit, productsData} = useAppSelector(state => state.products)
 
     const [date, setDate] = useState({
         from: lastFriday,
@@ -55,7 +55,7 @@ function ProductsForm(props) {
                 start: format(date.from, "dd/MM/yyyy"), end: format(date.to, "dd/MM/yyyy")
             },
             download: 0,
-            limit: 20,
+            limit: limit,
             detail_by_store: detail_by_store ? "1" : "0",
             page: page,
             report: report,
@@ -75,6 +75,11 @@ function ProductsForm(props) {
             }
         )
     }
+
+    useEffect(() => {
+        if (productsData.length === 0) return
+        fetchProductsData()
+    }, [limit, page]);
 
     useEffect(() => {
         return () => {
