@@ -4,35 +4,35 @@ export const offlinePlanSlice = createSlice({
     name: 'offline_plan',
     initialState: {
         offlinePlanData: [],
-        apiLoader: false,
-        category: "",
-        planDate: null,
+        offPlanApiLoader: false,
+        offPlanCategoryParams: "",
+        offPlanDateParams: new Date(),
     },
     reducers: {
-        getOfflinePlanData: (state, action) => {
+        offlinePlanDataReducer: (state, action) => {
             state.offlinePlanData = action.payload;
         },
-        toggleOfflinePlanApiLoader: (state, action) => {
-            state.apiLoader = action.payload
+        offPlanApiLoaderReducer: (state, action) => {
+            state.offPlanApiLoader = action.payload
         },
-        getOfflinePlanCategoryParams: (state, action) => {
-            state.category = action.payload;
+        offPlanCategoryParamsReducer: (state, action) => {
+            state.offPlanCategoryParams = action.payload;
         },
-        getOfflinePlanPlanDateParams: (state, action) => {
-            state.planDate = action.payload.toString();
+        offPlanDateParamsReducer: (state, action) => {
+            state.offPlanDateParams = action.payload;
         },
-        resetOfflinePlanData: (state) => {
+        resetOfflinePlanReducer: (state) => {
             state.offlinePlanData = [];
-            state.apiLoader = false;
-            state.category = "";
-            state.planDate = null;
+            state.offPlanApiLoader = false;
+            state.offPlanCategoryParams = "";
+            state.offPlanDateParams = new Date();
         }
     },
 });
 export const {
-    getOfflinePlanPlanDateParams,
-    getOfflinePlanCategoryParams,
-    getOfflinePlanData,
-    resetOfflinePlanData,
-    toggleOfflinePlanApiLoader
+    offPlanDateParamsReducer,
+    offPlanCategoryParamsReducer,
+    offlinePlanDataReducer,
+    resetOfflinePlanReducer,
+    offPlanApiLoaderReducer
 } = offlinePlanSlice.actions;

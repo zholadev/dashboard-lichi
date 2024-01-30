@@ -1,59 +1,63 @@
 'use client'
 
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import {cn} from "@/lib/utils";
 import {format} from "date-fns";
 import {ru} from 'date-fns/locale'
 import {CalendarIcon} from "lucide-react";
 import {Button} from "@/components/shared/shadcn/ui/button";
+import {LoaderButton} from "@/components/shared/uikit/loader";
 import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
 import {apiGetOfflinePlanData} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
-import {LoaderButton} from "@/components/shared/uikit/loader";
 
 /**
  * @author Zholaman Zhumanov
  * @created 25.01.2024
+ * @last-updated 30.01.2024 - Zholaman Zhumanov
+ * @update-description loader actions is added and store updated
  * @todo refactoring
- * @todo loader for actions
- * @todo getOfflinePlanPlanDateParams
  * @param props
  * @returns {Element}
  * @constructor
  */
-function OfflinePageForm(props) {
+function OfflinePlanPageForm(props) {
     const {apiFetchHandler} = useApiRequest()
 
     const events = useDispatchActionHandle()
 
-    const {apiLoader, category, planDate} = useAppSelector(state => state.offline_plan)
-
-    const [date, setDate] = useState(null)
+    const {offPlanApiLoader, offPlanCategoryParams, offPlanDateParams} = useAppSelector(state => state.offline_plan)
 
     const fetchOfflinePlan = async (e) => {
         if (e) e.preventDefault()
         await apiFetchHandler(
             apiGetOfflinePlanData,
-            [category, format(date, 'MM/yyyy')],
-            events.offlinePlanApiLoader,
+            [offPlanCategoryParams, format(offPlanDateParams, 'MM/yyyy')],
+            events.offPlanApiLoaderReducerAction,
             {
                 onGetData: (params) => {
                     if (params.success) {
-                        events.offlinePlanGetData(params.data)
+                        events.offlinePlanDataAction(params.data)
                     }
                 }
             }
         )
     }
 
+    useEffect(() => {
+        return () => {
+            events.resetOfflinePlanAction()
+        }
+    }, []);
+
     return (
         <form
             onSubmit={fetchOfflinePlan}
             className={cn("w-100 border 2xl:gap-10 gap-5 grid 2xl:grid-cols-3 md:grid-cols-2 grid-cols-1 justify-between items-center p-4 mb-10")}>
-            <Select onValueChange={value => events.offlineCategoryParams(value)}>
+            <Select onValueChange={value => events.offPlanCategoryParamsAction(value)}>
                 <SelectTrigger className="w-100">
                     <SelectValue placeholder="Выберите страну"/>
                 </SelectTrigger>
@@ -71,18 +75,18 @@ function OfflinePageForm(props) {
                         variant={"outline"}
                         className={cn(
                             "justify-start text-left font-normal",
-                            !date && "text-muted-foreground"
+                            !offPlanDateParams && "text-muted-foreground"
                         )}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4"/>
-                        {date ? format(date, "yyyy-mm") : <span>Выберите дату</span>}
+                        {offPlanDateParams ? format(offPlanDateParams, "yyyy-mm") : <span>Выберите дату</span>}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                         mode="single"
-                        selected={date}
-                        onSelect={setDate}
+                        selected={offPlanDateParams}
+                        onSelect={value => events.offPlanDateParamsAction(value)}
                         initialFocus
                         locale={ru}
                     />
@@ -90,11 +94,11 @@ function OfflinePageForm(props) {
             </Popover>
 
             <Button>
-                <LoaderButton loading={apiLoader}/>
+                <LoaderButton loading={offPlanApiLoader}/>
                 Показать
             </Button>
         </form>
     );
 }
 
-export default OfflinePageForm;
+export default OfflinePlanPageForm;

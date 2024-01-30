@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {Heading} from "@/components/shared/uikit/heading";
-import OfflinePageForm from "./components/OfflinePageForm";
+import OfflinePlanPageForm from "./components/OfflinePlanPageForm";
 import OfflinePageData from "./components/OfflinePageData";
 
 /**
@@ -17,7 +17,7 @@ function OfflinePlanPage(props) {
         <>
             <div className={"w-100"}>
                 <Heading type={"h1"}>План продаж</Heading>
-                <OfflinePageForm/>
+                <OfflinePlanPageForm/>
                 <OfflinePageData/>
             </div>
         </>
