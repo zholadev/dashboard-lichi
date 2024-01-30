@@ -22,7 +22,7 @@ function ProductsPage(props) {
             <ProductsForm/>
             <ProductsData/>
         </>
-    );
+    )
 }
 
 export default ProductsPage;

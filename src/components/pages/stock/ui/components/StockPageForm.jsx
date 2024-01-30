@@ -48,7 +48,8 @@ function StockPageForm(props) {
         stockNameParams,
         stockReportParams,
         stockSortParams,
-        stockSortDirection
+        stockSortDirection,
+        stockArticleParams,
     } = useAppSelector(state => state.stock)
 
     const [date, setDate] = useState({
@@ -93,7 +94,8 @@ function StockPageForm(props) {
         <>
             <div className={cn("border mb-20 p-4 rounded mt-3")}>
                 <form onSubmit={fetchStockData}
-                      className={cn("grid gap-10 2xl:grid-cols-4 md:grid-cols-3 grid-cols-1 mb-5 items-end")}>
+                      className={cn("grid gap-10 2xl:grid-cols-4 lg:grid-cols-3 grid-cols-1 mb-5 items-end")}>
+
                     <div className={cn("w-full flex flex-col gap-3")}>
                         <Label>Режим</Label>
                         <Select onValueChange={value => events.stockParamsReportAction(value)}>
@@ -189,13 +191,23 @@ function StockPageForm(props) {
 
                     <div className={cn("w-full flex flex-col gap-3")}>
                         <Label>Наименование</Label>
-                        <Input defaultValue={'Наименование'} onChange={event => events.stockParamsNameAction(event.target.value)}/>
+                        <Input
+                            id={'name'}
+                            name={'name'}
+                            defaultValue={stockNameParams}
+                            onChange={event => events.stockParamsNameAction(event.target.value)}
+                        />
                     </div>
 
 
-                    <div className={cn("w-full flex flex-col gap-3 col-span-2")}>
+                    <div className={cn("w-full flex flex-col gap-3 md:col-span-2")}>
                         <Label>Артикул</Label>
-                        <Input defaultValue={'Артикул'} onChange={event => events.stockParamsArticleAction(event.target.value)}/>
+                        <Input
+                            id={'article'}
+                            name={'article'}
+                            defaultValue={stockArticleParams}
+                            onChange={event => events.stockParamsArticleAction(event.target.value)}
+                        />
                     </div>
 
                     <Button className={cn("w-full")}>

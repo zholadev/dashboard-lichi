@@ -168,7 +168,7 @@ function OfflinePageForm(props) {
                     </Select>
                 </div>
 
-                <div className={cn("w-full flex flex-col gap-3 col-span-2")}>
+                <div className={cn("w-full flex flex-col gap-3 md:col-span-2")}>
                     <Label>Артикул</Label>
                     <Input defaultValue={'Артикул'}/>
                 </div>
