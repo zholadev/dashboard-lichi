@@ -13,7 +13,7 @@ import {StockPage} from "@/components/pages/stock";
 function Page(props) {
     return (
         <Container>
-            <PageBreadcrumbs page={"stock"}/>
+        <PageBreadcrumbs page={"stock"}/>
             <StockPage/>
         </Container>
     );

@@ -2,6 +2,7 @@ import {
     apiAddEventItem,
     apiEditEventItem,
     apiGetEventsData,
+    apiGetOfflineCountryData,
     apiGetOfflinePlanData,
     apiGetOfflinePlanDetailData,
     apiGetOfflineSchemaData,
@@ -29,5 +30,6 @@ export {
     apiGetOfflinePlanData,
     apiGetOfflinePlanDetailData,
     apiGetOfflineSchemaDetail,
-    apiGetStockData
+    apiGetStockData,
+    apiGetOfflineCountryData
 }

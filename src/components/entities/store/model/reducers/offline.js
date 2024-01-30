@@ -7,10 +7,15 @@ export const offlineSlice = createSlice({
         offSchemaApiLoader: false,
         offSchemaReportData: [],
         offSchemaDataWithReport: [],
-        offPlanDetailApiLoader: false,
-        offPlanDetailCategory: "",
-        offPlanDetailDate: "",
-        offSchemaRender: false
+        offSchemaRender: false,
+        offArticleParams: "",
+        offDateParams: {from: "", to: new Date()},
+        offCountryParams: "",
+        offStoresParams: "",
+        offDateGroupParams: "by_day",
+        offCategoryParams: "",
+        offDateCalendarValue: {from: "", to: new Date()},
+        offStoresData: []
     },
     reducers: {
         getOffSchemaDataAction: (state, action) => {
@@ -20,7 +25,6 @@ export const offlineSlice = createSlice({
             state.offSchemaApiLoader = action.payload
         },
         getOffSchemaReportDataAction: (state, action) => {
-            console.log(action.payload, state.offSchemaReportData?.[0])
             state.offSchemaReportData = [...state.offSchemaReportData, action.payload]
         },
         getOffSchemaDataWithReportDataAction: (state, action) => {
@@ -29,20 +33,44 @@ export const offlineSlice = createSlice({
         toggleOffSchemaRenderAction: (state, action) => {
             state.offSchemaRender = action.payload
         },
-        toggleOfflinePlanDetailApiLoader: (state, action) => {
-            state.offPlanDetailApiLoader = action.payload
+        offSchemaArticleParamsReducer: (state, action) => {
+            state.offArticleParams = action.payload
         },
-        getOfflinePlanDetailCategoryParams: (state, action) => {
-            state.offPlanDetailCategory = action.payload;
+        offDateParamsReducer: (state, action) => {
+            state.offDateParams = action.payload
         },
-        getOfflinePlanPlanDetailDateParams: (state, action) => {
-            state.offPlanDetailDate = action.payload.toString();
+        offSchemaCountryParamsReducer: (state, action) => {
+            state.offCountryParams = action.payload
         },
-        resetOfflinePlanDetailData: (state) => {
-            state.offlinePlanDetailData = [];
-            state.offPlanDetailApiLoader = false;
-            state.offPlanDetailCategory = "";
-            state.offPlanDetailDate = null;
+        offDateCalendarValueReducer: (state, action) => {
+            state.offDateCalendarValue = action.payload
+        },
+        offSchemaStoresParamsReducer: (state, action) => {
+            state.offStoresParams = action.payload
+        },
+        offSchemaStoresDataReducer: (state, action) => {
+            state.offStoresData = action.payload
+        },
+        offCategoryParamsReducer: (state, action) => {
+            state.offCategoryParams = action.payload
+        },
+        offDateGroupParamsReducer: (state, action) => {
+            state.offDateGroupParams = action.payload
+        },
+        resetOffSchemaDataReducer: (state) => {
+            state.offSchemaData = []
+            state.offSchemaApiLoader = false
+            state.offSchemaReportData = []
+            state.offSchemaDataWithReport = []
+            state.offSchemaRender = false
+            state.offArticleParams = ""
+            state.offDateParams = {from: "", to: new Date()}
+            state.offCountryParams = ""
+            state.offStoresParams = ""
+            state.offDateGroupParams = "by_day"
+            state.offCategoryParams = ""
+            state.offDateCalendarValue = {from: "", to: new Date()}
+            state.offStoresData = []
         }
     },
 });
@@ -51,5 +79,14 @@ export const {
     toggleOffSchemaApiLoaderAction,
     getOffSchemaReportDataAction,
     getOffSchemaDataWithReportDataAction,
-    toggleOffSchemaRenderAction
+    toggleOffSchemaRenderAction,
+    offSchemaCountryParamsReducer,
+    offSchemaStoresDataReducer,
+    offDateParamsReducer,
+    resetOffSchemaDataReducer,
+    offSchemaStoresParamsReducer,
+    offCategoryParamsReducer,
+    offSchemaArticleParamsReducer,
+    offDateGroupParamsReducer,
+    offDateCalendarValueReducer
 } = offlineSlice.actions;

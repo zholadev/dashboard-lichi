@@ -167,21 +167,30 @@ export const apiGetOfflineSchemaData = async () => {
  * @author Zholaman Zhumanov
  * @created 26.01.2024
  * @param schema_type
+ * @param data
  * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
  */
-export const apiGetOfflineSchemaDetail = async (schema_type) => {
+export const apiGetOfflineSchemaDetail = async (schema_type, data) => {
     return await sendApiPostRequest({
             method: `report_${schema_type}`,
             object: "offline",
-            params: {
-                "date": {
-                    "start": "19/01/2024",
-                    "end": "26/01/2024"
-                },
-                "date_group": "by_day",
-                "country": "0KDQvtGB0YHQuNGP",
-                "category": ""
-            }
+            params: {...data}
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 30.01.2024
+ * @param id
+ * @returns {Promise<AxiosResponse<any>|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetOfflineCountryData = async (id) => {
+    return await sendApiPostRequest({
+            method: "get_stores",
+            object: "offline",
+            params: {id: id}
         },
         true
     )

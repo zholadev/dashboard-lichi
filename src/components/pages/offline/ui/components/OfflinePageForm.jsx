@@ -1,8 +1,8 @@
 'use client'
 
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import {cn} from "@/lib/utils";
-import {addDays, format} from "date-fns";
+import {format} from "date-fns";
 import {CalendarIcon} from "lucide-react";
 import {Input} from "@/components/shared/shadcn/ui/input";
 import {Label} from "@/components/shared/shadcn/ui/label";
@@ -11,9 +11,18 @@ import {LoaderButton} from "@/components/shared/uikit/loader";
 import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
-import {apiGetOfflineSchemaDetail} from "@/components/shared/services/axios/clientRequests";
+import {apiGetOfflineCountryData, apiGetOfflineSchemaDetail} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/shared/shadcn/ui/select";
+import {categories} from "@/components/shared/data/categories";
 
 /**
  * @author Zholaman Zhumanov
@@ -28,12 +37,19 @@ function OfflinePageForm(props) {
 
     const {apiFetchHandler, loading} = useApiRequest()
 
-    const {offSchemaData, offSchemaReportData, offSchemaApiLoader} = useAppSelector(state => state?.offline)
-
-    const [date, setDate] = useState({
-        from: new Date(2022, 0, 20),
-        to: addDays(new Date(2022, 0, 20), 20),
-    })
+    const {
+        offSchemaData,
+        offSchemaReportData,
+        offSchemaApiLoader,
+        offArticleParams,
+        offCountryParams,
+        offStoresParams,
+        offStoresData,
+        offDateGroupParams,
+        offCategoryParams,
+        offDateParams,
+        offDateCalendarValue
+    } = useAppSelector(state => state?.offline)
 
     const fetchGetAllSchemaReportData = async (e) => {
         if (e) e.preventDefault()
@@ -48,12 +64,21 @@ function OfflinePageForm(props) {
         })
     }
 
-    const fetchOfflineSchema = async (e, schema_type, name) => {
+    const fetchOfflineSchema = async (e, schema_type) => {
         if (e) e.preventDefault()
+
+        const apiParams = {
+            "date": {"start": offDateParams.from, "end": offDateParams.to},
+            "date_group": offDateGroupParams,
+            "country": offCountryParams,
+            "category": offCategoryParams,
+            "store": [offStoresParams],
+            "article": offArticleParams
+        }
 
         await apiFetchHandler(
             apiGetOfflineSchemaDetail,
-            [schema_type],
+            [schema_type, apiParams],
             false,
             {
                 onGetData: (params) => {
@@ -64,6 +89,28 @@ function OfflinePageForm(props) {
             }
         )
     }
+
+
+    const fetchOffSchemaStoreData = async (id) => {
+        await apiFetchHandler(
+            apiGetOfflineCountryData,
+            [id || offCountryParams],
+            false,
+            {
+                onGetData: (params) => {
+                    if (params.success) {
+                        events.offSchemaStoresDataAction(params.data?.["stores"])
+                    }
+                }
+            }
+        )
+    }
+
+    useEffect(() => {
+        return () => {
+            events.resetOffSchemaDataAction()
+        }
+    }, []);
 
     return (
         <div className={cn("border mb-20 p-4 rounded mt-3")}>
@@ -78,21 +125,21 @@ function OfflinePageForm(props) {
                                 variant={"outline"}
                                 className={cn(
                                     "justify-start text-left font-normal",
-                                    !date && "text-muted-foreground"
+                                    !offDateCalendarValue && "text-muted-foreground"
                                 )}
                             >
                                 <CalendarIcon className="mr-2 h-4 w-4"/>
-                                {date?.from ? (
-                                    date.to ? (
+                                {offDateCalendarValue?.from ? (
+                                    offDateCalendarValue.to ? (
                                         <>
-                                            {format(date.from, "LLL dd, y")} -{" "}
-                                            {format(date.to, "LLL dd, y")}
+                                            {format(offDateCalendarValue.from, "LLL dd, y")} -{" "}
+                                            {format(offDateCalendarValue.to, "LLL dd, y")}
                                         </>
                                     ) : (
-                                        format(date.from, "LLL dd, y")
+                                        format(offDateCalendarValue.from, "LLL dd, y")
                                     )
                                 ) : (
-                                    <span>Pick a date</span>
+                                    <span>Выберите дату</span>
                                 )}
                             </Button>
                         </PopoverTrigger>
@@ -100,9 +147,15 @@ function OfflinePageForm(props) {
                             <Calendar
                                 initialFocus
                                 mode="range"
-                                defaultMonth={date?.from}
-                                selected={date}
-                                onSelect={setDate}
+                                defaultMonth={offDateCalendarValue?.from}
+                                selected={offDateCalendarValue}
+                                onSelect={value => {
+                                    events.offDateCalendarValueAction(value)
+                                    events.offDateParamsReducerAction({
+                                        from: format(value.from, "dd/MM/yyyy"),
+                                        to: format(value.to, "dd/MM/yyyy")
+                                    })
+                                }}
                                 numberOfMonths={2}
                             />
                         </PopoverContent>
@@ -111,7 +164,7 @@ function OfflinePageForm(props) {
 
                 <div className={cn("w-full flex flex-col gap-3")}>
                     <Label>Агрегация</Label>
-                    <Select>
+                    <Select onValueChange={value => events.offDateGroupParamsReducerAction(value)}>
                         <SelectTrigger className="w-100">
                             <SelectValue placeholder="Агрегация"/>
                         </SelectTrigger>
@@ -125,52 +178,97 @@ function OfflinePageForm(props) {
 
                 <div className={cn("w-full flex flex-col gap-3")}>
                     <Label>Страна</Label>
-                    <Select>
+                    <Select onValueChange={async value => {
+                        events.offSchemaCountryParamsAction(value)
+                        await fetchOffSchemaStoreData(value)
+                    }}>
                         <SelectTrigger className="w-100">
                             <SelectValue placeholder="Выберите страну"/>
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="ru">Россия</SelectItem>
-                            <SelectItem value="kz">Казахстан</SelectItem>
-                            <SelectItem value="uae">UAE</SelectItem>
-                            <SelectItem value="pol">Польша</SelectItem>
+                            <SelectItem value="0KDQvtGB0YHQuNGP">Россия</SelectItem>
+                            <SelectItem value="0JrQsNC30LDRhdGB0YLQsNC9">Казахстан</SelectItem>
+                            <SelectItem value="VUFF">UAE</SelectItem>
+                            <SelectItem value="QvtC70YzRiNCw">Польша</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
 
                 <div className={cn("w-full flex flex-col gap-3")}>
                     <Label>Магазин</Label>
-                    <Select disabled={true}>
+                    <Select
+                        disabled={offStoresData.length === 0}
+                        onValueChange={(value) => {
+                            events.offSchemaStoresParamsAction(value)
+                        }}
+                    >
                         <SelectTrigger className="w-100">
                             <SelectValue placeholder="Выберите магазин"/>
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="ru">Россия</SelectItem>
-                            <SelectItem value="kz">Казахстан</SelectItem>
-                            <SelectItem value="uae">UAE</SelectItem>
-                            <SelectItem value="pol">Польша</SelectItem>
+                            {
+                                offStoresData.map((storeItem) => (
+                                    <SelectItem
+                                        value={storeItem?.["key"]}
+                                        key={storeItem?.["key"]}>
+                                        {storeItem?.["value"]}
+                                    </SelectItem>
+                                ))
+                            }
                         </SelectContent>
                     </Select>
                 </div>
 
                 <div className={cn("w-full flex flex-col gap-3")}>
                     <Label>Категория товара</Label>
-                    <Select>
+                    <Select onValueChange={value => events.offCategoryParamsReducerAction(value)}>
                         <SelectTrigger className="w-100">
-                            <SelectValue placeholder="Выберите"/>
+                            <SelectValue placeholder="Выберите категорию"/>
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="ru">Россия</SelectItem>
-                            <SelectItem value="kz">Казахстан</SelectItem>
-                            <SelectItem value="uae">UAE</SelectItem>
-                            <SelectItem value="pol">Польша</SelectItem>
+                            {
+                                categories.map((categoryItem) => {
+                                    return (
+                                        categoryItem?.["is_submenu"] ? (
+                                            <SelectGroup className={cn("mb-3")} key={categoryItem.id}>
+                                                <SelectLabel
+                                                    className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
+                                                {
+                                                    categoryItem.items.map((childCategory) => {
+                                                        return (
+                                                            <SelectItem
+                                                                key={childCategory.id}
+                                                                value={childCategory.category}>
+                                                                {childCategory.title}
+                                                            </SelectItem>
+                                                        )
+                                                    })
+                                                }
+                                            </SelectGroup>
+                                        ) : (
+                                            <SelectItem
+                                                key={categoryItem.id}
+                                                value={categoryItem.category}
+                                            >
+                                                {categoryItem.title}
+                                            </SelectItem>
+                                        )
+                                    )
+                                })
+                            }
                         </SelectContent>
                     </Select>
                 </div>
 
                 <div className={cn("w-full flex flex-col gap-3 md:col-span-2")}>
                     <Label>Артикул</Label>
-                    <Input defaultValue={'Артикул'}/>
+                    <Input
+                        id={"article"}
+                        name={"article"}
+                        type={"text"}
+                        defaultValue={offArticleParams}
+                        onChange={event => events.offSchemaArticleParamsAction(event.target.value)}
+                    />
                 </div>
 
                 <Button
