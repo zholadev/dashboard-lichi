@@ -21,14 +21,14 @@ function ChartReact(props) {
     return (
         <>
             {title && <Heading type={"h3"}>{title}</Heading>}
-           <div id={"chart"}>
-               <ReactApexChart
-                   type={type}
-                   height={height}
-                   series={seriesData}
-                   options={optionsData}
-               />
-           </div>
+            <div id={"chart"}>
+                <ReactApexChart
+                    type={type}
+                    height={height}
+                    series={seriesData}
+                    options={optionsData}
+                />
+            </div>
         </>
     );
 }

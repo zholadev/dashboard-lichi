@@ -1,12 +1,13 @@
 'use client'
 
-import React, {Suspense, useCallback, useEffect, useMemo} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
 import {apiGetOfflineSchemaData} from "@/components/shared/services/axios/clientRequests";
+import {offlineChartList} from "@/components/shared/data/charts";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -26,17 +27,26 @@ function OfflinePageData(props) {
 
     const {offSchemaData, offSchemaReportData, offSchemaRender} = useAppSelector(state => state?.offline)
 
-    const getChartDataSet = useCallback((data, index) => {
+    const getChartDataSet = useCallback((data) => {
         try {
             return {
-                "options": {...data, "series": [], "chart": {...data?.["chart"], id: "chart" + index}, yaxis: {"title": ""}},
+                "options": {
+                    "chart": data?.["chart"] || {},
+                    "annotations": data?.["annotations"] || {},
+                    "dataLabels": data?.["dataLabels"] || {},
+                    "stroke": data?.["stroke"] || {},
+                    "xaxis": data?.["xaxis"] || {},
+                    "labels": data?.["labels"] || {},
+                    "yaxis": data?.["yaxis"] || [],
+                    "colors": data?.["colors"] || []
+                },
                 "series": data?.["series"],
-                "chart": data?.["chart"]
+                "chart": data?.["chart"],
             }
         } catch (error) {
             errorHandler("offlinePageData", "getChartDataSet", error)
         }
-    }, [offSchemaReportData, offSchemaData])
+    }, [offSchemaReportData])
 
     const schemaDoneData = useMemo(() => {
         try {
@@ -77,24 +87,6 @@ function OfflinePageData(props) {
         )
     }
 
-    const setSchemaDataWithReport = () => {
-        let dataIndex = 0;
-        const result = Object.entries(offSchemaData?.["schema"] || {}).map(item => {
-            console.log(item)
-            // const elements = offSchemaReportData?.slice(dataIndex, dataIndex + item.cols.length);
-            // dataIndex += item.cols.length;
-            // return elements;
-        });
-
-        // console.log(result)
-    }
-
-    // useEffect(() => {
-    //     if (offSchemaReportData.length > 0) {
-    //         setSchemaDataWithReport()
-    //     }
-    // }, [offSchemaReportData]);
-
     useEffect(() => {
         fetchOfflineSchema()
     }, []);
@@ -105,6 +97,13 @@ function OfflinePageData(props) {
 
     return (
         <>
+            <ul className={cn("w-full border p-4 my-5 flex items-center rounded justify-between gap-5")}>
+                {
+                    offlineChartList.map((item) => (
+                        <li key={item.id} className={cn("flex-1 border rotate-2 p-5 cursor-pointer")}>{item.title}</li>
+                    ))
+                }
+            </ul>
             {/*<div>*/}
             {/*    {*/}
             {/*        Object.entries(offSchemaData || {}).map(([key, schema], id) => {*/}
@@ -142,15 +141,13 @@ function OfflinePageData(props) {
                             schemaData?.["report"] ? (
                                 <div className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")} key={schemaId}>
                                     <div className={"border rounded p-5"}>
-                                        <Suspense fallback={"...loading"}>
-                                            <ChartReact
-                                                title={schemaData?.["report"]?.["yaxis"]?.[0]?.["title"]}
-                                                optionsData={getChartDataSet(schemaData?.["report"], schemaId).options}
-                                                seriesData={getChartDataSet(schemaData?.["report"], schemaId).series}
-                                                type={getChartDataSet(schemaData?.["report"], schemaId).chart?.["type"]}
-                                                height={getChartDataSet(schemaData?.["report"], schemaId).chart?.["height"]}
-                                            />
-                                        </Suspense>
+                                        <ChartReact
+                                            title={getChartDataSet(schemaData?.["report"])?.title}
+                                            optionsData={getChartDataSet(schemaData?.["report"])}
+                                            seriesData={getChartDataSet(schemaData?.["report"])?.series}
+                                            type={getChartDataSet(schemaData?.["report"])?.chart?.["type"]}
+                                            height={getChartDataSet(schemaData?.["report"])?.chart?.["height"]}
+                                        />
                                     </div>
                                 </div>
                             ) : null
@@ -158,6 +155,19 @@ function OfflinePageData(props) {
                     })
                 }
             </div>
+
+            {/*<div className={"border rounded p-5"}>*/}
+            {/*    {*/}
+            {/*        offSchemaReportData?.length > 0 &&*/}
+            {/*        <ChartReact*/}
+            {/*            title={schemaDoneData?.["yaxis"]?.[0]?.["title"]}*/}
+            {/*            optionsData={getChartDataSet(schemaDoneData)}*/}
+            {/*            seriesData={getChartDataSet(schemaDoneData)?.series}*/}
+            {/*            type={getChartDataSet(schemaDoneData)?.chart?.["type"]}*/}
+            {/*            height={getChartDataSet(schemaDoneData)?.chart?.["height"]}*/}
+            {/*        />*/}
+            {/*    }*/}
+            {/*</div>*/}
 
             {/*<div className={"border rounded mb-20 grid mt-10 gap-5 p-4"}>*/}
             {/*    <Table className={cn("mb-3")}>*/}
@@ -298,13 +308,23 @@ function OfflinePageData(props) {
             {/*        />*/}
             {/*    </div>*/}
 
-            {/*    <div className={"border rounded p-5"}>*/}
+            {/*<div className={"border rounded p-5"}>*/}
+            {/*    <ChartReact*/}
+            {/*        title={"Активность"}*/}
+            {/*        optionsData={activeData}*/}
+            {/*        seriesData={activeData?.series}*/}
+            {/*        type={activeData?.chart?.type}*/}
+            {/*        height={activeData?.chart?.height}*/}
+            {/*    />*/}
+            {/*</div>*/}
+
+            {/*<div className={"border rounded p-5"}>*/}
             {/*        <ChartReact*/}
             {/*            title={"Активность"}*/}
-            {/*            optionsData={chartActive}*/}
-            {/*            seriesData={chartActive.series}*/}
-            {/*            type={chartActive.chart.type}*/}
-            {/*            height={chartActive.chart.height}*/}
+            {/*            optionsData={weekActivity}*/}
+            {/*            seriesData={weekActivity.series}*/}
+            {/*            type={weekActivity.chart.type}*/}
+            {/*            height={weekActivity.chart.height}*/}
             {/*        />*/}
             {/*    </div>*/}
 

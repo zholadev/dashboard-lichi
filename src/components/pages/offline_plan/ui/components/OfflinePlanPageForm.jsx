@@ -79,7 +79,7 @@ function OfflinePlanPageForm(props) {
                         )}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4"/>
-                        {offPlanDateParams ? format(offPlanDateParams, "yyyy-mm") : <span>Выберите дату</span>}
+                        {offPlanDateParams ? format(offPlanDateParams, "yyyy-MM") : <span>Выберите дату</span>}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">

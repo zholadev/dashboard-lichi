@@ -10,12 +10,13 @@ export const offlineSlice = createSlice({
         offSchemaRender: false,
         offArticleParams: "",
         offDateParams: {from: "", to: new Date()},
-        offCountryParams: "",
+        offCountryParams: "0KDQvtGB0YHQuNGP",
         offStoresParams: "",
         offDateGroupParams: "by_day",
         offCategoryParams: "",
         offDateCalendarValue: {from: "", to: new Date()},
-        offStoresData: []
+        offStoresData: [],
+        offChartWeekActivity: {}
     },
     reducers: {
         getOffSchemaDataAction: (state, action) => {
@@ -65,7 +66,7 @@ export const offlineSlice = createSlice({
             state.offSchemaRender = false
             state.offArticleParams = ""
             state.offDateParams = {from: "", to: new Date()}
-            state.offCountryParams = ""
+            state.offCountryParams = "0KDQvtGB0YHQuNGP"
             state.offStoresParams = ""
             state.offDateGroupParams = "by_day"
             state.offCategoryParams = ""

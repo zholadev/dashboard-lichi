@@ -10,7 +10,7 @@ import {Button} from "@/components/shared/shadcn/ui/button";
 import {LoaderButton} from "@/components/shared/uikit/loader";
 import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
+import {useApiRequest, useDispatchActionHandle, usePreviousFriday} from "@/components/shared/hooks";
 import {apiGetOfflineCountryData, apiGetOfflineSchemaDetail} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {
@@ -23,6 +23,7 @@ import {
     SelectValue
 } from "@/components/shared/shadcn/ui/select";
 import {categories} from "@/components/shared/data/categories";
+import {offlineChartList} from "@/components/shared/data/charts";
 
 /**
  * @author Zholaman Zhumanov
@@ -34,6 +35,8 @@ import {categories} from "@/components/shared/data/categories";
  */
 function OfflinePageForm(props) {
     const events = useDispatchActionHandle()
+
+    const lastFriday = usePreviousFriday()
 
     const {apiFetchHandler, loading} = useApiRequest()
 
@@ -62,18 +65,33 @@ function OfflinePageForm(props) {
                 }, timer)
             })
         })
+
+        // fetchOfflineSchema(e, offlineChartList[0].key)
+        // fetchOfflineSchema(e, offlineChartList[1].key)
+        // fetchOfflineSchema(e, offlineChartList[2].key)
+        // fetchOfflineSchema(e, offlineChartList[3].key)
+        // fetchOfflineSchema(e, offlineChartList[4].key)
+        // fetchOfflineSchema(e, offlineChartList[5].key)
+        // fetchOfflineSchema(e, offlineChartList[6].key)
+        // fetchOfflineSchema(e, offlineChartList[7].key)
     }
 
     const fetchOfflineSchema = async (e, schema_type) => {
         if (e) e.preventDefault()
 
-        const apiParams = {
-            "date": {"start": offDateParams.from, "end": offDateParams.to},
+        let apiParams = {
+            "date": {"start": format(offDateParams.from, "dd/MM/yyyy"), "end": format(offDateParams.to, "dd/MM/yyyy")},
             "date_group": offDateGroupParams,
             "country": offCountryParams,
             "category": offCategoryParams,
-            "store": [offStoresParams],
-            "article": offArticleParams
+        }
+
+        if (offArticleParams) {
+            apiParams['article'] = offArticleParams
+        }
+
+        if (offStoresParams) {
+            apiParams['store'] = [offStoresParams]
         }
 
         await apiFetchHandler(
@@ -105,6 +123,13 @@ function OfflinePageForm(props) {
             }
         )
     }
+
+    useEffect(() => {
+        events.offDateParamsReducerAction({
+            from: lastFriday(),
+            to: new Date()
+        })
+    }, []);
 
     useEffect(() => {
         return () => {
@@ -152,8 +177,8 @@ function OfflinePageForm(props) {
                                 onSelect={value => {
                                     events.offDateCalendarValueAction(value)
                                     events.offDateParamsReducerAction({
-                                        from: format(value.from, "dd/MM/yyyy"),
-                                        to: format(value.to, "dd/MM/yyyy")
+                                        from: value.from,
+                                        to: value.to
                                     })
                                 }}
                                 numberOfMonths={2}
