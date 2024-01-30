@@ -1,8 +1,11 @@
 'use client'
 
 import React from 'react';
-import ReactApexChart from "react-apexcharts";
 import {Heading} from "@/components/shared/uikit/heading";
+import dynamic from "next/dynamic";
+
+const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
+
 
 /**
  * @author Zholaman Zhumanov
@@ -14,7 +17,9 @@ import {Heading} from "@/components/shared/uikit/heading";
 function ChartReact(props) {
     const {seriesData, optionsData, type, height, title} = props
 
-    if (!seriesData || !optionsData) {
+    console.log(optionsData, seriesData, type, height)
+
+    if (!seriesData && !optionsData || !seriesData || !optionsData) {
         return null
     }
 
@@ -22,11 +27,11 @@ function ChartReact(props) {
         <>
             {title && <Heading type={"h3"}>{title}</Heading>}
             <div id={"chart"}>
-                <ReactApexChart
+                <Chart
+                    options={optionsData}
+                    series={seriesData}
                     type={type}
                     height={height}
-                    series={seriesData}
-                    options={optionsData}
                 />
             </div>
         </>

@@ -26,7 +26,7 @@ export const offlineSlice = createSlice({
             state.offSchemaApiLoader = action.payload
         },
         getOffSchemaReportDataAction: (state, action) => {
-            state.offSchemaReportData = [...state.offSchemaReportData, action.payload]
+        state.offSchemaReportData = [...state.offSchemaReportData, action.payload]
         },
         getOffSchemaDataWithReportDataAction: (state, action) => {
             state.offSchemaDataWithReport = action.payload

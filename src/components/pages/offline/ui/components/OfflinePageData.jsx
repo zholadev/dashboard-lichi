@@ -1,13 +1,13 @@
 'use client'
 
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, {useEffect} from 'react';
 import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
-import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
+import {useApiRequest, useChartApexOptions, useDispatchActionHandle} from "@/components/shared/hooks";
 import {apiGetOfflineSchemaData} from "@/components/shared/services/axios/clientRequests";
-import {offlineChartList} from "@/components/shared/data/charts";
+import {chartAvg, chartSalesDynamic, chartSegment, offlineChartList} from "@/components/shared/data/charts";
+import {Button} from "@/components/shared/shadcn/ui/button";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -27,50 +27,7 @@ function OfflinePageData(props) {
 
     const {offSchemaData, offSchemaReportData, offSchemaRender} = useAppSelector(state => state?.offline)
 
-    const getChartDataSet = useCallback((data) => {
-        try {
-            return {
-                "options": {
-                    "chart": data?.["chart"] || {},
-                    "annotations": data?.["annotations"] || {},
-                    "dataLabels": data?.["dataLabels"] || {},
-                    "stroke": data?.["stroke"] || {},
-                    "xaxis": data?.["xaxis"] || {},
-                    "labels": data?.["labels"] || {},
-                    "yaxis": data?.["yaxis"] || [],
-                    "colors": data?.["colors"] || []
-                },
-                "series": data?.["series"],
-                "chart": data?.["chart"],
-            }
-        } catch (error) {
-            errorHandler("offlinePageData", "getChartDataSet", error)
-        }
-    }, [offSchemaReportData])
-
-    const schemaDoneData = useMemo(() => {
-        try {
-            return offSchemaReportData
-        } catch (error) {
-            errorHandler("offlinePageData", "schemaDoneData", error)
-        }
-    }, [offSchemaReportData])
-
-    const calculatePercentTotal = useCallback((total, sale) => {
-        try {
-            return Math.floor((Math.floor(total) / Math.floor(sale)) * 100);
-        } catch (error) {
-            errorHandler("offlinePageData", "func/calculatePercent", error)
-        }
-    }, [])
-
-    const calculateTotalSales = useCallback((total, refund) => {
-        try {
-            return Math.floor((Math.floor(total) - Math.floor(refund)));
-        } catch (error) {
-            errorHandler("offlinePageData", "func/calculateTotalSales", error)
-        }
-    }, [])
+    const chartApexOptions = useChartApexOptions()
 
     const fetchOfflineSchema = async () => {
         await apiFetchHandler(
@@ -97,13 +54,19 @@ function OfflinePageData(props) {
 
     return (
         <>
-            <ul className={cn("w-full border p-4 my-5 flex items-center rounded justify-between gap-5")}>
-                {
-                    offlineChartList.map((item) => (
-                        <li key={item.id} className={cn("flex-1 border rotate-2 p-5 cursor-pointer")}>{item.title}</li>
-                    ))
-                }
-            </ul>
+            {/*<ul className={cn("w-full border p-4 my-5 flex items-center rounded justify-between gap-5")}>*/}
+            {/*    {*/}
+            {/*        offlineChartList.map((item) => (*/}
+            {/*            <li key={item.id} className={cn("flex-1 border rotate-2 p-5 cursor-pointer")}>{item.title}</li>*/}
+            {/*        ))*/}
+            {/*    }*/}
+            {/*</ul>*/}
+
+            {/*<div>*/}
+            {/*    <Button onClick={() => events.offSchemaRenderToggle(!offSchemaRender)}>*/}
+            {/*        Render Charts*/}
+            {/*    </Button>*/}
+            {/*</div>*/}
             {/*<div>*/}
             {/*    {*/}
             {/*        Object.entries(offSchemaData || {}).map(([key, schema], id) => {*/}
@@ -136,23 +99,27 @@ function OfflinePageData(props) {
 
             <div className={cn("w-full")}>
                 {
-                    Object.values(schemaDoneData || {}).map((schemaData, schemaId) => {
-                        return (
-                            schemaData?.["report"] ? (
-                                <div className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")} key={schemaId}>
-                                    <div className={"border rounded p-5"}>
-                                        <ChartReact
-                                            title={getChartDataSet(schemaData?.["report"])?.title}
-                                            optionsData={getChartDataSet(schemaData?.["report"])}
-                                            seriesData={getChartDataSet(schemaData?.["report"])?.series}
-                                            type={getChartDataSet(schemaData?.["report"])?.chart?.["type"]}
-                                            height={getChartDataSet(schemaData?.["report"])?.chart?.["height"]}
-                                        />
+                    offSchemaRender ?
+                        Object.values(offSchemaReportData || {}).map((schemaData, schemaId) => {
+                            return (
+                                schemaData?.["report"] ? (
+                                    <div className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")}
+                                         key={schemaId}>
+                                        <div className={"border rounded p-5"}>
+                                            <ChartReact
+                                                title={""}
+                                                optionsData={chartApexOptions(schemaData?.["report"]).options}
+                                                seriesData={chartApexOptions(schemaData?.["report"]).series}
+                                                type={chartApexOptions(schemaData?.["report"]).type}
+                                                height={chartApexOptions(schemaData?.["report"]).height}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            ) : null
-                        )
-                    })
+                                ) : null
+                            )
+                        })
+                        :
+                        null
                 }
             </div>
 
@@ -288,25 +255,43 @@ function OfflinePageData(props) {
             {/*</div>*/}
 
             {/*<div className={cn("mb-20 grid 2xl:grid-cols-2 grid-cols-1 mt-5 gap-5")}>*/}
-            {/*    <div className={"border rounded p-5"}>*/}
-            {/*        <ChartReact*/}
-            {/*            title={"Динамика продаж"}*/}
-            {/*            optionsData={chartSalesDynamic}*/}
-            {/*            seriesData={chartSalesDynamic.series}*/}
-            {/*            type={chartSalesDynamic.chart.type}*/}
-            {/*            height={chartSalesDynamic.chart.height}*/}
-            {/*        />*/}
-            {/*    </div>*/}
 
-            {/*    <div className={"border rounded p-5"}>*/}
-            {/*        <ChartReact*/}
-            {/*            title={"Сегмент номенклатуры"}*/}
-            {/*            optionsData={chartSegment}*/}
-            {/*            seriesData={chartSegment.series}*/}
-            {/*            type={chartSegment.chart.type}*/}
-            {/*            height={chartSegment.chart.height}*/}
-            {/*        />*/}
-            {/*    </div>*/}
+            {/*{*/}
+            {/*    offSchemaRender ?*/}
+            {/*        <>*/}
+            {/*            <div className={"border rounded p-5"}>*/}
+            {/*                <ChartReact*/}
+            {/*                    title={"Динамика продаж"}*/}
+            {/*                    optionsData={chartSalesDynamic}*/}
+            {/*                    seriesData={chartSalesDynamic.series}*/}
+            {/*                    type={chartSalesDynamic.chart.type}*/}
+            {/*                    height={chartSalesDynamic.chart.height}*/}
+            {/*                />*/}
+            {/*            </div>*/}
+
+            {/*            <div className={"border rounded p-5"}>*/}
+            {/*                <ChartReact*/}
+            {/*                    title={"Сегмент номенклатуры"}*/}
+            {/*                    optionsData={chartSegment}*/}
+            {/*                    seriesData={chartSegment.series}*/}
+            {/*                    type={chartSegment.chart.type}*/}
+            {/*                    height={chartSegment.chart.height}*/}
+            {/*                />*/}
+            {/*            </div>*/}
+
+            {/*            <div className={"border rounded p-5"}>*/}
+            {/*                <ChartReact*/}
+            {/*                    title={"Сегмент номенклатуры"}*/}
+            {/*                    optionsData={chartAvg}*/}
+            {/*                    seriesData={chartAvg.series}*/}
+            {/*                    type={chartAvg.chart.type}*/}
+            {/*                    height={chartAvg.chart.height}*/}
+            {/*                />*/}
+            {/*            </div>*/}
+            {/*        </>*/}
+            {/*        : null*/}
+            {/*}*/}
+
 
             {/*<div className={"border rounded p-5"}>*/}
             {/*    <ChartReact*/}
@@ -440,4 +425,4 @@ function OfflinePageData(props) {
     );
 }
 
-export default React.memo(OfflinePageData);
+export default OfflinePageData;

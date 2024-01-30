@@ -7,10 +7,7 @@ import {cn} from "@/lib/utils";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/components/shared/shadcn/ui/dropdown-menu";
@@ -107,7 +104,7 @@ function Header(props) {
                                         menuList.map((menuItem) => (
                                             <li
                                                 key={menuItem.id}
-                                                className={"text-md font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer"}>
+                                                className={cn("text-md font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer", pathname === menuItem.link ? "text-black" : "")}>
                                                 <SheetClose asChild>
                                                     <Link href={menuItem.link}>
                                                         {menuItem.title}
@@ -130,7 +127,7 @@ function Header(props) {
                             menuList.map((menuItem) => (
                                 <li
                                     key={menuItem.id}
-                                    className={"text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer"}>
+                                    className={cn("text-md font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer", pathname === menuItem.link ? "text-black" : "")}>
                                     <Link href={menuItem.link}>
                                         {menuItem.title}
                                     </Link>
@@ -151,27 +148,6 @@ function Header(props) {
                             </Avatar>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56">
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator/>
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem>
-                                    Profile
-                                    {/*<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>*/}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    Billing
-                                    {/*<DropdownMenuShortcut>⌘B</DropdownMenuShortcut>*/}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    Settings
-                                    {/*<DropdownMenuShortcut>⌘S</DropdownMenuShortcut>*/}
-                                </DropdownMenuItem>
-                                {/*<DropdownMenuItem>*/}
-                                {/*    Themes*/}
-                                {/*    <DropdownMenuShortcut><ModeToggle/></DropdownMenuShortcut>*/}
-                                {/*</DropdownMenuItem>*/}
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator/>
                             <DropdownMenuItem>
                                 <Button
                                     type={"button"}
@@ -180,7 +156,6 @@ function Header(props) {
                                 >
                                     Log out
                                 </Button>
-                                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

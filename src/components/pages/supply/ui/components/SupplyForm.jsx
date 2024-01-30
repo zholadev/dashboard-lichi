@@ -18,6 +18,7 @@ import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
 import {apiGetSupplyKanbanData, apiGetSupplyNetworkData} from "@/components/shared/services/axios/clientRequests";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {LoaderButton} from "@/components/shared/uikit/loader";
 
 /**
  * @author Zholaman Zhumanov
@@ -196,6 +197,7 @@ function SupplyForm(props) {
                         type={"submit"}
                         className={cn("w-full")}
                     >
+                        <LoaderButton loading={kanbanDataLoader} />
                         Сформировать
                     </Button>
                 </form>

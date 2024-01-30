@@ -1,12 +1,12 @@
 'use client'
 
-import React, {useMemo} from 'react';
+import React from 'react';
 import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
 import {Heading} from "@/components/shared/uikit/heading";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
+import {useChartApexOptions} from "@/components/shared/hooks";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -21,25 +21,13 @@ const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/Char
  * @returns {Element}
  * @constructor
  */
-function OfflinePlanDetailData(props) {
+function OfflinePlanDetailData() {
     const {offPlanDetailData, offPlanDetailApiLoader} = useAppSelector(state => state.offline_plan_detail)
 
     const chartData = offPlanDetailData?.["report"]
     const planDataCounts = offPlanDetailData?.["$analytics"]
 
-    const getChartData = useMemo(() => {
-        try {
-            return {
-                "options": {
-                    ...chartData
-                },
-                "series": chartData?.["series"],
-                "chart": chartData?.["chart"]
-            }
-        } catch (error) {
-            errorHandler("offlinePageDetailData", "getChartData", error)
-        }
-    }, [chartData])
+    const chartApexOptions = useChartApexOptions()
 
     if (offPlanDetailApiLoader) {
         return (
@@ -71,10 +59,10 @@ function OfflinePlanDetailData(props) {
             <div className={"border rounded p-5"}>
                 <ChartReact
                     title={"Анализ продаж"}
-                    optionsData={getChartData}
-                    seriesData={getChartData?.series}
-                    type={getChartData?.chart.type}
-                    height={getChartData?.chart.height}
+                    optionsData={chartApexOptions(chartData).options}
+                    seriesData={chartApexOptions(chartData).series}
+                    type={chartApexOptions(chartData).type}
+                    height={chartApexOptions(chartData).height}
                 />
             </div>
         </div>

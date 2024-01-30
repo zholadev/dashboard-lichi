@@ -4,15 +4,6 @@ import React, {useEffect} from 'react';
 import {cn} from "@/lib/utils";
 import {format} from "date-fns";
 import {CalendarIcon} from "lucide-react";
-import {Input} from "@/components/shared/shadcn/ui/input";
-import {Label} from "@/components/shared/shadcn/ui/label";
-import {Button} from "@/components/shared/shadcn/ui/button";
-import {LoaderButton} from "@/components/shared/uikit/loader";
-import {Calendar} from "@/components/shared/shadcn/ui/calendar";
-import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {useApiRequest, useDispatchActionHandle, usePreviousFriday} from "@/components/shared/hooks";
-import {apiGetOfflineCountryData, apiGetOfflineSchemaDetail} from "@/components/shared/services/axios/clientRequests";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {
     Select,
     SelectContent,
@@ -22,8 +13,16 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/shared/shadcn/ui/select";
+import {Input} from "@/components/shared/shadcn/ui/input";
+import {Label} from "@/components/shared/shadcn/ui/label";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {LoaderButton} from "@/components/shared/uikit/loader";
 import {categories} from "@/components/shared/data/categories";
-import {offlineChartList} from "@/components/shared/data/charts";
+import {Calendar} from "@/components/shared/shadcn/ui/calendar";
+import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
+import {useApiRequest, useDispatchActionHandle, usePreviousFriday} from "@/components/shared/hooks";
+import {apiGetOfflineCountryData, apiGetOfflineSchemaDetail} from "@/components/shared/services/axios/clientRequests";
 
 /**
  * @author Zholaman Zhumanov
@@ -66,6 +65,8 @@ function OfflinePageForm(props) {
             })
         })
 
+        events.offSchemaRenderToggle(true)
+
         // fetchOfflineSchema(e, offlineChartList[0].key)
         // fetchOfflineSchema(e, offlineChartList[1].key)
         // fetchOfflineSchema(e, offlineChartList[2].key)
@@ -107,7 +108,6 @@ function OfflinePageForm(props) {
             }
         )
     }
-
 
     const fetchOffSchemaStoreData = async (id) => {
         await apiFetchHandler(
@@ -252,17 +252,17 @@ function OfflinePageForm(props) {
                         </SelectTrigger>
                         <SelectContent>
                             {
-                                categories.map((categoryItem) => {
+                                categories.map((categoryItem, categoryId) => {
                                     return (
                                         categoryItem?.["is_submenu"] ? (
-                                            <SelectGroup className={cn("mb-3")} key={categoryItem.id}>
+                                            <SelectGroup className={cn("mb-3")} key={categoryId}>
                                                 <SelectLabel
                                                     className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
                                                 {
-                                                    categoryItem.items.map((childCategory) => {
+                                                    categoryItem.items.map((childCategory, index) => {
                                                         return (
                                                             <SelectItem
-                                                                key={childCategory.id}
+                                                                key={index}
                                                                 value={childCategory.category}>
                                                                 {childCategory.title}
                                                             </SelectItem>
@@ -272,7 +272,7 @@ function OfflinePageForm(props) {
                                             </SelectGroup>
                                         ) : (
                                             <SelectItem
-                                                key={categoryItem.id}
+                                                key={categoryId}
                                                 value={categoryItem.category}
                                             >
                                                 {categoryItem.title}
