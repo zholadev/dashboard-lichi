@@ -8,6 +8,7 @@ import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useDispatchActionHandle} from "@/components/shared/hooks";
 import {TableData} from "@/components/shared/uikit/table";
+import {NotData} from "@/components/shared/uikit/templates";
 
 /**
  * @author Zholaman Zhumanov
@@ -91,7 +92,7 @@ function ProductsData() {
     }
 
     if (productsData.length === 0) {
-        return null
+        return <NotData/>
     }
 
     return (

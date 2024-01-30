@@ -7,6 +7,7 @@ import {Heading} from "@/components/shared/uikit/heading";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {useChartApexOptions} from "@/components/shared/hooks";
+import {NotData} from "@/components/shared/uikit/templates";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -38,7 +39,7 @@ function OfflinePlanDetailData() {
     }
 
     if (offPlanDetailData?.length === 0) {
-        return null
+        return <NotData/>
     }
 
     return (

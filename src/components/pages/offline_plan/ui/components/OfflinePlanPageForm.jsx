@@ -9,7 +9,7 @@ import {Button} from "@/components/shared/shadcn/ui/button";
 import {LoaderButton} from "@/components/shared/uikit/loader";
 import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
+import {useApiRequest, useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
 import {apiGetOfflinePlanData} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
@@ -27,12 +27,19 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 function OfflinePlanPageForm(props) {
     const {apiFetchHandler} = useApiRequest()
 
+    const toastMessage = useToastMessage()
     const events = useDispatchActionHandle()
 
     const {offPlanApiLoader, offPlanCategoryParams, offPlanDateParams} = useAppSelector(state => state.offline_plan)
 
     const fetchOfflinePlan = async (e) => {
         if (e) e.preventDefault()
+
+        if (!offPlanCategoryParams || !offPlanDateParams) {
+            toastMessage("заполните данные", "error")
+            return
+        }
+
         await apiFetchHandler(
             apiGetOfflinePlanData,
             [offPlanCategoryParams, format(offPlanDateParams, 'MM/yyyy')],

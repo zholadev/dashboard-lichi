@@ -16,6 +16,9 @@ import {Heading} from "@/components/shared/uikit/heading";
 import EventAddFormModal from "./components/EventAddFormModal";
 import {apiGetEventsData} from "@/components/shared/services/axios/clientRequests";
 import {Table, TableBody, TableHead, TableHeader, TableRow,} from "@/components/shared/shadcn/ui/table"
+import {NotData} from "@/components/shared/uikit/templates";
+import {cn} from "@/lib/utils";
+import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 
 /**
  * @author Zholaman Zhumanov
@@ -54,8 +57,29 @@ function EventsPage(props) {
         fetchApiEventsData()
     }, []);
 
+    if (loading) {
+        return <div className={cn("w-full flex justify-center items-center my-4")}>
+            <div className={cn("w-full flex flex-row flex-wrap md:gap-3 gap-1 items-center")}>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
+            </div>
+        </div>
+    }
+
     if (eventsData.length === 0) {
-        return <h3>not found data</h3>
+        return <NotData/>
     }
 
     return (
@@ -78,7 +102,7 @@ function EventsPage(props) {
                 </TableHeader>
                 <TableBody>
                     {
-                        eventsData?.["data"].map((eventItem) => (
+                        Object.values(eventsData?.["data"] || {}).map((eventItem) => (
                             <EventCard
                                 data={eventItem}
                                 totalData={eventItem}

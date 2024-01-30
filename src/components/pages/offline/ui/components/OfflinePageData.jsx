@@ -8,6 +8,7 @@ import {useApiRequest, useChartApexOptions, useDispatchActionHandle} from "@/com
 import {apiGetOfflineSchemaData} from "@/components/shared/services/axios/clientRequests";
 import {chartAvg, chartSalesDynamic, chartSegment, offlineChartList} from "@/components/shared/data/charts";
 import {Button} from "@/components/shared/shadcn/ui/button";
+import {NotData} from "@/components/shared/uikit/templates";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -49,7 +50,7 @@ function OfflinePageData(props) {
     }, []);
 
     if (offSchemaData.length === 0) {
-        return null
+        return <NotData/>
     }
 
     return (

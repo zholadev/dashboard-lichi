@@ -7,6 +7,7 @@ import SupplyKanbanLoading from "./SupplyKanbanLoading";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {apiUpdateSupplyKanbanData} from "@/components/shared/services/axios/clientRequests";
+import {NotData} from "@/components/shared/uikit/templates";
 
 /**
  * @author Zholaman Zhumanov
@@ -78,6 +79,10 @@ function SupplyKanbanContainer(props) {
 
     if (kanbanLoading) {
         return <SupplyKanbanLoading loading={kanbanLoading}/>
+    }
+
+    if (Object.values(kanbanData?.["kanban"] || {}).length === 0) {
+        return <NotData/>
     }
 
     return (

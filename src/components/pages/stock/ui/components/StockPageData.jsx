@@ -9,6 +9,7 @@ import {Heading} from "@/components/shared/uikit/heading";
 import {Button} from "@/components/shared/shadcn/ui/button";
 import {CaretSortIcon} from "@radix-ui/react-icons";
 import {TableData} from "@/components/shared/uikit/table";
+import {NotData} from "@/components/shared/uikit/templates";
 
 /**
  * @author Zholaman Zhumanov
@@ -24,8 +25,6 @@ function StockPageData(props) {
         stockPageParams,
         stockLimitParams
     } = useAppSelector(state => state.stock)
-
-    const [sorting, setSorting] = useState()
 
     const events = useDispatchActionHandle()
 
@@ -135,8 +134,8 @@ function StockPageData(props) {
         </div>
     }
 
-    if (stockData.length === 0) {
-        return null
+    if (Object.values(stockData?.["table"]?.["data"] || {}).length === 0) {
+        return <NotData/>
     }
 
     return (

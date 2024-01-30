@@ -197,7 +197,7 @@ function SupplyForm(props) {
                         type={"submit"}
                         className={cn("w-full")}
                     >
-                        <LoaderButton loading={kanbanDataLoader} />
+                        <LoaderButton loading={kanbanDataLoader}/>
                         Сформировать
                     </Button>
                 </form>

@@ -52,14 +52,14 @@ function TableData({pageValue, changePageHandle, columns, pageCount, pageIndex, 
 
     return (
         <div className="space-y-4">
-            <div className={cn("py-4 px-3")}>
+            <div className={cn("py-2 px-3")}>
                 <TableToolbar table={table} column={columns}/>
             </div>
             <Table>
                 <TableHeader className={cn("bg-secondary")}>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <TableRow key={headerGroup.id} className={cn("first:position-sticky first:left-1")}>
-                            {headerGroup.headers.map((header) => {
+                    {table?.getHeaderGroups()?.map((headerGroup) => (
+                        <TableRow key={headerGroup?.id} className={cn("first:position-sticky first:left-1")}>
+                            {headerGroup?.headers?.map((header) => {
                                 return (
                                     <TableHead key={header.id} className={cn("text-center")}>
                                         {header.isPlaceholder
@@ -77,14 +77,14 @@ function TableData({pageValue, changePageHandle, columns, pageCount, pageIndex, 
                     ))}
                 </TableHeader>
                 <TableBody>
-                    {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => {
+                    {table?.getRowModel()?.rows?.length ? (
+                        table?.getRowModel()?.rows?.map((row) => {
                             return (
                                 <TableRow
-                                    key={row.id}
+                                    key={row?.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
-                                    {row.getVisibleCells().map((cell) => {
+                                    {row?.getVisibleCells()?.map((cell) => {
                                         return (
                                             <TableCell key={cell.id} className={cn("text-center")}>
                                                 <Heading

@@ -127,7 +127,7 @@ function Header(props) {
                             menuList.map((menuItem) => (
                                 <li
                                     key={menuItem.id}
-                                    className={cn("text-md font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer", pathname === menuItem.link ? "text-black" : "")}>
+                                    className={cn("text-md font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer", pathname === menuItem.link ? "text-primary" : "")}>
                                     <Link href={menuItem.link}>
                                         {menuItem.title}
                                     </Link>
