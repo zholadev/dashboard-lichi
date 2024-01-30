@@ -12,11 +12,11 @@ import OfflinePlanDetailData from "./components/OfflinePlanDetailData";
  * @constructor
  */
 function OfflinePlanDetailPage(props) {
-    const {id} = props
+    const {id, date} = props
 
     return (
         <>
-            <OfflinePageDetailForm id={id}/>
+            <OfflinePageDetailForm id={id} date={date}/>
             <OfflinePlanDetailData id={id}/>
         </>
     );

@@ -8,10 +8,10 @@ import {OfflinePlanDetailPage} from "@/components/pages/offline_plan_detail";
  * @returns {Element}
  * @constructor
  */
-function Page({params}) {
+function Page(props) {
     return (
         <Container>
-            <OfflinePlanDetailPage id={params.id}/>
+            <OfflinePlanDetailPage id={props.params.id} date={props.searchParams?.date}/>
         </Container>
     );
 }

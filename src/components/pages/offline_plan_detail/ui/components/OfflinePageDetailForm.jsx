@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {cn} from "@/lib/utils";
 import {format} from "date-fns";
 import {ru} from "date-fns/locale";
@@ -21,26 +21,24 @@ import {apiGetOfflinePlanDetailData} from "@/components/shared/services/axios/cl
  * @constructor
  */
 function OfflinePageDetailForm(props) {
-    const {id} = props
+    const {id, date} = props
 
     const {apiFetchHandler} = useApiRequest()
 
     const events = useDispatchActionHandle()
 
-    const {offPlanDetailApiLoader} = useAppSelector(state => state.offline_plan)
+    const {offPlanDetailApiLoader, offPlanDetailDate} = useAppSelector(state => state.offline_plan_detail)
 
-    const [date, setDate] = useState(null)
-
-    const fetchOfflinePlan = async (e) => {
+    const fetchOfflinePlan = async (e, customDate) => {
         if (e) e.preventDefault()
         await apiFetchHandler(
             apiGetOfflinePlanDetailData,
-            [id, "03/2023"],
-            events.offlinePlanDetailApiLoader,
+            [id, customDate ? format(offPlanDetailDate, 'MM/yyyy') : date],
+            events.offPlanDetailApiLoaderAction,
             {
                 onGetData: (params) => {
                     if (params.success) {
-                        events.offlinePlanDetailGetData(params.data)
+                        events.offPlanDetailDataAction(params.data)
                     }
                 }
             }
@@ -49,11 +47,15 @@ function OfflinePageDetailForm(props) {
 
     useEffect(() => {
         fetchOfflinePlan()
+
+        return () => {
+            events.resetOfflinePlanDetailAction()
+        }
     }, []);
 
     return (
         <form
-            onSubmit={fetchOfflinePlan}
+            onSubmit={(e) => fetchOfflinePlan(e, true)}
             className={cn("w-100 border 2xl:gap-10 gap-5 grid 2xl:grid-cols-3 md:grid-cols-2 grid-cols-1 justify-between items-center p-4 mb-10")}>
             <Popover>
                 <PopoverTrigger asChild>
@@ -61,18 +63,18 @@ function OfflinePageDetailForm(props) {
                         variant={"outline"}
                         className={cn(
                             "justify-start text-left font-normal col-span-2",
-                            !date && "text-muted-foreground"
+                            !offPlanDetailDate && "text-muted-foreground"
                         )}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4"/>
-                        {date ? format(date, "yyyy-mm") : <span>Выберите дату</span>}
+                        {offPlanDetailDate ? format(offPlanDetailDate, "yyyy-MM") : <span>Выберите дату</span>}
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                         mode="single"
-                        selected={date}
-                        onSelect={setDate}
+                        selected={offPlanDetailDate}
+                        onSelect={value => events.offPlanDetailDateAction(value)}
                         initialFocus
                         locale={ru}
                     />

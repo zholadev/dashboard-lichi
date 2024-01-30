@@ -22,10 +22,10 @@ const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/Char
  * @constructor
  */
 function OfflinePlanDetailData(props) {
-    const {offlinePlanDetailData, offPlanDetailApiLoader} = useAppSelector(state => state.offline_plan_detail)
+    const {offPlanDetailData, offPlanDetailApiLoader} = useAppSelector(state => state.offline_plan_detail)
 
-    const chartData = offlinePlanDetailData?.["report"]
-    const planDataCounts = offlinePlanDetailData?.["$analytics"]
+    const chartData = offPlanDetailData?.["report"]
+    const planDataCounts = offPlanDetailData?.["$analytics"]
 
     const getChartData = useMemo(() => {
         try {
@@ -49,7 +49,7 @@ function OfflinePlanDetailData(props) {
         )
     }
 
-    if (offlinePlanDetailData?.length === 0) {
+    if (offPlanDetailData?.length === 0) {
         return null
     }
 
