@@ -7,7 +7,7 @@ import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useDispatchActionHandle} from "@/components/shared/hooks";
-import {TableDataTest} from "@/components/shared/uikit/table";
+import {TableData} from "@/components/shared/uikit/table";
 
 /**
  * @author Zholaman Zhumanov
@@ -17,9 +17,14 @@ import {TableDataTest} from "@/components/shared/uikit/table";
  * @constructor
  */
 function ProductsData() {
-    const {productsData, apiLoader} = useAppSelector(state => state.products)
-
-    const {report, category, page, detail_by_store, limit} = useAppSelector(state => state.products)
+    const {
+        productsData,
+        productsApiLoader,
+        productsPageParams,
+        productsLimitParams,
+        productsReportParams,
+        productsDetailByStore
+    } = useAppSelector(state => state.products)
 
     const events = useDispatchActionHandle()
 
@@ -42,18 +47,34 @@ function ProductsData() {
                         "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
                     }
                 } else {
-                    return {
-                        "accessorKey": key,
-                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                    if (productsReportParams === 'by_colors' && productsDetailByStore && key !== 'store' && key !== 'total') {
+                        return {
+                            "accessorKey": key,
+                            "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                            // cell: ({row}) => (
+                            //     <div className={cn("w-full h-full")}
+                            //          style={{
+                            //              backgroundColor: `rgba(0, 143, 251, 0.5)`
+                            //          }}>
+                            //         {productsData?.["table"]?.["head"]?.[key]?.["label"]}
+                            //     </div>
+                            // ),
+                        }
+                    } else {
+                        return {
+                            "accessorKey": key,
+                            "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                        }
+
                     }
                 }
             })
         } catch (error) {
             errorHandler("productsData", "", error)
         }
-    }, [productsData, apiLoader])
+    }, [productsData, productsApiLoader, productsPageParams, productsReportParams, productsDetailByStore])
 
-    if (apiLoader) {
+    if (productsApiLoader) {
         return <div className={cn("w-full flex justify-center items-center my-4")}>
             <div className={cn("w-full flex flex-row flex-wrap md:gap-3 gap-1 items-center")}>
                 <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
@@ -75,14 +96,15 @@ function ProductsData() {
 
     return (
         <div className="rounded-md border">
-            <TableDataTest
+            <TableData
                 data={productsData?.["table"]?.["data"]}
                 columns={getTableColumns}
                 pageCount={productsData?.["paging"]?.["max_page"]}
-                pageIndex={page}
-                pageSize={limit}
-                pageValue={page}
-                changePageHandle={events.productsPageParams}
+                pageIndex={productsPageParams}
+                pageSize={productsLimitParams}
+                pageValue={productsPageParams}
+                changeLimitHandle={events.productsLimitParamsAction}
+                changePageHandle={events.productsPageParamsAction}
             />
         </div>
     );

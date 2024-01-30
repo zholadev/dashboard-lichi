@@ -4,11 +4,11 @@ import React, {useEffect, useState} from 'react';
 import {cn} from "@/lib/utils";
 import {format} from "date-fns";
 import {ru} from "date-fns/locale";
-import {CalendarIcon} from '@radix-ui/react-icons'
 import {Label} from "@/components/shared/shadcn/ui/label";
 import {Input} from "@/components/shared/shadcn/ui/input";
 import {Button} from "@/components/shared/shadcn/ui/button";
 import {Switch} from "@/components/shared/shadcn/ui/switch";
+import {CalendarIcon, DownloadIcon} from '@radix-ui/react-icons'
 import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {
     Select,
@@ -20,11 +20,11 @@ import {
     SelectValue
 } from "@/components/shared/shadcn/ui/select";
 import {LoaderButton} from "@/components/shared/uikit/loader";
+import {categories} from "@/components/shared/data/categories";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {apiGetProductsListData} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {useApiRequest, useDispatchActionHandle, usePreviousFriday} from "@/components/shared/hooks";
-import {categories} from "@/components/shared/data/categories";
 
 /**
  * @author Zholaman Zhumanov
@@ -34,41 +34,60 @@ import {categories} from "@/components/shared/data/categories";
  * @constructor
  */
 function ProductsForm(props) {
-
     const events = useDispatchActionHandle()
 
-    const {apiFetchHandler, loading} = useApiRequest()
     const lastFriday = usePreviousFriday();
 
-    const {report, category, page, detail_by_store, limit, productsData} = useAppSelector(state => state.products)
+    const {apiFetchHandler} = useApiRequest()
+
+    const {
+        productsReportParams,
+        productsCategoryParams,
+        productsPageParams,
+        productsDetailByStore,
+        productsLimitParams,
+        productsData,
+        productsApiLoader,
+        productsArticleParams,
+        productsDownloadParams
+    } = useAppSelector(state => state.products)
 
     const [date, setDate] = useState({
         from: lastFriday(),
         to: new Date(),
     })
 
-    const fetchProductsData = async (e) => {
+    const fetchProductsData = async (e, download) => {
         if (e) e.preventDefault()
 
         let apiParams = {
-            category: category,
+            category: productsCategoryParams,
             date: {
                 start: format(date.from, "dd/MM/yyyy"), end: format(date.to, "dd/MM/yyyy")
             },
-            download: 0,
-            limit: limit,
-            detail_by_store: detail_by_store ? "1" : "0",
-            page: parseInt(page) ?? 1,
-            report: report,
+            download: download || productsDownloadParams || 0,
+            limit: productsLimitParams,
+            detail_by_store: productsDetailByStore ? "1" : "0",
+            page: parseInt(productsPageParams) ?? 1,
+            report: productsReportParams,
             sort_direction: -1
         }
 
         await apiFetchHandler(
             apiGetProductsListData,
             [apiParams],
-            events.productsApiLoader,
+            events.productsApiLoaderAction,
             {
                 onGetData: (params) => {
+                    console.log(params.data)
+                    if (download || productsDownloadParams) {
+                        const url = "http://localhost:3000/products/"
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = params.data?.['download_file']
+                        link.click();
+                        return
+                    }
                     if (params.success) {
                         events.productsGetProductsData(params.data)
                     }
@@ -80,11 +99,11 @@ function ProductsForm(props) {
     useEffect(() => {
         if (productsData.length === 0) return
         fetchProductsData()
-    }, [limit, page]);
+    }, [productsLimitParams, productsPageParams]);
 
     useEffect(() => {
         return () => {
-            events.productsResetData()
+            events.productsResetDataAction()
         }
     }, []);
 
@@ -130,7 +149,7 @@ function ProductsForm(props) {
                     </PopoverContent>
                 </Popover>
 
-                <Select onValueChange={value => events.productsReportParams(value)}>
+                <Select onValueChange={value => events.productsReportParamsAction(value)}>
                     <SelectTrigger className="w-100">
                         <SelectValue placeholder="Отчет"/>
                     </SelectTrigger>
@@ -142,7 +161,7 @@ function ProductsForm(props) {
                     </SelectContent>
                 </Select>
 
-                <Select onValueChange={value => events.productsCategoryParams(value)}>
+                <Select onValueChange={value => events.productsCategoryParamsAction(value)}>
                     <SelectTrigger className="w-100">
                         <SelectValue placeholder="Категория товара"/>
                     </SelectTrigger>
@@ -180,10 +199,16 @@ function ProductsForm(props) {
                     </SelectContent>
                 </Select>
 
-                <Input defaultValue={'Артикул'}/>
+                <Input
+                    id={'article'}
+                    name={'article'}
+                    type={'text'}
+                    defaultValue={productsArticleParams}
+                    onChange={event => events.productsArticleParamsReducerAction(event.target.value)}
+                />
 
                 {
-                    detail_by_store &&
+                    productsDetailByStore &&
                     <Select>
                         <SelectTrigger className="w-100">
                             <SelectValue placeholder="Выберите магазины"/>
@@ -198,19 +223,33 @@ function ProductsForm(props) {
 
                 <div className={cn("flex items-center flex-wrap gap-10 justify-between")}>
                     <div className="flex items-center space-x-2">
-                        <Switch id="airplane-mode"
-                                onCheckedChange={(value) => events.productsDetailByStoreParams(value)}/>
+                        <Switch
+                            id="airplane-mode"
+                            onCheckedChange={(value) => events.productsDetailByStoreParamsAction(value)}
+                        />
                         <Label htmlFor="airplane-mode">Группировка по магазинам</Label>
                     </div>
 
                     <Button
                         type={"submit"}
                         className={cn("2xl:w-[230px] w-[100%]")}>
-                        <LoaderButton loading={loading}/>
+                        <LoaderButton loading={productsApiLoader}/>
                         Сформировать
                     </Button>
                 </div>
+
             </form>
+            <div className={cn("w-full")}>
+                <Button
+                    type={"button"}
+                    variant={'secondary'}
+                    className={cn("w-full max-w-[400px]")}
+                    onClick={e => fetchProductsData(e, 1)}
+                >
+                    <LoaderButton loading={productsApiLoader}/>
+                    <DownloadIcon/>
+                </Button>
+            </div>
         </div>
 
     );

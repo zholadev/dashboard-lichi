@@ -13,12 +13,12 @@ import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
  * @returns {JSX.Element}
  * @constructor
  */
-function TableDataPagination({table, changePageHandle, pageValue}) {
+function TableDataPagination({table, changePageHandle, pageValue, changeLimitHandle}) {
     const prevPage = () => {
         try {
             table.previousPage()
             if (changePageHandle) {
-                changePageHandle(pageValue + 1)
+                changePageHandle(pageValue - 1)
             }
         } catch (error) {
             errorHandler("tablePageDataPagination", "prevPage", error)
@@ -29,7 +29,7 @@ function TableDataPagination({table, changePageHandle, pageValue}) {
         try {
             table.nextPage()
             if (changePageHandle) {
-                changePageHandle(pageValue - 1)
+                changePageHandle(pageValue + 1)
             }
         } catch (error) {
             errorHandler("tablePageDataPagination", "nextPage", error)
@@ -58,6 +58,17 @@ function TableDataPagination({table, changePageHandle, pageValue}) {
         }
     }
 
+    const selectLimitPage = (value) => {
+        try {
+            table.setPageSize(Number(value))
+            if (changeLimitHandle) {
+                changeLimitHandle(value)
+            }
+        } catch (error) {
+            errorHandler("tablePageDataPagination", "selectLastPage", error)
+        }
+    }
+
     return (
         <div className="flex items-center lg:flex-row flex-col justify-end px-2 py-4 border-t">
             {/*<div className="flex-1 text-sm text-muted-foreground">*/}
@@ -70,7 +81,7 @@ function TableDataPagination({table, changePageHandle, pageValue}) {
                     <Select
                         value={`${table.getState().pagination.pageSize}`}
                         onValueChange={(value) => {
-                            table.setPageSize(Number(value))
+                            selectLimitPage(Number(value))
                         }}
                     >
                         <SelectTrigger className="h-8 w-[70px]">

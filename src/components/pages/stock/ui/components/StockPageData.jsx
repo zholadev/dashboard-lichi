@@ -8,7 +8,7 @@ import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {Heading} from "@/components/shared/uikit/heading";
 import {Button} from "@/components/shared/shadcn/ui/button";
 import {CaretSortIcon} from "@radix-ui/react-icons";
-import {TableDataTest} from "@/components/shared/uikit/table";
+import {TableData} from "@/components/shared/uikit/table";
 
 /**
  * @author Zholaman Zhumanov
@@ -141,7 +141,7 @@ function StockPageData(props) {
 
     return (
         <div className="rounded-md border">
-            <TableDataTest
+            <TableData
                 data={stockData?.["table"]?.["data"]}
                 columns={getTableColumns}
                 pageCount={stockData?.["paging"]?.["max_page"]}

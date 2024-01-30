@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 export const stockSlice = createSlice({
-    name: 'offline',
+    name: 'stock',
     initialState: {
         stockData: [],
         stockApiLoader: false,

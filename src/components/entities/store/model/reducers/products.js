@@ -3,57 +3,65 @@ import {createSlice} from '@reduxjs/toolkit';
 export const productsSlice = createSlice({
     name: 'products',
     initialState: {
-        formData: {},
         productsData: [],
-        apiLoader: false,
-        page: 1,
-        report: "by_articles",
-        download: 0,
-        limit: 10,
-        category: "",
-        detail_by_store: false,
+        productsApiLoader: false,
+        productsPageParams: 1,
+        productsReportParams: "by_articles",
+        productsDownloadParams: 0,
+        productsLimitParams: 10,
+        productsCategoryParams: "",
+        productsDetailByStore: false,
+        productsArticleParams: ""
     },
     reducers: {
         getProductsData: (state, action) => {
             state.productsData = action.payload;
         },
-        toggleApiLoader: (state, action) => {
-            state.apiLoader = action.payload
+        productsApiLoaderReducer: (state, action) => {
+            state.productsApiLoader = action.payload
         },
-        getPageParams: (state, action) => {
-            state.page = action.payload;
+        productsPageParamsReducer: (state, action) => {
+            state.productsPageParams = action.payload;
         },
-        getReportParams: (state, action) => {
-            state.report = action.payload;
+        productsReportParamsReducer: (state, action) => {
+            state.productsReportParams = action.payload;
         },
-        getCategoryParams: (state, action) => {
-            state.category = action.payload;
+        productsDownloadParamsReducer: (state, action) => {
+            state.productsDownloadParams = action.payload;
         },
-        getLimitParams: (state, action) => {
-            state.limit = action.payload;
+        productsCategoryParamsReducer: (state, action) => {
+            state.productsCategoryParams = action.payload;
         },
-        getDetailByStoreParams: (state, action) => {
-            state.detail_by_store = action.payload;
+        productsLimitParamsReducer: (state, action) => {
+            state.productsLimitParams = action.payload;
         },
-        resetData: (state) => {
-            state.formData = {};
+        productsDetailByStoreReducer: (state, action) => {
+            state.productsDetailByStore = action.payload;
+        },
+        productsArticleParamsReducer: (state, action) => {
+            state.productsArticleParams = action.payload;
+        },
+        productsResetDataReducer: (state) => {
             state.productsData = [];
-            state.apiLoader = false;
-            state.page = 1;
-            state.report = "by_articles";
-            state.download = false;
-            state.category = "";
-            state.detail_by_store = "";
+            state.productsApiLoader = false;
+            state.productsPageParams = 1;
+            state.productsReportParams = "by_articles";
+            state.productsDownloadParams = 0;
+            state.productsCategoryParams = "";
+            state.productsDetailByStore = "";
+            state.productsArticleParams = ""
         }
     },
 });
 export const {
-    toggleApiLoader,
+    productsApiLoaderReducer,
     getProductsData,
-    resetData,
-    getPageParams,
-    getReportParams,
-    getCategoryParams,
-    getDetailByStoreParams,
-    getLimitParams,
+    productsResetDataReducer,
+    productsPageParamsReducer,
+    productsReportParamsReducer,
+    productsCategoryParamsReducer,
+    productsDetailByStoreReducer,
+    productsLimitParamsReducer,
+    productsDownloadParamsReducer,
+    productsArticleParamsReducer
 } = productsSlice.actions;
