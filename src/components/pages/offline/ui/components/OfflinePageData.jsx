@@ -32,6 +32,7 @@ function OfflinePageData(props) {
     const {offSchemaData, offSchemaReportData, offSchemaRender} = useAppSelector(state => state?.offline)
 
     const [boardList, setBoardList] = useState([])
+    const [startList, setStartList] = useState([...offlineChartList])
     const [boardReportData, setBoardReportData] = useState([])
 
     const chartApexOptions = useChartApexOptions()
@@ -65,16 +66,15 @@ function OfflinePageData(props) {
 
     const onDragEnd = (result) => {
         if (!result.destination) return;
-        console.log('result', result)
+
         if (checkListIncludes(result)) {
             toastMessage('Отчет уже есть в списке', 'info')
             return;
         }
 
-        const items = Array.from(offlineChartList);
-        console.log(items)
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
+        const itemsFilterDroppable = offlineChartList.filter((item) => item?.key !== result?.draggableId)
+
+        setStartList([...itemsFilterDroppable])
 
         const itemsFilter = offlineChartList.filter((item) => item?.key == result?.draggableId)
 
@@ -106,7 +106,7 @@ function OfflinePageData(props) {
                         <ul className="w-full border p-4 my-5 flex items-center rounded content-stretch justify-between gap-5"
                             {...provided.droppableProps}
                             ref={provided.innerRef}>
-                            {offlineChartList.map((item, index) => (
+                            {startList.map((item, index) => (
                                 <Draggable key={item?.key} draggableId={item?.key?.toString()} index={index}>
                                     {(provided) => (
                                         <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs"
@@ -125,23 +125,60 @@ function OfflinePageData(props) {
                 </Droppable>
                 <Droppable droppableId="droppable2">
                     {(provided) => (
-                        <ul className="w-full border p-4 my-5 space-y-3"
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}>
-                            {boardList.map((item, index) => (
-                                <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
-                                    {(provided) => (
-                                        <li className="flex-1 border rounded p-5 cursor-pointer text-xs"
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            ref={provided.innerRef}>
-                                            {item.title}
-                                        </li>
-                                    )}
-                                </Draggable>
-                            ))}
+                        <div className={cn("w-full border rounded p-5")}
+                             {...provided.droppableProps}
+                             ref={provided.innerRef}>
+                            {
+                                // offSchemaRender ?
+                                Object.values(boardReportData || {}).map((schemaData, schemaId) => {
+                                    const reportData = schemaData?.["data"]?.["report"]
+                                    return (
+                                        reportData ? (
+                                            <Draggable
+                                                key={schemaData?.key}
+                                                draggableId={schemaData?.key?.toString()}
+                                                index={schemaId}
+                                            >
+                                                {(provided) => (
+                                                    <div
+                                                        className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")}
+                                                        key={schemaId}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                        ref={provided.innerRef}
+                                                    >
+                                                        <div className={"border rounded p-5"}>
+                                                            <ChartReact
+                                                                title={""}
+                                                                optionsData={chartApexOptions(reportData).options}
+                                                                seriesData={chartApexOptions(reportData).series}
+                                                                type={chartApexOptions(reportData).type}
+                                                                height={chartApexOptions(reportData).height}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ) : null
+                                    )
+                                })
+                                // :
+                                // null
+                            }
+                            {/*{boardList.map((item, index) => (*/}
+                            {/*    <Draggable key={item.id} draggableId={item.id.toString()} index={index}>*/}
+                            {/*        {(provided) => (*/}
+                            {/*            <li className="flex-1 border rounded p-5 cursor-pointer text-xs"*/}
+                            {/*                {...provided.draggableProps}*/}
+                            {/*                {...provided.dragHandleProps}*/}
+                            {/*                ref={provided.innerRef}>*/}
+                            {/*                {item.title}*/}
+                            {/*            </li>*/}
+                            {/*        )}*/}
+                            {/*    </Draggable>*/}
+                            {/*))}*/}
                             {provided.placeholder}
-                        </ul>
+                        </div>
                     )}
                 </Droppable>
             </DragDropContext>
@@ -190,33 +227,33 @@ function OfflinePageData(props) {
             {/*</div>*/}
 
 
-            <div className={cn("w-full")}>
-                {
-                    offSchemaRender ?
-                        Object.values(boardReportData || {}).map((schemaData, schemaId) => {
-                            const reportData = schemaData?.["data"]?.["report"]
-                            return (
-                                reportData ? (
-                                    <div
-                                        className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")}
-                                        key={schemaId}>
-                                        <div className={"border rounded p-5"}>
-                                            <ChartReact
-                                                title={""}
-                                                optionsData={chartApexOptions(reportData).options}
-                                                seriesData={chartApexOptions(reportData).series}
-                                                type={chartApexOptions(reportData).type}
-                                                height={chartApexOptions(reportData).height}
-                                            />
-                                        </div>
-                                    </div>
-                                ) : null
-                            )
-                        })
-                        :
-                        null
-                }
-            </div>
+            {/*<div className={cn("w-full")}>*/}
+            {/*    {*/}
+            {/*        offSchemaRender ?*/}
+            {/*            Object.values(boardReportData || {}).map((schemaData, schemaId) => {*/}
+            {/*                const reportData = schemaData?.["data"]?.["report"]*/}
+            {/*                return (*/}
+            {/*                    reportData ? (*/}
+            {/*                        <div*/}
+            {/*                            className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")}*/}
+            {/*                            key={schemaId}>*/}
+            {/*                            <div className={"border rounded p-5"}>*/}
+            {/*                                <ChartReact*/}
+            {/*                                    title={""}*/}
+            {/*                                    optionsData={chartApexOptions(reportData).options}*/}
+            {/*                                    seriesData={chartApexOptions(reportData).series}*/}
+            {/*                                    type={chartApexOptions(reportData).type}*/}
+            {/*                                    height={chartApexOptions(reportData).height}*/}
+            {/*                                />*/}
+            {/*                            </div>*/}
+            {/*                        </div>*/}
+            {/*                    ) : null*/}
+            {/*                )*/}
+            {/*            })*/}
+            {/*            :*/}
+            {/*            null*/}
+            {/*    }*/}
+            {/*</div>*/}
 
             {/*<div className={"border rounded p-5"}>*/}
             {/*    {*/}
