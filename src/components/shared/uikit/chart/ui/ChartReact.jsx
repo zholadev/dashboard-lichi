@@ -17,8 +17,6 @@ const Chart = dynamic(() => import('react-apexcharts'), {ssr: false});
 function ChartReact(props) {
     const {seriesData, optionsData, type, height, title} = props
 
-    console.log(optionsData, seriesData, type, height)
-
     if (!seriesData && !optionsData || !seriesData || !optionsData) {
         return null
     }

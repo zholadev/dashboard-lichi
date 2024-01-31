@@ -1,14 +1,15 @@
 'use client'
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {useApiRequest, useChartApexOptions, useDispatchActionHandle} from "@/components/shared/hooks";
 import {apiGetOfflineSchemaData} from "@/components/shared/services/axios/clientRequests";
-import {chartAvg, chartSalesDynamic, chartSegment, offlineChartList} from "@/components/shared/data/charts";
-import {Button} from "@/components/shared/shadcn/ui/button";
+import {offlineChartList} from "@/components/shared/data/charts";
 import {NotData} from "@/components/shared/uikit/templates";
+import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
+
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -27,6 +28,9 @@ function OfflinePageData(props) {
     const {apiFetchHandler} = useApiRequest()
 
     const {offSchemaData, offSchemaReportData, offSchemaRender} = useAppSelector(state => state?.offline)
+
+    const [boardList, setBoardList] = useState([])
+    const [boardReportData, setBoardReportData] = useState([])
 
     const chartApexOptions = useChartApexOptions()
 
@@ -49,16 +53,88 @@ function OfflinePageData(props) {
         fetchOfflineSchema()
     }, []);
 
+    useEffect(() => {
+        const getCurrentData = Object.values(offSchemaReportData || {}).filter(item => {
+            return boardList.some(board => board?.key === item?.key)
+        })
+
+        setBoardReportData([...getCurrentData])
+    }, [boardList, offSchemaReportData]);
+
+    // React DND
+    const onDragEnd = (result) => {
+        if (!result.destination) return;
+        console.log('result', result)
+        const items = Array.from(offlineChartList);
+        console.log(items)
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+
+        const itemsFilter = offlineChartList.filter((item) => item?.id == result?.draggableId)
+
+        setBoardList([...boardList, ...itemsFilter])
+        // Обновите state с новым порядком элементов
+    };
+    //
+    // console.log('boardList', boardList)
+    // console.log('boardReportData', boardReportData)
+
+
     if (offSchemaData.length === 0) {
         return <NotData/>
     }
 
     return (
         <>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="droppable1">
+                    {(provided) => (
+                        <ul className="w-full border p-4 my-5 flex items-center rounded justify-between gap-5"
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}>
+                            {offlineChartList.map((item, index) => (
+                                <Draggable key={item?.id} draggableId={item?.id?.toString()} index={index}>
+                                    {(provided) => (
+                                        <li className="flex-1 border rounded p-5 cursor-pointer text-xs"
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            ref={provided.innerRef}>
+                                            {item.title}
+                                        </li>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </ul>
+                    )}
+                </Droppable>
+                <Droppable droppableId="droppable2">
+                    {(provided)=> (
+                        <ul className="w-full border p-4 my-5 space-y-3"
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}>
+                            {boardList.map((item, index) => (
+                                <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
+                                    {(provided) => (
+                                        <li className="flex-1 border rounded p-5 cursor-pointer text-xs"
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            ref={provided.innerRef}>
+                                            {item.title}
+                                        </li>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </ul>
+                    )}
+                </Droppable>
+            </DragDropContext>
+
             {/*<ul className={cn("w-full border p-4 my-5 flex items-center rounded justify-between gap-5")}>*/}
             {/*    {*/}
             {/*        offlineChartList.map((item) => (*/}
-            {/*            <li key={item.id} className={cn("flex-1 border rotate-2 p-5 cursor-pointer")}>{item.title}</li>*/}
+            {/*            <li key={item.id} className={cn("flex-1 border rounded p-5 cursor-pointer text-xs")}>{item.title}</li>*/}
             {/*        ))*/}
             {/*    }*/}
             {/*</ul>*/}
@@ -98,21 +174,24 @@ function OfflinePageData(props) {
             {/*    }*/}
             {/*</div>*/}
 
+
             <div className={cn("w-full")}>
                 {
                     offSchemaRender ?
-                        Object.values(offSchemaReportData || {}).map((schemaData, schemaId) => {
+                        Object.values(boardReportData || {}).map((schemaData, schemaId) => {
+                            const reportData = schemaData?.["data"]?.["report"]
                             return (
-                                schemaData?.["report"] ? (
-                                    <div className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")}
-                                         key={schemaId}>
+                                reportData ? (
+                                    <div
+                                        className={cn("mb-20 grid 2xl:grid-cols-1 grid-cols-1 mt-5 gap-5")}
+                                        key={schemaId}>
                                         <div className={"border rounded p-5"}>
                                             <ChartReact
                                                 title={""}
-                                                optionsData={chartApexOptions(schemaData?.["report"]).options}
-                                                seriesData={chartApexOptions(schemaData?.["report"]).series}
-                                                type={chartApexOptions(schemaData?.["report"]).type}
-                                                height={chartApexOptions(schemaData?.["report"]).height}
+                                                optionsData={chartApexOptions(reportData).options}
+                                                seriesData={chartApexOptions(reportData).series}
+                                                type={chartApexOptions(reportData).type}
+                                                height={chartApexOptions(reportData).height}
                                             />
                                         </div>
                                     </div>

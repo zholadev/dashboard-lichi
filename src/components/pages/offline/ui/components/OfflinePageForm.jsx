@@ -56,6 +56,10 @@ function OfflinePageForm(props) {
     const fetchGetAllSchemaReportData = async (e) => {
         if (e) e.preventDefault()
 
+        // if (offSchemaReportData.length > 0) {
+        //     events.offSchemaReportGetData([])
+        // }
+
         Object.values(offSchemaData?.["schema"] || {}).map((schema, index) => {
             const timer = 400 * index
             Object.values(schema?.["content"] || {}).map((content) => {
@@ -66,15 +70,6 @@ function OfflinePageForm(props) {
         })
 
         events.offSchemaRenderToggle(true)
-
-        // fetchOfflineSchema(e, offlineChartList[0].key)
-        // fetchOfflineSchema(e, offlineChartList[1].key)
-        // fetchOfflineSchema(e, offlineChartList[2].key)
-        // fetchOfflineSchema(e, offlineChartList[3].key)
-        // fetchOfflineSchema(e, offlineChartList[4].key)
-        // fetchOfflineSchema(e, offlineChartList[5].key)
-        // fetchOfflineSchema(e, offlineChartList[6].key)
-        // fetchOfflineSchema(e, offlineChartList[7].key)
     }
 
     const fetchOfflineSchema = async (e, schema_type) => {
@@ -102,7 +97,7 @@ function OfflinePageForm(props) {
             {
                 onGetData: (params) => {
                     if (params.success) {
-                        events.offSchemaReportGetData(params.data)
+                        events.offSchemaReportGetData({"key": schema_type, data: params.data})
                     }
                 }
             }
