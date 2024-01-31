@@ -4,11 +4,12 @@ import React, {useEffect, useState} from 'react';
 import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {useApiRequest, useChartApexOptions, useDispatchActionHandle} from "@/components/shared/hooks";
+import {useApiRequest, useChartApexOptions, useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
 import {apiGetOfflineSchemaData} from "@/components/shared/services/axios/clientRequests";
 import {offlineChartList} from "@/components/shared/data/charts";
 import {NotData} from "@/components/shared/uikit/templates";
 import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd';
+import {MoveIcon} from "@radix-ui/react-icons";
 
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
@@ -23,6 +24,7 @@ const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/Char
  */
 function OfflinePageData(props) {
 
+    const toastMessage = useToastMessage()
     const events = useDispatchActionHandle()
 
     const {apiFetchHandler} = useApiRequest()
@@ -53,29 +55,41 @@ function OfflinePageData(props) {
         fetchOfflineSchema()
     }, []);
 
-    useEffect(() => {
-        const getCurrentData = Object.values(offSchemaReportData || {}).filter(item => {
-            return boardList.some(board => board?.key === item?.key)
-        })
-
-        setBoardReportData([...getCurrentData])
-    }, [boardList, offSchemaReportData]);
-
     // React DND
+
+    const checkListIncludes = (result) => {
+        const getItem = boardList.filter((item) => item?.key == result?.draggableId)
+        if (getItem.length > 0) return true
+    }
+
+
     const onDragEnd = (result) => {
         if (!result.destination) return;
         console.log('result', result)
+        if (checkListIncludes(result)) {
+            toastMessage('Отчет уже есть в списке', 'info')
+            return;
+        }
+
         const items = Array.from(offlineChartList);
         console.log(items)
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
 
-        const itemsFilter = offlineChartList.filter((item) => item?.id == result?.draggableId)
+        const itemsFilter = offlineChartList.filter((item) => item?.key == result?.draggableId)
 
         setBoardList([...boardList, ...itemsFilter])
+
+        setTimeout(() => {
+            const getCurrentData = Object.values(offSchemaReportData || {}).filter(item => {
+                return boardList.some(board => board?.key === item?.key)
+            })
+
+            setBoardReportData([...getCurrentData])
+        }, 1000)
         // Обновите state с новым порядком элементов
     };
-    //
+
     // console.log('boardList', boardList)
     // console.log('boardReportData', boardReportData)
 
@@ -87,18 +101,19 @@ function OfflinePageData(props) {
     return (
         <>
             <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="droppable1">
+                <Droppable>
                     {(provided) => (
-                        <ul className="w-full border p-4 my-5 flex items-center rounded justify-between gap-5"
+                        <ul className="w-full border p-4 my-5 flex items-center rounded content-stretch justify-between gap-5"
                             {...provided.droppableProps}
                             ref={provided.innerRef}>
                             {offlineChartList.map((item, index) => (
-                                <Draggable key={item?.id} draggableId={item?.id?.toString()} index={index}>
+                                <Draggable key={item?.key} draggableId={item?.key?.toString()} index={index}>
                                     {(provided) => (
-                                        <li className="flex-1 border rounded p-5 cursor-pointer text-xs"
+                                        <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs"
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
                                             ref={provided.innerRef}>
+                                            <MoveIcon/>
                                             {item.title}
                                         </li>
                                     )}
@@ -109,7 +124,7 @@ function OfflinePageData(props) {
                     )}
                 </Droppable>
                 <Droppable droppableId="droppable2">
-                    {(provided)=> (
+                    {(provided) => (
                         <ul className="w-full border p-4 my-5 space-y-3"
                             {...provided.droppableProps}
                             ref={provided.innerRef}>
