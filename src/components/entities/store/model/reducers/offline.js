@@ -5,6 +5,7 @@ export const offlineSlice = createSlice({
     initialState: {
         offSchemaData: [],
         offSchemaApiLoader: false,
+        offSchemaReportApiLoader: false,
         offSchemaReportData: [],
         offSchemaDataWithReport: [],
         offSchemaRender: false,
@@ -31,7 +32,7 @@ export const offlineSlice = createSlice({
             state.offSchemaApiLoader = action.payload
         },
         getOffSchemaReportDataAction: (state, action) => {
-        state.offSchemaReportData = [...state.offSchemaReportData, action.payload]
+            state.offSchemaReportData = [...state.offSchemaReportData, action.payload]
         },
         getOffSchemaDataWithReportDataAction: (state, action) => {
             state.offSchemaDataWithReport = action.payload
@@ -78,10 +79,13 @@ export const offlineSlice = createSlice({
         offBoardNotUseListReducer: (state, action) => {
             state.offBoardNotUseList = action.payload
         },
-
+        offSchemaReportApiLoaderReducer: (state, action) => {
+            state.offSchemaReportApiLoader = action.payload
+        },
         resetOffSchemaDataReducer: (state) => {
             state.offSchemaData = []
             state.offSchemaApiLoader = false
+            state.offSchemaReportApiLoader = false
             state.offSchemaReportData = []
             state.offSchemaDataWithReport = []
             state.offSchemaRender = false
@@ -120,5 +124,6 @@ export const {
     offDragStartBoardReducer,
     offBoardUseListReducer,
     offBoardNotUseListReducer,
-    offBoardReportUseDataReducer
+    offBoardReportUseDataReducer,
+    offSchemaReportApiLoaderReducer
 } = offlineSlice.actions;

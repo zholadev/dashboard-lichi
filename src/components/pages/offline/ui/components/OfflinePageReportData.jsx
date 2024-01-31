@@ -5,6 +5,7 @@ import {offlineChartList} from "@/components/shared/data/charts";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import dynamic from "next/dynamic";
 import {useChartApexOptions} from "@/components/shared/hooks";
+import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -24,11 +25,22 @@ function OfflinePageReportData(props) {
         offDragStartBoard,
         offBoardNotUseList,
         offSchemaReportData,
-        offBoardReportUseData
+        offBoardReportUseData,
+        offSchemaReportApiLoader
     } = useAppSelector(state => state?.offline)
 
 
     const chartApexOptions = useChartApexOptions()
+
+    if (offSchemaReportApiLoader) {
+        return (
+            <>
+                <Skeleton className="w-[100%] h-[170px] rounded-2 mb-3"/>
+                <Skeleton className="w-[100%] h-[170px] rounded-2 mb-3"/>
+                <Skeleton className="w-[100%] h-[170px] rounded-2 mb-3"/>
+            </>
+        )
+    }
 
     if (offSchemaReportData.length === 0) {
         return <NotData/>

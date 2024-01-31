@@ -93,7 +93,7 @@ function OfflinePageForm(props) {
         await apiFetchHandler(
             apiGetOfflineSchemaDetail,
             [schema_type, apiParams],
-            false,
+            events.offSchemaReportApiLoaderAction,
             {
                 onGetData: (params) => {
                     if (params.success) {

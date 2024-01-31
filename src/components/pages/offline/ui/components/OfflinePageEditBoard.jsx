@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import {cn} from "@/lib/utils";
-import {DragHandleDots2Icon, MoveIcon} from "@radix-ui/react-icons";
+import {MoveIcon} from "@radix-ui/react-icons";
 import {offlineChartList} from "@/components/shared/data/charts";
-import {useApiRequest, useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {useApiRequest, useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
 
 /**
  * @author Zholaman Zhumanov
@@ -31,7 +31,7 @@ function OfflinePageEditBoard(props) {
 
     const toggleDrag = (value) => events.offDragStartBoardAction(value)
 
-    const onDragStart = (value) => toggleDrag(true)
+    const onDragStart = () => toggleDrag(true)
 
     const checkListIncludes = (result) => {
         const getItem = offBoardUseList.filter((item) => item?.key == result?.draggableId)
@@ -41,7 +41,7 @@ function OfflinePageEditBoard(props) {
     const onDragEnd = (result) => {
         if (!result.destination) return;
 
-        // console.log(result, JSON.parse(localStorage.getItem("schema_use_list")))
+        console.log(result)
 
         if (result?.source?.droppableId === 'not_use_list') {
             if (checkListIncludes(result)) {
@@ -50,6 +50,8 @@ function OfflinePageEditBoard(props) {
             }
 
             const itemsFilterDroppable = offBoardNotUseList.filter((item) => item?.key !== result?.draggableId)
+
+            localStorage.setItem("schema_not_use_list", JSON.stringify([...itemsFilterDroppable]))
 
             events.offBoardNotUseListAction([...itemsFilterDroppable])
 
@@ -62,9 +64,13 @@ function OfflinePageEditBoard(props) {
         } else if (result?.source?.droppableId === 'use_list') {
             const itemsFilter = offBoardUseList.filter((item) => item?.key !== result?.draggableId)
 
+            localStorage.setItem("schema_use_list", JSON.stringify([...itemsFilter]))
+
             events.offBoardUseListAction([...itemsFilter])
 
             const itemsFilterDroppable = offlineChartList.filter((item) => item?.key == result?.draggableId)
+
+            localStorage.setItem("schema_not_use_list", JSON.stringify([...offBoardNotUseList, ...itemsFilterDroppable]))
 
             events.offBoardNotUseListAction([...offBoardNotUseList, ...itemsFilterDroppable])
         } else {
@@ -75,7 +81,13 @@ function OfflinePageEditBoard(props) {
     };
 
     useEffect(() => {
-        events.offBoardNotUseListAction([...offlineChartList])
+        if (!localStorage.getItem("schema_use_list")) return
+        events.offBoardUseListAction(JSON.parse(localStorage.getItem("schema_use_list")))
+    }, [])
+
+    useEffect(() => {
+        if (!localStorage.getItem("schema_not_use_list")) events.offBoardNotUseListAction([...offlineChartList])
+        events.offBoardNotUseListAction(JSON.parse(localStorage.getItem("schema_not_use_list")))
     }, []);
 
     return (
