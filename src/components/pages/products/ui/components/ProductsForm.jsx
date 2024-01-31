@@ -24,7 +24,7 @@ import {categories} from "@/components/shared/data/categories";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {apiGetProductsListData} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
-import {useApiRequest, useDispatchActionHandle, usePreviousFriday} from "@/components/shared/hooks";
+import {useApiRequest, useDispatchActionHandle, useGetDomain, usePreviousFriday} from "@/components/shared/hooks";
 
 /**
  * @author Zholaman Zhumanov
@@ -37,6 +37,7 @@ function ProductsForm(props) {
     const events = useDispatchActionHandle()
 
     const lastFriday = usePreviousFriday();
+    const domain = useGetDomain()
 
     const {apiFetchHandler} = useApiRequest()
 
@@ -81,7 +82,7 @@ function ProductsForm(props) {
                 onGetData: (params) => {
                     console.log(params.data)
                     if (download || productsDownloadParams) {
-                        const url = "http://localhost:3000/products/"
+                        const url = `${domain}/products/`
                         const link = document.createElement('a');
                         link.href = url;
                         link.download = params.data?.['download_file']
@@ -221,35 +222,34 @@ function ProductsForm(props) {
                     </Select>
                 }
 
-                <div className={cn("flex items-center flex-wrap gap-10 justify-between")}>
-                    <div className="flex items-center space-x-2">
-                        <Switch
-                            id="airplane-mode"
-                            onCheckedChange={(value) => events.productsDetailByStoreParamsAction(value)}
-                        />
-                        <Label htmlFor="airplane-mode">Группировка по магазинам</Label>
-                    </div>
-
-                    <Button
-                        type={"submit"}
-                        className={cn("2xl:w-[230px] w-[100%]")}>
-                        <LoaderButton loading={productsApiLoader}/>
-                        Сформировать
-                    </Button>
+            </form>
+            <div className={cn("flex items-center flex-wrap gap-10")}>
+                <div className="flex items-center space-x-2">
+                    <Switch
+                        id="airplane-mode"
+                        onCheckedChange={(value) => events.productsDetailByStoreParamsAction(value)}
+                    />
+                    <Label htmlFor="airplane-mode">Группировка по магазинам</Label>
                 </div>
 
-            </form>
-            <div className={cn("w-full")}>
+                <Button
+                    type={"submit"}
+                    className={cn("md:w-[400px] w-full")}>
+                    <LoaderButton loading={productsApiLoader}/>
+                    Сформировать
+                </Button>
+
                 <Button
                     type={"button"}
                     variant={'secondary'}
-                    className={cn("w-full max-w-[400px]")}
+                    className={cn("w-full md:max-w-[120px]")}
                     onClick={e => fetchProductsData(e, 1)}
                 >
                     <LoaderButton loading={productsApiLoader}/>
                     <DownloadIcon/>
                 </Button>
             </div>
+
         </div>
 
     );
