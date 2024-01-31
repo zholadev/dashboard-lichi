@@ -18,18 +18,17 @@ const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/Char
 /**
  * @author Zholaman Zhumanov
  * @created 26.01.2024
- * @param props
  * @returns {Element}
  * @constructor
  */
-function OfflinePageData(props) {
+function OfflinePageData() {
 
     const toastMessage = useToastMessage()
     const events = useDispatchActionHandle()
 
     const {apiFetchHandler} = useApiRequest()
 
-    const {offSchemaData, offSchemaReportData, offSchemaRender} = useAppSelector(state => state?.offline)
+    const {offSchemaData, offSchemaReportData} = useAppSelector(state => state?.offline)
 
     const [boardList, setBoardList] = useState([])
     const [startDrag, setStartDrag] = useState(false)
@@ -147,7 +146,6 @@ function OfflinePageData(props) {
                                 Object.values(boardReportData || {}).map((schemaData, schemaId) => {
                                     const reportData = schemaData?.["data"]?.["report"]
                                     const getChartCurrentData = offlineChartList.filter((item) => item?.key === schemaData?.["key"])
-                                    console.log(getChartCurrentData)
                                     return (
                                         reportData ? (
                                             <Draggable

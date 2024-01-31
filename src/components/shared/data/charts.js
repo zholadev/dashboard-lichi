@@ -1,9 +1,10 @@
 export const offlineChartList = [
+    // {
+    //     "id": 1,
+    //     "title": "Продажи по магазинам",
+    //     "key": "stores"
+    // },
     {
-        "id": 1,
-        "title": "Продажи по магазинам",
-        "key": "stores"
-    },{
         "id": 2,
         "title": "Динамика продаж",
         "key": "sale_dynamic"
@@ -15,25 +16,27 @@ export const offlineChartList = [
         "id": 4,
         "title": "Сегменты",
         "key": "product_category"
-    },{
-        "id": 5,
-        "title": "ТОП Продаж",
-        "key": "product_top_sale"
-    },{
-        "id": 6,
-        "title": "ТОП Возвратов",
-        "key": "product_top_return"
     },
+    // {
+    //     "id": 5,
+    //     "title": "ТОП Продаж",
+    //     "key": "product_top_sale"
+    // },
+    // {
+    //     "id": 6,
+    //     "title": "ТОП Возвратов",
+    //     "key": "product_top_return"
+    // },
     {
         "id": 7,
         "title": "Активность",
         "key": "week_activity"
     },
-    {
-        "id": 8,
-        "title": "Продажи по магазинам (по дням)",
-        "key": "stores_by_day"
-    },
+    // {
+    //     "id": 8,
+    //     "title": "Продажи по магазинам (по дням)",
+    //     "key": "stores_by_day"
+    // },
 ]
 
 export const chartSalesDynamic = {
