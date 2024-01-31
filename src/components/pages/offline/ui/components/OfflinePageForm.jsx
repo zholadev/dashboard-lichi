@@ -56,15 +56,15 @@ function OfflinePageForm(props) {
     const fetchGetAllSchemaReportData = async (e) => {
         if (e) e.preventDefault()
 
-        // if (offSchemaReportData.length > 0) {
-        //     events.offSchemaReportGetData([])
-        // }
+        if (offSchemaReportData.length > 0) {
+            events.offSchemaReportGetData([])
+        }
 
         Object.values(offSchemaData?.["schema"] || {}).map((schema, index) => {
             const timer = 400 * index
             Object.values(schema?.["content"] || {}).map((content) => {
                 setTimeout(() => {
-                    fetchOfflineSchema(e, content, content)
+                    fetchOfflineSchema(e, content, index)
                 }, timer)
             })
         })
@@ -72,7 +72,7 @@ function OfflinePageForm(props) {
         events.offSchemaRenderToggle(true)
     }
 
-    const fetchOfflineSchema = async (e, schema_type) => {
+    const fetchOfflineSchema = async (e, schema_type, index) => {
         if (e) e.preventDefault()
 
         let apiParams = {
@@ -97,7 +97,7 @@ function OfflinePageForm(props) {
             {
                 onGetData: (params) => {
                     if (params.success) {
-                        events.offSchemaReportGetData({"key": schema_type, data: params.data})
+                        events.offSchemaReportGetData({"key": schema_type, "data": params.data, "id": index})
                     }
                 }
             }

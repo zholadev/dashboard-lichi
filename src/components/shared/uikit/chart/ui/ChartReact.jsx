@@ -36,4 +36,4 @@ function ChartReact(props) {
     );
 }
 
-export default ChartReact;
+export default React.memo(ChartReact);

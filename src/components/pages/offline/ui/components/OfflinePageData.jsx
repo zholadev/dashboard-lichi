@@ -129,14 +129,13 @@ function OfflinePageData(props) {
                              {...provided.droppableProps}
                              ref={provided.innerRef}>
                             {
-                                // offSchemaRender ?
                                 Object.values(boardReportData || {}).map((schemaData, schemaId) => {
                                     const reportData = schemaData?.["data"]?.["report"]
                                     return (
                                         reportData ? (
                                             <Draggable
-                                                key={schemaData?.key}
-                                                draggableId={schemaData?.key?.toString()}
+                                                key={schemaData?.id}
+                                                draggableId={schemaData?.id?.toString()}
                                                 index={schemaId}
                                             >
                                                 {(provided) => (
@@ -162,21 +161,7 @@ function OfflinePageData(props) {
                                         ) : null
                                     )
                                 })
-                                // :
-                                // null
                             }
-                            {/*{boardList.map((item, index) => (*/}
-                            {/*    <Draggable key={item.id} draggableId={item.id.toString()} index={index}>*/}
-                            {/*        {(provided) => (*/}
-                            {/*            <li className="flex-1 border rounded p-5 cursor-pointer text-xs"*/}
-                            {/*                {...provided.draggableProps}*/}
-                            {/*                {...provided.dragHandleProps}*/}
-                            {/*                ref={provided.innerRef}>*/}
-                            {/*                {item.title}*/}
-                            {/*            </li>*/}
-                            {/*        )}*/}
-                            {/*    </Draggable>*/}
-                            {/*))}*/}
                             {provided.placeholder}
                         </div>
                     )}
