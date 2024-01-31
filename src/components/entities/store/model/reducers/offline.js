@@ -16,7 +16,12 @@ export const offlineSlice = createSlice({
         offCategoryParams: "",
         offDateCalendarValue: {from: "", to: new Date()},
         offStoresData: [],
-        offChartWeekActivity: {}
+        offChartWeekActivity: {},
+        offEditBoard: false,
+        offDragStartBoard: false,
+        offBoardUseList: [],
+        offBoardNotUseList: [],
+        offBoardReportUseData: []
     },
     reducers: {
         getOffSchemaDataAction: (state, action) => {
@@ -58,6 +63,22 @@ export const offlineSlice = createSlice({
         offDateGroupParamsReducer: (state, action) => {
             state.offDateGroupParams = action.payload
         },
+        offEditBoardReducer: (state, action) => {
+            state.offEditBoard = action.payload
+        },
+        offDragStartBoardReducer: (state, action) => {
+            state.offDragStartBoard = action.payload
+        },
+        offBoardUseListReducer: (state, action) => {
+            state.offBoardUseList = action.payload
+        },
+        offBoardReportUseDataReducer: (state, action) => {
+            state.offBoardReportUseData = action.payload
+        },
+        offBoardNotUseListReducer: (state, action) => {
+            state.offBoardNotUseList = action.payload
+        },
+
         resetOffSchemaDataReducer: (state) => {
             state.offSchemaData = []
             state.offSchemaApiLoader = false
@@ -72,6 +93,11 @@ export const offlineSlice = createSlice({
             state.offCategoryParams = ""
             state.offDateCalendarValue = {from: "", to: new Date()}
             state.offStoresData = []
+            state.offBoardUseList = []
+            state.offBoardNotUseList = []
+            state.offBoardReportUseData = []
+            state.offEditBoard = false
+            state.offDragStartBoard = false
         }
     },
 });
@@ -89,5 +115,10 @@ export const {
     offCategoryParamsReducer,
     offSchemaArticleParamsReducer,
     offDateGroupParamsReducer,
-    offDateCalendarValueReducer
+    offDateCalendarValueReducer,
+    offEditBoardReducer,
+    offDragStartBoardReducer,
+    offBoardUseListReducer,
+    offBoardNotUseListReducer,
+    offBoardReportUseDataReducer
 } = offlineSlice.actions;
