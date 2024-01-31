@@ -32,10 +32,13 @@ function OfflinePageData(props) {
     const {offSchemaData, offSchemaReportData, offSchemaRender} = useAppSelector(state => state?.offline)
 
     const [boardList, setBoardList] = useState([])
-    const [startList, setStartList] = useState([...offlineChartList])
+    const [startDrag, setStartDrag] = useState(false)
     const [boardReportData, setBoardReportData] = useState([])
+    const [startList, setStartList] = useState([...offlineChartList])
 
     const chartApexOptions = useChartApexOptions()
+
+    const toggleDrag = (value) => setStartDrag(value)
 
     const fetchOfflineSchema = async () => {
         await apiFetchHandler(
@@ -57,12 +60,19 @@ function OfflinePageData(props) {
     }, []);
 
     // React DND
+    const onDragStart = (value) => {
+        toggleDrag(true)
+    }
+
+    const onBeforeCapture = (value) => {
+        console.log(value)
+        toggleDrag(false)
+    }
 
     const checkListIncludes = (result) => {
         const getItem = boardList.filter((item) => item?.key == result?.draggableId)
         if (getItem.length > 0) return true
     }
-
 
     const onDragEnd = (result) => {
         if (!result.destination) return;
@@ -72,14 +82,22 @@ function OfflinePageData(props) {
             return;
         }
 
-        const itemsFilterDroppable = offlineChartList.filter((item) => item?.key !== result?.draggableId)
+        toggleDrag(false)
+
+        const itemsFilterDroppable = startList.filter((item) => item?.key !== result?.draggableId)
 
         setStartList([...itemsFilterDroppable])
 
         const itemsFilter = offlineChartList.filter((item) => item?.key == result?.draggableId)
 
         setBoardList([...boardList, ...itemsFilter])
+        // Обновите state с новым порядком элементов
+    };
 
+    // console.log('boardList', boardList)
+    // console.log('boardReportData', boardReportData)
+
+    useEffect(() => {
         setTimeout(() => {
             const getCurrentData = Object.values(offSchemaReportData || {}).filter(item => {
                 return boardList.some(board => board?.key === item?.key)
@@ -87,11 +105,7 @@ function OfflinePageData(props) {
 
             setBoardReportData([...getCurrentData])
         }, 1000)
-        // Обновите state с новым порядком элементов
-    };
-
-    // console.log('boardList', boardList)
-    // console.log('boardReportData', boardReportData)
+    }, [boardList, offSchemaReportData])
 
 
     if (offSchemaData.length === 0) {
@@ -100,7 +114,7 @@ function OfflinePageData(props) {
 
     return (
         <>
-            <DragDropContext onDragEnd={onDragEnd}>
+            <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart} onBeforeCapture={onBeforeCapture}>
                 <Droppable>
                     {(provided) => (
                         <ul className="w-full border p-4 my-5 flex items-center rounded content-stretch justify-between gap-5"
@@ -125,12 +139,15 @@ function OfflinePageData(props) {
                 </Droppable>
                 <Droppable droppableId="droppable2">
                     {(provided) => (
-                        <div className={cn("w-full border rounded p-5")}
-                             {...provided.droppableProps}
-                             ref={provided.innerRef}>
+                        <div
+                            className={cn("w-full border rounded p-5 will-change-auto duration-300 transition-all", startDrag ? "bg-green-100 border-3 border-amber-300" : "")}
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}>
                             {
                                 Object.values(boardReportData || {}).map((schemaData, schemaId) => {
                                     const reportData = schemaData?.["data"]?.["report"]
+                                    const getChartCurrentData = offlineChartList.filter((item) => item?.key === schemaData?.["key"])
+                                    console.log(getChartCurrentData)
                                     return (
                                         reportData ? (
                                             <Draggable
@@ -148,7 +165,7 @@ function OfflinePageData(props) {
                                                     >
                                                         <div className={"border rounded p-5"}>
                                                             <ChartReact
-                                                                title={""}
+                                                                title={getChartCurrentData?.[0]?.title}
                                                                 optionsData={chartApexOptions(reportData).options}
                                                                 seriesData={chartApexOptions(reportData).series}
                                                                 type={chartApexOptions(reportData).type}
