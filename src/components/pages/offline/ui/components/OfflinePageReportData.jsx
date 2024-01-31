@@ -1,11 +1,18 @@
-import React from 'react';
-import {NotData} from "@/components/shared/uikit/templates";
+import React, {useCallback} from 'react';
 import {cn} from "@/lib/utils";
-import {offlineChartList} from "@/components/shared/data/charts";
-import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import dynamic from "next/dynamic";
-import {useChartApexOptions} from "@/components/shared/hooks";
+import {TableData} from "@/components/shared/uikit/table";
+import {useCalcPercent, useChartApexOptions, useGetRandomColor} from "@/components/shared/hooks";
+import {NotData} from "@/components/shared/uikit/templates";
+import {offlineChartList} from "@/components/shared/data/charts";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
+import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import Image from "next/image";
+import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {CaretSortIcon} from "@radix-ui/react-icons";
+import {Heading} from "@/components/shared/uikit/heading";
+import {Badge} from "@/components/shared/shadcn/ui/badge";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -20,17 +27,273 @@ const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/Char
 function OfflinePageReportData(props) {
     const {
         offEditBoard,
-        offSchemaData,
-        offBoardUseList,
-        offDragStartBoard,
-        offBoardNotUseList,
         offSchemaReportData,
         offBoardReportUseData,
         offSchemaReportApiLoader
     } = useAppSelector(state => state?.offline)
 
-
     const chartApexOptions = useChartApexOptions()
+
+    const calcPercent = useCalcPercent()
+    const getRandomColor = useGetRandomColor()
+
+    const getTableColumns = useCallback((data, type, dataItems, dataBody) => {
+        try {
+            return Object.keys(data || {}).map((key) => {
+                if (key === 'photo') {
+                    return {
+                        "accessorKey": key,
+                        cell: ({row}) => (
+                            <div>
+                                <Image
+                                    width={60}
+                                    height={90}
+                                    src={row.original[key]}
+                                    alt={'...'}
+                                />
+                            </div>
+                        ),
+                        "header": data?.[key]?.["label"],
+                    }
+                } else {
+                    if (type === "stores") {
+                        if (key === 'total') {
+                            return {
+                                "accessorKey": key,
+                                "header": ({column}) => {
+                                    return (
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                        >
+                                            {data?.[key]?.["label"]}
+                                            <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                        </Button>
+                                    )
+                                },
+                                cell: ({row}) => (
+                                    <div
+                                        className={cn("w-full flex items-center md:flex-row p-3 flex-col justify-between mb-2 relative")}>
+                                        <div className={cn("absolute top-0 left-0 h-full")}
+                                             style={{
+                                                 backgroundColor: `${getRandomColor(dataItems, row?.["id"])}`,
+                                                 width: `${calcPercent(row?.["original"]?.["total"], dataBody?.[0]?.["sale"])}%`
+                                             }}/>
+                                        <Heading type={"h4"}
+                                                 cls={cn("mb-0 text-bold relative font-medium")}>{row?.["original"]?.["total"]}</Heading>
+                                        <Badge
+                                            className={cn("relative")}>{calcPercent(row?.["original"]?.["total"], dataBody?.[0]?.["sale"])} %</Badge>
+                                    </div>
+                                )
+                            }
+                        }
+                        if (key === 'sale') {
+                            return {
+                                "accessorKey": key,
+                                "header": ({column}) => {
+                                    return (
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                        >
+                                            {data?.[key]?.["label"]}
+                                            <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                        </Button>
+                                    )
+                                },
+                                cell: ({row}) => (
+                                    <div
+                                        className={cn("w-full flex items-center md:flex-row p-3 flex-col justify-between mb-2 relative")}>
+                                        <div className={cn("absolute top-0 left-0 h-full")}
+                                             style={{
+                                                 backgroundColor: `${getRandomColor(dataItems, row?.["id"])}`,
+                                                 width: `${calcPercent(row?.["original"]?.["sale"], dataBody?.[0]?.["sale"])}%`
+                                             }}/>
+                                        <Heading type={"h4"}
+                                                 cls={cn("mb-0 text-bold relative font-medium")}>{row?.["original"]?.["sale"]}</Heading>
+                                        <Badge
+                                            className={cn("relative")}>{Number(row?.["original"]?.["sale"]) - Number(row?.["original"]?.["sale_by_price"])}</Badge>
+                                    </div>
+                                )
+                            }
+                        }
+                        if (key === 'refund') {
+                            return {
+                                "accessorKey": key,
+                                "header": ({column}) => {
+                                    return (
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                        >
+                                            {data?.[key]?.["label"]}
+                                            <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                        </Button>
+                                    )
+                                },
+                                cell: ({row}) => (
+                                    <div
+                                        className={cn("w-full flex items-center md:flex-row p-3 flex-col justify-between mb-2 relative")}>
+                                        <div className={cn("absolute top-0 left-0 h-full")}
+                                             style={{
+                                                 backgroundColor: `${getRandomColor(dataItems, row?.["id"])}`,
+                                                 width: `${calcPercent(row?.["original"]?.["refund"], dataBody?.[0]?.["sale"])}%`
+                                             }}/>
+                                        <Heading type={"h4"}
+                                                 cls={cn("mb-0 text-bold relative font-medium")}>{row?.["original"]?.["refund"]}</Heading>
+                                        <Badge
+                                            className={cn("relative")}>{Number(row?.["original"]?.["refund"]) - Number(row?.["original"]?.["refund_by_price"])}</Badge>
+                                    </div>
+                                )
+                            }
+                        } else {
+                            return {
+                                "accessorKey": key,
+                                "header": ({column}) => {
+                                    return (
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                        >
+                                            {data?.[key]?.["label"]}
+                                            <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                        </Button>
+                                    )
+                                },
+
+                            }
+                        }
+                    }
+                    else if (type === "stores_by_day") {
+                        if (key === 'total') {
+                            return {
+                                "accessorKey": key,
+                                "header": ({column}) => {
+                                    return (
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                        >
+                                            {data?.[key]?.["label"]}
+                                            <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                        </Button>
+                                    )
+                                },
+                                cell: ({row}) => (
+                                    <div
+                                        className={cn("w-full flex items-center md:flex-row p-3 flex-col justify-between mb-2 relative")}>
+                                        <div className={cn("absolute top-0 left-0 h-full")}
+                                             style={{
+                                                 backgroundColor: `${getRandomColor(dataItems, row?.["id"])}`,
+                                                 width: `${calcPercent(row?.["original"]?.["total"], dataBody?.[0]?.["sale"])}%`
+                                             }}/>
+                                        <Heading type={"h4"}
+                                                 cls={cn("mb-0 text-bold relative font-medium")}>{row?.["original"]?.["total"]}</Heading>
+                                        <Badge
+                                            className={cn("relative")}>{calcPercent(row?.["original"]?.["total"], dataBody?.[0]?.["sale"])} %</Badge>
+                                    </div>
+                                )
+                            }
+                        }
+                        if (key === 'sale') {
+                            return {
+                                "accessorKey": key,
+                                "header": ({column}) => {
+                                    return (
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                        >
+                                            {data?.[key]?.["label"]}
+                                            <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                        </Button>
+                                    )
+                                },
+                                cell: ({row}) => (
+                                    <div
+                                        className={cn("w-full flex items-center md:flex-row p-3 flex-col justify-between mb-2 relative")}>
+                                        <div className={cn("absolute top-0 left-0 h-full")}
+                                             style={{
+                                                 backgroundColor: `${getRandomColor(dataItems, row?.["id"])}`,
+                                                 width: `${calcPercent(row?.["original"]?.["sale"], dataBody?.[0]?.["sale"])}%`
+                                             }}/>
+                                        <Heading type={"h4"}
+                                                 cls={cn("mb-0 text-bold relative font-medium")}>{row?.["original"]?.["sale"]}</Heading>
+                                        <Badge
+                                            className={cn("relative")}>{Number(row?.["original"]?.["sale"]) - Number(row?.["original"]?.["sale_by_price"])}</Badge>
+                                    </div>
+                                )
+                            }
+                        }
+                        if (key === 'refund') {
+                            return {
+                                "accessorKey": key,
+                                "header": ({column}) => {
+                                    return (
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                        >
+                                            {data?.[key]?.["label"]}
+                                            <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                        </Button>
+                                    )
+                                },
+                                cell: ({row}) => (
+                                    <div
+                                        className={cn("w-full flex items-center md:flex-row p-3 flex-col justify-between mb-2 relative")}>
+                                        <div className={cn("absolute top-0 left-0 h-full")}
+                                             style={{
+                                                 backgroundColor: `${getRandomColor(dataItems, row?.["id"])}`,
+                                                 width: `${calcPercent(row?.["original"]?.["refund"], dataBody?.[0]?.["sale"])}%`
+                                             }}/>
+                                        <Heading type={"h4"}
+                                                 cls={cn("mb-0 text-bold relative font-medium")}>{row?.["original"]?.["refund"]}</Heading>
+                                        <Badge
+                                            className={cn("relative")}>{Number(row?.["original"]?.["refund"]) - Number(row?.["original"]?.["refund_by_price"])}</Badge>
+                                    </div>
+                                )
+                            }
+                        } else {
+                            return {
+                                "accessorKey": key,
+                                "header": ({column}) => {
+                                    return (
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                        >
+                                            {data?.[key]?.["label"]}
+                                            <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                        </Button>
+                                    )
+                                },
+
+                            }
+                        }
+                    } else {
+                        return {
+                            "accessorKey": key,
+                            "header": ({column}) => {
+                                return (
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                    >
+                                        {data?.[key]?.["label"]}
+                                        <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                    </Button>
+                                )
+                            },
+
+                        }
+                    }
+                }
+            })
+        } catch (error) {
+            errorHandler("offPageReportData", "getTableColumns", error)
+        }
+    }, [offSchemaReportData, getRandomColor])
 
     if (offSchemaReportApiLoader) {
         return (
@@ -51,22 +314,35 @@ function OfflinePageReportData(props) {
             <div className={cn("w-full border rounded p-5 will-change-auto")}>
                 {
                     Object.values(offBoardReportUseData || {}).map((schemaData, schemaId) => {
-                        const reportData = schemaData?.["data"]?.["report"]
+                        const reportChart = schemaData?.["data"]?.["report"]
+                        const reportTable = schemaData?.["data"]?.["table"]
                         const getChartCurrentData = offlineChartList.filter((item) => item?.key === schemaData?.["key"])
                         return (
-                            reportData ? (
+                            reportChart ? (
                                 <div
                                     className={cn("mb-20 grid grid-cols-1 mt-5 gap-5")}
                                     key={schemaId}>
                                     <div className={"border rounded p-5"}>
                                         <ChartReact
                                             title={getChartCurrentData?.[0]?.title}
-                                            optionsData={chartApexOptions(reportData).options}
-                                            seriesData={chartApexOptions(reportData).series}
-                                            type={chartApexOptions(reportData).type}
-                                            height={chartApexOptions(reportData).height}
+                                            optionsData={chartApexOptions(reportChart).options}
+                                            seriesData={chartApexOptions(reportChart).series}
+                                            type={chartApexOptions(reportChart).type}
+                                            height={chartApexOptions(reportChart).height}
                                         />
                                     </div>
+                                </div>
+                            ) : reportTable ? (
+                                <div>
+                                    <Heading type={"h3"} cls={"mb-2 mt-4"}>{getChartCurrentData?.[0]?.title}</Heading>
+                                    <TableData
+                                        data={reportTable?.["data"]}
+                                        columns={getTableColumns(reportTable?.["head"], schemaData?.["key"], reportTable?.["data"]?.length, reportTable?.["data"])}
+                                        hidePagination={schemaData?.["key"] === 'stores_by_day'}
+                                        hideLimitContent={schemaData?.["key"] === 'stores_by_day'}
+                                        pageCount={reportTable?.["data"].length / 10}
+                                        pageSize={10}
+                                    />
                                 </div>
                             ) : null
                         )

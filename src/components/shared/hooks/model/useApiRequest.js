@@ -1,9 +1,7 @@
 'use client'
 import {useState} from 'react';
 import useToastMessage from "./useToastMessage";
-import {useRouter} from "next/navigation";
-import Cookie from "js-cookie";
-import {routerPagesList} from "@/components/entities/router";
+import {useLogout} from "@/components/shared/hooks";
 
 /**
  * @author Zholaman Zhumanov
@@ -15,7 +13,7 @@ function useApiRequest() {
     const [loading, setLoading] = useState(false)
     const toastMessage = useToastMessage()
 
-    const router = useRouter()
+    const logout = useLogout()
 
     const handleErrorMessage = (messages, exceptions, options) => {
         if (!options?.onDisabledMessage) {
@@ -38,8 +36,7 @@ function useApiRequest() {
 
     const userSessionEnd = (code) => {
         if (code === 500) {
-            Cookie.remove("dashboard-token")
-            return router.push(routerPagesList.login)
+            logout()
         }
     }
 

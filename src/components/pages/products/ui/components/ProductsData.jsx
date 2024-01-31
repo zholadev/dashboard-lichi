@@ -6,9 +6,12 @@ import Image from 'next/image'
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
-import {useDispatchActionHandle} from "@/components/shared/hooks";
+import {useColorWithOpacity, useDispatchActionHandle} from "@/components/shared/hooks";
 import {TableData} from "@/components/shared/uikit/table";
 import {NotData} from "@/components/shared/uikit/templates";
+import {Heading} from "@/components/shared/uikit/heading";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {CaretSortIcon} from "@radix-ui/react-icons";
 
 /**
  * @author Zholaman Zhumanov
@@ -27,6 +30,7 @@ function ProductsData() {
         productsDetailByStore
     } = useAppSelector(state => state.products)
 
+    const colorWithOpacity = useColorWithOpacity()
     const events = useDispatchActionHandle()
 
     const getTableColumns = useMemo(() => {
@@ -36,7 +40,7 @@ function ProductsData() {
                     return {
                         "accessorKey": key,
                         cell: ({row}) => (
-                            <div>
+                            <div className={cn("w-[200px] flex justify-center items-center")}>
                                 <Image
                                     width={60}
                                     height={90}
@@ -47,26 +51,48 @@ function ProductsData() {
                         ),
                         "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
                     }
+                } else if (key === 'name') {
+                    return {
+                        "accessorKey": key,
+                        cell: ({row}) => (
+                            <div>
+                                <Heading type={'h4'} cls={cn("mb-1")}>{row?.["original"]?.["category"]}</Heading>
+                                <Heading type={'h4'}>{row?.["original"]?.["article"]}</Heading>
+                            </div>
+                        ),
+                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                    }
+                } else if (productsReportParams === 'by_colors' && productsDetailByStore && key !== 'store' && key !== 'total') {
+                    return {
+                        "accessorKey": key,
+                        "header": ({column}) => {
+                            return (
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                >
+                                    {productsData?.["table"]?.["head"]?.[key]?.["label"]}
+                                    <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                </Button>
+                            )
+                        },
+                        cell: ({row}) => {
+                            return (
+                                <div className={cn("w-full h-full relative")}>
+                                    <div className={cn("w-full h-full absolute top-0 left-0")}
+                                         style={{
+                                             backgroundColor: colorWithOpacity(row?.original, productsData?.["table"]?.["head"]?.[key]?.["label"])
+                                         }}
+                                    />
+                                    {row?.original?.[key] ?? 0}
+                                </div>
+                            )
+                        },
+                    }
                 } else {
-                    if (productsReportParams === 'by_colors' && productsDetailByStore && key !== 'store' && key !== 'total') {
-                        return {
-                            "accessorKey": key,
-                            "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
-                            // cell: ({row}) => (
-                            //     <div className={cn("w-full h-full")}
-                            //          style={{
-                            //              backgroundColor: `rgba(0, 143, 251, 0.5)`
-                            //          }}>
-                            //         {productsData?.["table"]?.["head"]?.[key]?.["label"]}
-                            //     </div>
-                            // ),
-                        }
-                    } else {
-                        return {
-                            "accessorKey": key,
-                            "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
-                        }
-
+                    return {
+                        "accessorKey": key,
+                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
                     }
                 }
             })

@@ -45,7 +45,7 @@ import {
     offDateParamsReducer,
     offDragStartBoardReducer,
     offEditBoardReducer,
-    offSchemaArticleParamsReducer,
+    offSchemaArticleParamsReducer, offSchemaContainerDataReducer,
     offSchemaCountryParamsReducer, offSchemaReportApiLoaderReducer,
     offSchemaStoresDataReducer,
     offSchemaStoresParamsReducer,
@@ -132,6 +132,7 @@ function useDispatchActionHandle() {
         offBoardUseListAction: (data) => dispatch(offBoardUseListReducer(data)),
         offBoardNotUseListAction: (data) => dispatch(offBoardNotUseListReducer(data)),
         offBoardReportUseDataAction: (data) => dispatch(offBoardReportUseDataReducer(data)),
+        offSchemaContainerDataAction: (data) => dispatch(offSchemaContainerDataReducer(data)),
 
         // Stock actions
         stockGetDataAction: (data) => dispatch(stockGetDataReducer(data)),

@@ -110,7 +110,7 @@ function ProductsForm(props) {
 
     return (
         <div className={cn("w-100 border mb-20 p-4 rounded mt-3")}>
-            <form onSubmit={fetchProductsData}
+            <form
                   className={cn("grid gap-10 2xl:grid-cols-3 md:grid-cols-2 grid-cols-1 mb-10 items-center")}>
                 <Popover>
                     <PopoverTrigger asChild>
@@ -234,7 +234,9 @@ function ProductsForm(props) {
 
                 <Button
                     type={"submit"}
-                    className={cn("md:w-[400px] w-full")}>
+                    className={cn("md:w-[400px] w-full")}
+                    onClick={e => fetchProductsData(e)}
+                >
                     <LoaderButton loading={productsApiLoader}/>
                     Сформировать
                 </Button>

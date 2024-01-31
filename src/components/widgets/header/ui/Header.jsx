@@ -2,20 +2,18 @@
 
 import React from 'react';
 import Link from "next/link";
-import Cookie from "js-cookie";
 import {cn} from "@/lib/utils";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/components/shared/shadcn/ui/dropdown-menu";
 import {Input} from "@/components/shared/shadcn/ui/input";
 import {Button} from "@/components/shared/shadcn/ui/button";
-import {usePathname, useRouter} from "next/navigation";
+import {usePathname} from "next/navigation";
 import {HamburgerMenuIcon} from "@radix-ui/react-icons";
-import {useScrollAction} from "@/components/shared/hooks";
+import {useLogout, useScrollAction} from "@/components/shared/hooks";
 import {ModeToggle} from "@/components/shared/theme-switch";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/shared/shadcn/ui/avatar";
 import {routerPagesList} from "@/components/entities/router/model/routerPagesList";
@@ -31,15 +29,11 @@ import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/share
  */
 function Header(props) {
 
-    const router = useRouter()
+    const logout = useLogout()
     const pathname = usePathname()
 
     const isScroll = useScrollAction({position: 20})
 
-    const logoutHandle = () => {
-        Cookie.remove("dashboard-token")
-        router.push(routerPagesList.login)
-    }
 
     const menuList = [
         {
@@ -152,7 +146,7 @@ function Header(props) {
                                 <Button
                                     type={"button"}
                                     variant={'ghost'}
-                                    onClick={logoutHandle}
+                                    onClick={logout}
                                 >
                                     Log out
                                 </Button>

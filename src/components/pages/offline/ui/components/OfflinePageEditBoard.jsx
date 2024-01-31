@@ -26,10 +26,15 @@ function OfflinePageEditBoard(props) {
         offDragStartBoard,
         offBoardNotUseList,
         offSchemaReportData,
-        offBoardReportUseData
+        offBoardReportUseData,
+        offSchemaContainerData
     } = useAppSelector(state => state?.offline)
 
     const toggleDrag = (value) => events.offDragStartBoardAction(value)
+
+    console.log(
+        offSchemaReportData
+    )
 
     const onDragStart = () => toggleDrag(true)
 
@@ -40,8 +45,6 @@ function OfflinePageEditBoard(props) {
 
     const onDragEnd = (result) => {
         if (!result.destination) return;
-
-        console.log(result)
 
         if (result?.source?.droppableId === 'not_use_list') {
             if (checkListIncludes(result)) {
@@ -80,73 +83,192 @@ function OfflinePageEditBoard(props) {
         toggleDrag(false)
     };
 
+    const getChildCounts = (childCount = 1) => {
+        const keys = [...Array(childCount)?.keys()]
+
+        return keys.map((child, index) => {
+            return {
+                "id": index,
+                "type": ""
+            }
+        })
+    }
+
+    const addNewContainer = (childCount) => {
+        if (Object.values(offSchemaContainerData || {}).length === 0) {
+            events.offSchemaContainerDataAction({
+                "container": 1,
+                "type": "container",
+                "items": getChildCounts(childCount)
+            })
+        } else {
+            events.offSchemaContainerDataAction({
+                "container": Object.values(offSchemaContainerData || {}).length + 1,
+                "type": "container",
+                "items": getChildCounts(childCount)
+            })
+        }
+
+    }
+
     useEffect(() => {
         if (!localStorage.getItem("schema_use_list")) return
         events.offBoardUseListAction(JSON.parse(localStorage.getItem("schema_use_list")))
     }, [])
 
     useEffect(() => {
-        if (!localStorage.getItem("schema_not_use_list")) events.offBoardNotUseListAction([...offlineChartList])
+        if (Object.values(localStorage.getItem("schema_not_use_list") || {}).length === 0) {
+            events.offBoardNotUseListAction([...offlineChartList])
+            return
+        }
         events.offBoardNotUseListAction(JSON.parse(localStorage.getItem("schema_not_use_list")))
     }, []);
 
+    console.log(offSchemaContainerData)
+
     return (
-        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-            <Droppable droppableId="not_use_list">
-                {(provided) => (
-                    <ul className={
-                        cn("w-full border p-4 my-5 flex items-center rounded content-stretch justify-between gap-5",
-                            offEditBoard ? "opacity-100 flex" : "opacity-0 hidden"
-                        )
-                    }
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}>
-                        {offBoardNotUseList.map((item, index) => (
-                            <Draggable key={item?.key} draggableId={item?.key?.toString()} index={index}>
-                                {(provided) => (
-                                    <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs"
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        ref={provided.innerRef}>
-                                        <MoveIcon/>
-                                        {item.title}
-                                    </li>
-                                )}
-                            </Draggable>
-                        ))}
-                        {provided.placeholder}
-                    </ul>
-                )}
-            </Droppable>
-            <Droppable droppableId="use_list">
-                {(provided) => (
-                    <ul className={
-                        cn("w-full border p-4 my-5 rounded delay-75",
-                            offEditBoard ? "opacity-100 block" : "opacity-0 hidden",
-                            offDragStartBoard ? "bg-green-100 border-2 border-amber-400" : ""
-                        )
-                    }
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}>
-                        {offBoardUseList.map((item, index) => (
-                            <Draggable key={item?.id} draggableId={item?.key?.toString()} index={index}>
-                                {(provided) => (
-                                    <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs mb-5"
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        ref={provided.innerRef}>
-                                        <MoveIcon/>
-                                        {item.title}
-                                    </li>
-                                )}
-                            </Draggable>
-                        ))}
-                        {provided.placeholder}
-                    </ul>
-                )}
-            </Droppable>
-        </DragDropContext>
+        <>
+            <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+                <Droppable droppableId="not_use_list">
+                    {(provided) => (
+                        <ul className={
+                            cn("w-full border p-4 my-5 flex items-center rounded content-stretch justify-between gap-5",
+                                offEditBoard ? "opacity-100 flex" : "opacity-0 hidden"
+                            )
+                        }
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}>
+                            {offBoardNotUseList.map((item, index) => (
+                                <Draggable key={item?.key} draggableId={item?.key?.toString()} index={index}>
+                                    {(provided) => (
+                                        <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs"
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            ref={provided.innerRef}>
+                                            <MoveIcon/>
+                                            {item.title}
+                                        </li>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </ul>
+                    )}
+                </Droppable>
+                <Droppable droppableId="use_list">
+                    {(provided) => (
+                        <ul className={
+                            cn("w-full border p-4 my-5 rounded delay-75",
+                                offEditBoard ? "opacity-100 block" : "opacity-0 hidden",
+                                offDragStartBoard ? "bg-green-100 border-2 border-amber-400" : ""
+                            )
+                        }
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}>
+                            {offBoardUseList.map((item, index) => (
+                                <Draggable key={item?.id} draggableId={item?.key?.toString()} index={index}>
+                                    {(provided) => (
+                                        <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs mb-5"
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            ref={provided.innerRef}>
+                                            <MoveIcon/>
+                                            {item.title}
+                                        </li>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </ul>
+                    )}
+                </Droppable>
+            </DragDropContext>
+
+            {/*<div className={cn("w-full h-full border rounded p-5")}>*/}
+            {/*    <div className={cn("w-full flex justify-end mb-4")}>*/}
+            {/*        <DropdownMenu>*/}
+            {/*            <DropdownMenuTrigger asChild>*/}
+            {/*                <Button className={cn("flex items-center gap-2 ")}>*/}
+            {/*                    Добавить контейнер<PlusIcon/>*/}
+            {/*                </Button>*/}
+            {/*            </DropdownMenuTrigger>*/}
+            {/*            <DropdownMenuContent align="end" className="w-[150px]">*/}
+            {/*                <DropdownMenuLabel>Выберите контейнер</DropdownMenuLabel>*/}
+            {/*                <DropdownMenuSeparator/>*/}
+            {/*                <DropdownMenuItem onClick={() => addNewContainer(1)}>*/}
+            {/*                    <div className={cn("grid grid-cols-1 p-1 w-[100px]")}>*/}
+            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
+            {/*                    </div>*/}
+            {/*                </DropdownMenuItem>*/}
+
+            {/*                <DropdownMenuItem onClick={() => addNewContainer(2)}>*/}
+            {/*                    <div className={cn("grid grid-cols-2 gap-2 p-1 w-[100px]")}>*/}
+            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
+            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
+            {/*                    </div>*/}
+            {/*                </DropdownMenuItem>*/}
+
+            {/*                <DropdownMenuItem onClick={() => addNewContainer(3)}>*/}
+            {/*                    <div className={cn("grid grid-cols-3 gap-2 p-1 w-[100px]")}>*/}
+            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
+            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
+            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
+            {/*                    </div>*/}
+            {/*                </DropdownMenuItem>*/}
+            {/*            </DropdownMenuContent>*/}
+            {/*        </DropdownMenu>*/}
+
+            {/*    </div>*/}
+
+            {/*    {*/}
+            {/*        Object.values(offSchemaContainerData || {}).map((schemaContentItem, schemaContentId) => {*/}
+            {/*            return (*/}
+            {/*                <div key={schemaContentId}*/}
+            {/*                     className={cn(`grid grid-cols-1 p-2 md:grid-cols-${schemaContentItem?.items?.length} gap-5 mb-5 border rounded`)}>*/}
+            {/*                    {*/}
+            {/*                        schemaContentItem?.items?.map((childItem, childId) => {*/}
+            {/*                            return (*/}
+            {/*                                <div key={childId} className={cn("border rounded p-3")}>*/}
+
+            {/*                                </div>*/}
+            {/*                            )*/}
+            {/*                        })*/}
+            {/*                    }*/}
+            {/*                </div>*/}
+            {/*            )*/}
+            {/*        })*/}
+            {/*    }*/}
+            {/*</div>*/}
+        </>
     );
 }
 
 export default OfflinePageEditBoard;
+// <Droppable droppableId="use_list">
+//     {(provided) => (
+//         <ul className={
+//             cn("w-full border p-4 my-5 rounded delay-75",
+//                 offEditBoard ? "opacity-100 block" : "opacity-0 hidden",
+//                 offDragStartBoard ? "bg-green-100 border-2 border-amber-400" : ""
+//             )
+//         }
+//             {...provided.droppableProps}
+//             ref={provided.innerRef}>
+//             {offBoardUseList.map((item, index) => (
+//                 <Draggable key={item?.id} draggableId={item?.key?.toString()} index={index}>
+//                     {(provided) => (
+//                         <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs mb-5"
+//                             {...provided.draggableProps}
+//                             {...provided.dragHandleProps}
+//                             ref={provided.innerRef}>
+//                             <MoveIcon/>
+//                             {item.title}
+//                         </li>
+//                     )}
+//                 </Draggable>
+//             ))}
+//             {provided.placeholder}
+//         </ul>
+//     )}
+// </Droppable>
+

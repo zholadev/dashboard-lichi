@@ -2,7 +2,6 @@
 
 import React, {useState} from 'react';
 import {cn} from "@/lib/utils";
-import TableViewOptions from "@/components/shared/uikit/table/ui/TableViewOptions";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/shadcn/ui/table";
 import {
     flexRender,
@@ -12,8 +11,8 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {Heading} from "@/components/shared/uikit/heading";
-import TableDataPagination from "@/components/shared/uikit/table/ui/TableDataPagination";
 import TableToolbar from "@/components/shared/uikit/table/ui/TableToolbar";
+import TableDataPagination from "@/components/shared/uikit/table/ui/TableDataPagination";
 
 /**
  * @author Zholaman Zhumanov
@@ -22,12 +21,24 @@ import TableToolbar from "@/components/shared/uikit/table/ui/TableToolbar";
  * @returns {Element}
  * @constructor
  */
-function TableData({pageValue, changePageHandle, columns, pageCount, pageIndex, pageSize, data, changeLimitHandle}) {
+function TableData({
+                       pageValue,
+                       changePageHandle,
+                       columns,
+                       pageCount,
+                       pageIndex,
+                       pageSize,
+                       data,
+                       changeLimitHandle,
+                       hidePagination,
+                       hideLimitContent
+                   }) {
 
     const [sorting, setSorting] = useState([])
     const [rowSelection, setRowSelection] = useState({})
     const [columnFilters, setColumnFilters] = useState([])
     const [columnVisibility, setColumnVisibility] = useState({})
+    const [paginationState, setPaginationState] = useState(1)
 
     const table = useReactTable({
         "data": data,
@@ -37,7 +48,7 @@ function TableData({pageValue, changePageHandle, columns, pageCount, pageIndex, 
         pageCount: pageCount ?? 1,
         state: {
             pagination: {
-                pageIndex: pageIndex - 1 ?? 0,
+                pageIndex: pageIndex - 1 || paginationState - 1 || 0,
                 pageSize: pageSize,
             },
             sorting: sorting,
@@ -49,6 +60,10 @@ function TableData({pageValue, changePageHandle, columns, pageCount, pageIndex, 
         },
         getSortedRowModel: getSortedRowModel(),
     })
+
+    if (data?.length === 0) {
+        return null
+    }
 
     return (
         <div className="space-y-4">
@@ -104,12 +119,16 @@ function TableData({pageValue, changePageHandle, columns, pageCount, pageIndex, 
                     )}
                 </TableBody>
             </Table>
-            <TableDataPagination
-                table={table}
-                pageValue={pageValue}
-                changePageHandle={changePageHandle}
-                changeLimitHandle={changeLimitHandle}
-            />
+            {
+                !hidePagination &&
+                <TableDataPagination
+                    table={table}
+                    pageValue={pageValue || paginationState}
+                    changePageHandle={changePageHandle || setPaginationState}
+                    hideLimitContent={hideLimitContent}
+                    changeLimitHandle={changeLimitHandle}
+                />
+            }
         </div>
     );
 }
