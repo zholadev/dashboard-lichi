@@ -41,7 +41,7 @@ function OfflinePageEditBoard(props) {
     const onDragEnd = (result) => {
         if (!result.destination) return;
 
-        console.log(result)
+        // console.log(result, JSON.parse(localStorage.getItem("schema_use_list")))
 
         if (result?.source?.droppableId === 'not_use_list') {
             if (checkListIncludes(result)) {
@@ -56,6 +56,8 @@ function OfflinePageEditBoard(props) {
             const itemsFilter = offlineChartList.filter((item) => item?.key == result?.draggableId)
 
             events.offBoardUseListAction([...offBoardUseList, ...itemsFilter])
+
+            localStorage.setItem("schema_use_list", JSON.stringify([...offBoardUseList, ...itemsFilter]))
 
         } else if (result?.source?.droppableId === 'use_list') {
             const itemsFilter = offBoardUseList.filter((item) => item?.key !== result?.draggableId)
