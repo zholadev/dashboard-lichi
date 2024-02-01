@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
 import {TableData} from "@/components/shared/uikit/table";
@@ -406,25 +406,21 @@ function OfflinePageReportData(props) {
             <div className={cn("w-full border rounded p-5 will-change-auto")}>
                 {
                     Object.values(offBoardReportUseData || {}).map((schemaData, schemaId) => {
-                        const reportChart = schemaData?.["data"]?.["report"]?.["chart"]
+                        const reportChart = schemaData?.["data"]?.["report"]
+                        const reportProduct = !schemaData?.["data"]?.["report"]?.["chart"] && !schemaData?.["data"]?.["table"]
                         const reportTable = schemaData?.["data"]?.["table"]
                         const getChartCurrentData = offlineChartList.filter((item) => item?.key === schemaData?.["key"])
                         return (
-                            reportChart ? (
-                                <div
-                                    className={cn("mb-20 grid grid-cols-1 mt-5 gap-5")}
-                                    key={schemaId}>
-                                    <div className={"border rounded p-5"}>
-                                        <ChartReact
-                                            title={getChartCurrentData?.[0]?.title}
-                                            optionsData={chartApexOptions(reportChart).options}
-                                            seriesData={chartApexOptions(reportChart).series}
-                                            type={chartApexOptions(reportChart).type}
-                                            height={chartApexOptions(reportChart).height}
-                                        />
-                                    </div>
+                            reportProduct ? (
+                                <div>
+                                    <Heading type={"h3"} cls={"mb-2 mt-4"}>{getChartCurrentData?.[0]?.title}</Heading>
+                                    <TableData
+                                        data={getTableDataProductTop(schemaData?.["data"]?.["report"])}
+                                        columns={getColumnsProductTop(schemaData?.["data"]?.["report"],)}
+                                        hidePagination
+                                    />
                                 </div>
-                            ) : reportTable ? (
+                            ) : reportTable && !reportChart ? (
                                 <div>
                                     <Heading type={"h3"} cls={"mb-2 mt-4"}>{getChartCurrentData?.[0]?.title}</Heading>
                                     <TableData
@@ -438,14 +434,19 @@ function OfflinePageReportData(props) {
                                         staticData={schemaData?.["key"] === 'stores_by_day'}
                                     />
                                 </div>
-                            ) : !reportChart ? (
-                                <div>
-                                    <Heading type={"h3"} cls={"mb-2 mt-4"}>{getChartCurrentData?.[0]?.title}</Heading>
-                                    <TableData
-                                        data={getTableDataProductTop(schemaData?.["data"]?.["report"])}
-                                        columns={getColumnsProductTop(schemaData?.["data"]?.["report"],)}
-                                        hidePagination
-                                    />
+                            ) : reportChart ? (
+                                <div
+                                    className={cn("mb-20 grid grid-cols-1 mt-5 gap-5")}
+                                    key={schemaId}>
+                                    <div className={"border rounded p-5"}>
+                                        <ChartReact
+                                            title={getChartCurrentData?.[0]?.title}
+                                            optionsData={chartApexOptions(reportChart)?.options}
+                                            seriesData={chartApexOptions(reportChart)?.series}
+                                            type={chartApexOptions(reportChart)?.type}
+                                            height={chartApexOptions(reportChart)?.height}
+                                        />
+                                    </div>
                                 </div>
                             ) : null
                         )

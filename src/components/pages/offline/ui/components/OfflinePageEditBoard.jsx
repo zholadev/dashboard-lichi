@@ -126,7 +126,7 @@ function OfflinePageEditBoard(props) {
                 <Droppable droppableId="not_use_list">
                     {(provided) => (
                         <ul className={
-                            cn("w-full border p-4 my-5 flex items-center rounded content-stretch justify-between gap-5",
+                            cn("w-full border p-4 my-5 flex items-center rounded flex-wrap content-stretch justify-between gap-5",
                                 offEditBoard ? "opacity-100 flex" : "opacity-0 hidden"
                             )
                         }
