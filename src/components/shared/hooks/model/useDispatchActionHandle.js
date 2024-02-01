@@ -5,6 +5,17 @@ import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {
     getCountryData,
     getDateKanbanData,
+    supplyKanbanColumnApiLoaderReducer,
+    supplyKanbanColumnDataReducer,
+    supplyParamsColumnWeekIdReducer,
+    supplyParamsDateEndDataReducer,
+    supplyParamsDateEndReducer,
+    supplyParamsDateReducer,
+    supplyParamsDateStartDataReducer,
+    supplyParamsDateStartReducer,
+    supplyParamsNetworkIdReducer,
+    supplyResetDataReducer,
+    supplySheetToggleReducer,
     toggleCountryDataLoader,
     toggleKanbanDataLoader
 } from "@/components/entities/store/model/reducers/supply";
@@ -73,7 +84,8 @@ import {
 import {
     eventsApiLoaderReducer,
     eventsDataReducer,
-    eventsParamsPageReducer, resetEventsDataReducer
+    eventsParamsPageReducer,
+    resetEventsDataReducer
 } from "@/components/entities/store/model/reducers/annotations";
 
 /**
@@ -98,6 +110,16 @@ function useDispatchActionHandle() {
         supplyDateKanbanDataHandle: (data) => dispatch(getDateKanbanData(data)),
         supplyCountryLoader: (value) => dispatch(toggleCountryDataLoader(value)),
         supplyKanbanLoader: (value) => dispatch(toggleKanbanDataLoader(value)),
+        supplyKanbanColumnDataAction: (data) => dispatch(supplyKanbanColumnDataReducer(data)),
+        supplySheetToggleAction: (value) => dispatch(supplySheetToggleReducer(value)),
+        supplyParamsNetworkIdAction: (value) => dispatch(supplyParamsNetworkIdReducer(value)),
+        supplyParamsDateAction: (value) => dispatch(supplyParamsDateReducer(value)),
+        supplyKanbanColumnApiLoaderAction: (value) => dispatch(supplyKanbanColumnApiLoaderReducer(value)),
+        supplyParamsColumnWeekIdAction: (value) => dispatch(supplyParamsColumnWeekIdReducer(value)),
+        supplyParamsDateStartDataAction: (value) => dispatch(supplyParamsDateStartDataReducer(value)),
+        supplyParamsDateEndDataAction: (value) => dispatch(supplyParamsDateEndDataReducer(value)),
+        supplyParamsDateStartAction: (data) => dispatch(supplyParamsDateStartReducer(data)),
+        supplyParamsDateEndAction: (data) => dispatch(supplyParamsDateEndReducer(data)),
 
         // Products actions
         productsApiLoaderAction: (value) => dispatch(productsApiLoaderReducer(value)),
@@ -168,6 +190,7 @@ function useDispatchActionHandle() {
         stockStateResetAction: createDispatchHandler(dispatch, stockStateResetReducer, "stockStateResetAction"),
         resetOffSchemaDataAction: createDispatchHandler(dispatch, resetOffSchemaDataReducer, "resetOffSchemaDataAction"),
         resetEventsDataAction: createDispatchHandler(dispatch, resetEventsDataReducer, "resetEventsDataReducer"),
+        supplyResetDataAction: createDispatchHandler(dispatch, supplyResetDataReducer, "supplyResetDataReducer"),
     }
 }
 

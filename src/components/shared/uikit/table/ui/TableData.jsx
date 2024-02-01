@@ -46,12 +46,14 @@ function TableData({
     const [paginationLimitState, setPaginationLimitState] = useState(10)
 
     const staticDataPageCount = useMemo(() => {
+        if (!staticData) return []
         return Math.floor(data?.length / paginationLimitState)
-    }, [paginationState, paginationLimitState])
+    }, [paginationState, paginationLimitState, staticData])
 
     const displayStaticData = useMemo(() => {
+        if (!staticData) return []
         return data.slice(paginationState * paginationLimitState, (paginationState + 1) * paginationLimitState)
-    }, [paginationState, paginationLimitState])
+    }, [paginationState, paginationLimitState, staticData])
 
     const table = useReactTable({
         "data": staticData ? displayStaticData : data,

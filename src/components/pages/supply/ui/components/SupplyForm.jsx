@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect} from 'react';
 import {cn} from "@/lib/utils";
 import {
     Select,
@@ -14,54 +14,42 @@ import {
 import {Label} from "@/components/shared/shadcn/ui/label";
 import {Button} from "@/components/shared/shadcn/ui/button";
 import SupplyKanbanContainer from "./SupplyKanbanContainer";
+import {LoaderButton} from "@/components/shared/uikit/loader";
+import useYearWeeks from "@/components/pages/supply/lib/useYearWeeks";
+import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
 import {apiGetSupplyKanbanData, apiGetSupplyNetworkData} from "@/components/shared/services/axios/clientRequests";
-import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {LoaderButton} from "@/components/shared/uikit/loader";
 
 /**
  * @author Zholaman Zhumanov
  * @created 25.01.2024
  * @todo refactoring
  * @todo state get by redux
- * @param props
  * @returns {JSX.Element}
  * @constructor
  */
-function SupplyForm(props) {
-    const {} = props
+function SupplyForm() {
 
     const events = useDispatchActionHandle()
 
     const {apiFetchHandler} = useApiRequest()
 
-    const kanbanData = useAppSelector(state => state.supply.kanbanData)
-    const countryData = useAppSelector(state => state.supply.countryData)
-    const kanbanDataLoader = useAppSelector(state => state.supply.kanbanDataLoader)
-    const countryDataLoader = useAppSelector(state => state.supply.countryDataLoader)
+    const yearWeakData = useYearWeeks(new Date().getFullYear())
 
-    const [countryValue, setCountryValue] = useState(2)
-    const [dateValue, setDateValue] = useState("2023-1")
-    const [dateEndValue, setDateEndValue] = useState("2024-21")
-
-    const getCurrentNetworkData = useMemo(() => {
-        try {
-            return countryData.filter((item) => item?.["key"] === kanbanData?.["network_id"])
-        } catch (error) {
-            errorHandler("supplyForm", "func/getCurrentNetworkData", error)
-        }
-    }, [kanbanData, countryData])
-
-    const getSelectNetworkData = useCallback((value) => {
-        try {
-            const current = countryData.filter((item) => item?.["value"] === value)
-            setCountryValue(current?.[0]?.["key"])
-        } catch (error) {
-            errorHandler("supplyForm", "func/getCurrentNetworkData", error)
-        }
-    }, [kanbanData, countryData])
-
+    const {
+        kanbanData,
+        countryData,
+        kanbanDataLoader,
+        supplySheetToggle,
+        supplyParamsColumnWeekId,
+        supplyParamsNetworkId,
+        supplyKanbanColumnData,
+        supplyParamsDateStartData,
+        supplyParamsDateEndData,
+        supplyParamsDateStart,
+        supplyParamsDateEnd
+    } = useAppSelector(state => state.supply)
     const fetchSupplyCountryData = async () => {
         await apiFetchHandler(
             apiGetSupplyNetworkData,
@@ -78,17 +66,15 @@ function SupplyForm(props) {
     }
 
     const fetchSupplyKanbanData = async (event, disabledLoader) => {
-        if (event) {
-            event?.preventDefault()
-        }
+        if (event) event?.preventDefault()
 
         await apiFetchHandler(
             apiGetSupplyKanbanData,
             [
-                countryValue.toString(),
+                supplyParamsNetworkId?.toString(),
                 {
-                    start: dateValue,
-                    end: dateEndValue
+                    start: supplyParamsDateStart,
+                    end: supplyParamsDateEnd
                 }
             ],
             events.supplyKanbanLoader,
@@ -105,16 +91,21 @@ function SupplyForm(props) {
     }
 
     useEffect(() => {
+        try {
+            if (Object.values(yearWeakData || {}).length > 0) {
+                events.supplyParamsDateStartDataAction([...yearWeakData?.past, ...yearWeakData?.now])
+                events.supplyParamsDateEndDataAction([...yearWeakData?.now, ...yearWeakData?.next])
+            }
+        } catch (error) {
+            errorHandler("supplyForm", "effect", error)
+        }
+    }, [yearWeakData]);
+
+    useEffect(() => {
         if (countryData.length === 0) {
             fetchSupplyCountryData()
         }
     }, [countryData]);
-
-    useEffect(() => {
-        if (kanbanData.length === 0 && countryData.length > 0) {
-            fetchSupplyKanbanData()
-        }
-    }, [kanbanData, countryData]);
 
     return (
         <>
@@ -125,21 +116,23 @@ function SupplyForm(props) {
                     <div className={cn("w-full flex flex-col gap-3")}>
                         <Label>Сеть</Label>
                         <Select
-                            defaultValue={getCurrentNetworkData?.[0]}
-                            onValueChange={(value) => getSelectNetworkData(value)}>
-                            <SelectTrigger className="w-100">
-                                <SelectValue placeholder={"Выберите"}/>
+                            onValueChange={(value) => events.supplyParamsNetworkIdAction(value)}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder={"Выберите страну"}/>
                             </SelectTrigger>
                             <SelectContent>
                                 {
-                                    countryData.map((country) => (
-                                        <SelectItem
-                                            key={country?.["key"]}
-                                            value={country?.["value"]}
-                                        >
-                                            {country?.["value"]}
-                                        </SelectItem>
-                                    ))
+                                    Object.values(countryData || {}).map((country, id) => {
+                                        return (
+                                            <SelectItem
+                                                key={country?.["key"]}
+                                                value={country?.["key"]}
+                                            >
+                                                {country?.["value"]}
+                                            </SelectItem>
+                                        )
+                                    })
                                 }
                             </SelectContent>
                         </Select>
@@ -147,20 +140,22 @@ function SupplyForm(props) {
 
                     <div className={cn("w-full flex flex-col gap-3")}>
                         <Label>Начало</Label>
-                        <Select onValueChange={value => setDateValue(value)}>
+                        <Select onValueChange={value => events.supplyParamsDateStartAction(value)}>
                             <SelectTrigger className="w-100">
                                 <SelectValue placeholder={"Выберите"}/>
                             </SelectTrigger>
                             <SelectContent>
                                 {
-                                    Object.entries(kanbanData?.["kanban"] || {})?.map(([key, value], id) => (
+                                    Object.values(supplyParamsDateStartData || {})?.map((item, id) => (
                                         <SelectGroup key={id}>
-                                            <SelectLabel>{value?.["sub_label"]}</SelectLabel>
-                                            <SelectItem
-                                                value={key}
-                                            >
-                                                {key}
-                                            </SelectItem>
+                                            <SelectLabel className={"mb-2 text-lg"}>{item?.["month"]}</SelectLabel>
+                                            {
+                                                item?.["weeks"]?.map((week, weekId) => {
+                                                    return (
+                                                        <SelectItem key={weekId} value={week}>{week}</SelectItem>
+                                                    )
+                                                })
+                                            }
                                         </SelectGroup>
                                     ))
                                 }
@@ -170,24 +165,24 @@ function SupplyForm(props) {
 
                     <div className={cn("w-full flex flex-col gap-3")}>
                         <Label>Конец</Label>
-                        <Select onValueChange={value => setDateEndValue(value)}>
+                        <Select onValueChange={value => events.supplyParamsDateEndAction(value)}>
                             <SelectTrigger className="w-100">
                                 <SelectValue placeholder={"Выберите"}/>
                             </SelectTrigger>
                             <SelectContent>
                                 {
-                                    Object.entries(kanbanData?.["kanban"] || {})?.map(([key, value], id) => {
-                                        return (
-                                            <SelectGroup key={id}>
-                                                <SelectLabel>{value?.["sub_label"]}</SelectLabel>
-                                                <SelectItem
-                                                    value={key}
-                                                >
-                                                    {key}
-                                                </SelectItem>
-                                            </SelectGroup>
-                                        )
-                                    })
+                                    Object.values(supplyParamsDateEndData || {})?.map((item, id) => (
+                                        <SelectGroup key={id}>
+                                            <SelectLabel className={"mb-2 text-lg"}>{item?.["month"]}</SelectLabel>
+                                            {
+                                                item?.["weeks"]?.map((week, weekId) => {
+                                                    return (
+                                                        <SelectItem key={weekId} value={week}>{week}</SelectItem>
+                                                    )
+                                                })
+                                            }
+                                        </SelectGroup>
+                                    ))
                                 }
                             </SelectContent>
                         </Select>

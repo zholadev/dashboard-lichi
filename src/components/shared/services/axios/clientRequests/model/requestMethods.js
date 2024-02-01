@@ -150,6 +150,61 @@ export const apiUpdateSupplyKanbanData = async (data = {}, id) => {
 
 /**
  * @author Zholaman Zhumanov
+ * @created 01.02.2024
+ * @param network_id
+ * @param id
+ * @returns {Promise<AxiosResponse<any>|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetKanbanColumnData = async (network_id = 1, id = {}) => {
+    return await sendApiPostRequest({
+            method: "kanban_get_column",
+            object: "supply",
+            params: {
+                "network_id": network_id,
+                "id": id
+            }
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 01.02.2024
+ * @param data
+ * @returns {Promise<AxiosResponse<any>|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiCreateKanbanColumn = async (data) => {
+    return await sendApiPostRequest({
+            method: "kanban_item_save",
+            object: "supply",
+            params: {data}
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 01.02.2024
+ * @param article
+ * @returns {Promise<AxiosResponse<any>|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetItemSizes = async (article) => {
+    return await sendApiPostRequest({
+            method: "get_item_sizes",
+            object: "supply",
+            params: {
+                article: article
+            }
+        },
+        true
+    )
+}
+
+
+/**
+ * @author Zholaman Zhumanov
  * @created 25.01.2024
  * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
  */

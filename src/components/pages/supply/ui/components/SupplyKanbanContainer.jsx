@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
 import {cn} from "@/lib/utils";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/shared/shadcn/ui/tooltip"
-import {Badge} from "@/components/shared/shadcn/ui/badge";
-import {Button} from "@/components/shared/shadcn/ui/button";
 import SupplyKanbanLoading from "./SupplyKanbanLoading";
-import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
-import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
-import {apiUpdateSupplyKanbanData} from "@/components/shared/services/axios/clientRequests";
+import {Badge} from "@/components/shared/shadcn/ui/badge";
 import {NotData} from "@/components/shared/uikit/templates";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
+import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
+import {apiGetKanbanColumnData, apiUpdateSupplyKanbanData} from "@/components/shared/services/axios/clientRequests";
+import SupplyKanbanColumnSheet from "@/components/pages/supply/ui/components/SupplyKanbanColumnSheet";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/shared/shadcn/ui/tooltip"
+import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 
 /**
  * @author Zholaman Zhumanov
@@ -24,17 +26,14 @@ function SupplyKanbanContainer(props) {
 
     const {apiFetchHandler} = useApiRequest()
 
+    const {
+        supplyParamsNetworkId
+    } = useAppSelector(state => state?.supply)
+
     const [animateUpdate, setAnimateUpdate] = useState(false)
-    const [showButton, setShowButton] = useState(false)
     const [selectItem, setSelectItem] = useState({})
 
     const toggleHoverPut = () => setAnimateUpdate(!animateUpdate)
-    const toggleButtonShow = () => setShowButton(!showButton)
-
-    const showButtonHandler = (id) => {
-        if (id === selectItem?.["data"]?.["id"]) return
-        setShowButton(true)
-    }
 
     const updateSupplyDataHandler = async (data) => {
         try {
@@ -76,6 +75,20 @@ function SupplyKanbanContainer(props) {
         )
     }
 
+    const fetchGetKanbanColumnData = async (weekId) => {
+        await apiFetchHandler(
+            apiGetKanbanColumnData,
+            [supplyParamsNetworkId, weekId],
+            events.supplyKanbanColumnApiLoaderAction,
+            {
+                onGetData: (params) => {
+                    if (params.success) {
+                        events.supplyKanbanColumnDataAction(params.data?.["items"])
+                    }
+                }
+            }
+        )
+    }
 
     if (kanbanLoading) {
         return <SupplyKanbanLoading loading={kanbanLoading}/>
@@ -125,10 +138,23 @@ function SupplyKanbanContainer(props) {
                                         Отмена
                                     </Button>
                                 </div>
-                                <div className={cn("flex items-center justify-between gap-10 mb-2 text-xs")}>
-                                    <span className={cn("text-gray-500")}>{value?.label}</span>
-                                    <span>{value?.sub_label}</span>
-                                </div>
+                                <SupplyKanbanColumnSheet
+                                    week={value?.sub_label}
+                                    weekId={value?.id}
+                                    year={value?.label}
+                                >
+                                    <div
+                                        onClick={() => fetchGetKanbanColumnData(value?.id)}
+                                        className={cn("flex items-center justify-between gap-10 mb-2 text-xs")}
+                                    >
+                                        <span
+                                            className={cn("text-gray-500")}>
+                                            {value?.label}
+                                        </span>
+
+                                        <span>{value?.sub_label}</span>
+                                    </div>
+                                </SupplyKanbanColumnSheet>
                                 <div className={cn(`w-full h-[2px] mb-4`)}
                                      style={{backgroundColor: value.color}}></div>
 
@@ -176,3 +202,12 @@ function SupplyKanbanContainer(props) {
 }
 
 export default SupplyKanbanContainer;
+
+
+// kanban_item_save
+// {
+//     "sk_id": "",
+//     "sk_item_id": "sddsd",
+//     "sk_network_id": "1",
+//     "sk_week_id": "2024-05"
+// }

@@ -403,7 +403,7 @@ function OfflinePageReportData(props) {
 
     return (
         offEditBoard ? null :
-            <div className={cn("w-full border rounded p-5 will-change-auto")}>
+            <div className={cn("w-full border rounded p-5 grid gap-5 will-change-auto")}>
                 {
                     Object.values(offBoardReportUseData || {}).map((schemaData, schemaId) => {
                         const reportChart = schemaData?.["data"]?.["report"]
@@ -412,7 +412,7 @@ function OfflinePageReportData(props) {
                         const getChartCurrentData = offlineChartList.filter((item) => item?.key === schemaData?.["key"])
                         return (
                             reportProduct ? (
-                                <div>
+                                <div className={cn("border rounded p-5")} key={schemaId}>
                                     <Heading type={"h3"} cls={"mb-2 mt-4"}>{getChartCurrentData?.[0]?.title}</Heading>
                                     <TableData
                                         data={getTableDataProductTop(schemaData?.["data"]?.["report"])}
@@ -421,7 +421,7 @@ function OfflinePageReportData(props) {
                                     />
                                 </div>
                             ) : reportTable && !reportChart ? (
-                                <div>
+                                <div className={cn("border rounded p-5")} key={schemaId}>
                                     <Heading type={"h3"} cls={"mb-2 mt-4"}>{getChartCurrentData?.[0]?.title}</Heading>
                                     <TableData
                                         data={reportTable?.["data"]}
@@ -435,18 +435,14 @@ function OfflinePageReportData(props) {
                                     />
                                 </div>
                             ) : reportChart ? (
-                                <div
-                                    className={cn("mb-20 grid grid-cols-1 mt-5 gap-5")}
-                                    key={schemaId}>
-                                    <div className={"border rounded p-5"}>
-                                        <ChartReact
-                                            title={getChartCurrentData?.[0]?.title}
-                                            optionsData={chartApexOptions(reportChart)?.options}
-                                            seriesData={chartApexOptions(reportChart)?.series}
-                                            type={chartApexOptions(reportChart)?.type}
-                                            height={chartApexOptions(reportChart)?.height}
-                                        />
-                                    </div>
+                                <div className={"border rounded p-5"} key={schemaId}>
+                                    <ChartReact
+                                        title={getChartCurrentData?.[0]?.title}
+                                        optionsData={chartApexOptions(reportChart)?.options}
+                                        seriesData={chartApexOptions(reportChart)?.series}
+                                        type={chartApexOptions(reportChart)?.type}
+                                        height={chartApexOptions(reportChart)?.height}
+                                    />
                                 </div>
                             ) : null
                         )

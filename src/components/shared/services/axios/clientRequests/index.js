@@ -1,7 +1,10 @@
 import {
     apiAddEventItem,
+    apiCreateKanbanColumn,
     apiEditEventItem,
     apiGetEventsData,
+    apiGetItemSizes,
+    apiGetKanbanColumnData,
     apiGetOfflineCountryData,
     apiGetOfflinePlanData,
     apiGetOfflinePlanDetailData,
@@ -31,5 +34,8 @@ export {
     apiGetOfflinePlanDetailData,
     apiGetOfflineSchemaDetail,
     apiGetStockData,
-    apiGetOfflineCountryData
+    apiGetOfflineCountryData,
+    apiGetKanbanColumnData,
+    apiCreateKanbanColumn,
+    apiGetItemSizes
 }
