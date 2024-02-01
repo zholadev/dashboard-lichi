@@ -1,10 +1,11 @@
+import {stockSlice} from "./reducers/stock";
 import {supplySlice} from "./reducers/supply";
 import {configureStore} from '@reduxjs/toolkit'
+import {offlineSlice} from "./reducers/offline";
 import {productsSlice} from "./reducers/products";
+import {annotationsSupply} from "./reducers/annotations";
 import {offlinePlanSlice} from "./reducers/offline_plan";
 import {offlinePlanDetailSlice} from "./reducers/offline_plan_detail";
-import {offlineSlice} from "@/components/entities/store/model/reducers/offline";
-import {stockSlice} from "@/components/entities/store/model/reducers/stock";
 
 export const makeStore = () => {
     return configureStore({
@@ -14,7 +15,8 @@ export const makeStore = () => {
             offline_plan: offlinePlanSlice.reducer,
             offline_plan_detail: offlinePlanDetailSlice.reducer,
             offline: offlineSlice.reducer,
-            stock: stockSlice.reducer
+            stock: stockSlice.reducer,
+            annotations: annotationsSupply.reducer
         }
     })
 }

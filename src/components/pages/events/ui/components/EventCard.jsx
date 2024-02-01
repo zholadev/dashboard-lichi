@@ -4,6 +4,7 @@ import React from 'react';
 import {TableCell, TableRow} from "@/components/shared/shadcn/ui/table";
 import EventEditFormModal from "@/components/pages/events/ui/components/EventEditFormModal";
 import EventRemoveItem from "@/components/pages/events/ui/components/EventRemoveItem";
+import {Heading} from "@/components/shared/uikit/heading";
 
 /**
  * @author Zholaman Zhumanov
@@ -19,15 +20,21 @@ function EventCard(props) {
         <TableRow>
             <TableCell className="font-medium">
                 <div
-                    className={`rounded-full w-[10px] h-[10px]`}
+                    className={`w-[3px] min-h-[20px]`}
                     style={{
                         backgroundColor: color ?? '#000'
                     }}
                 ></div>
             </TableCell>
-            <TableCell>{date}</TableCell>
-            <TableCell>{everyYear === 1 ? 'ДА' : 'НЕТ'}</TableCell>
-            <TableCell>{name}</TableCell>
+            <TableCell>
+                <Heading type={'h5'} cls={'mb-0'}>{date}</Heading>
+            </TableCell>
+            <TableCell>
+                <Heading type={'h5'} cls={'mb-0'}>{everyYear === 1 ? 'ДА' : 'НЕТ'}</Heading>
+            </TableCell>
+            <TableCell>
+                <Heading type={'h5'} cls={'mb-0'}>{name}</Heading>
+            </TableCell>
             <TableCell>
                 <div className={"flex items-center gap-4"}>
                     <EventEditFormModal

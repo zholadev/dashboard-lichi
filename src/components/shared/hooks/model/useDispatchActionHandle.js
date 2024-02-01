@@ -37,7 +37,8 @@ import {
     getOffSchemaDataAction,
     getOffSchemaDataWithReportDataAction,
     getOffSchemaReportDataAction,
-    offBoardNotUseListReducer, offBoardReportUseDataReducer,
+    offBoardNotUseListReducer,
+    offBoardReportUseDataReducer,
     offBoardUseListReducer,
     offCategoryParamsReducer,
     offDateCalendarValueReducer,
@@ -45,11 +46,14 @@ import {
     offDateParamsReducer,
     offDragStartBoardReducer,
     offEditBoardReducer,
-    offSchemaArticleParamsReducer, offSchemaContainerDataReducer,
-    offSchemaCountryParamsReducer, offSchemaReportApiLoaderReducer,
+    offSchemaArticleParamsReducer,
+    offSchemaContainerDataReducer,
+    offSchemaCountryParamsReducer,
+    offSchemaReportApiLoaderReducer,
     offSchemaStoresDataReducer,
     offSchemaStoresParamsReducer,
-    resetOffSchemaDataReducer, resetOffSchemaReportDataReducer,
+    resetOffSchemaDataReducer,
+    resetOffSchemaReportDataReducer,
     toggleOffSchemaApiLoaderAction,
     toggleOffSchemaRenderAction
 } from "@/components/entities/store/model/reducers/offline";
@@ -66,6 +70,11 @@ import {
     stockParamsSortReducer,
     stockStateResetReducer
 } from "@/components/entities/store/model/reducers/stock";
+import {
+    eventsApiLoaderReducer,
+    eventsDataReducer,
+    eventsParamsPageReducer, resetEventsDataReducer
+} from "@/components/entities/store/model/reducers/annotations";
 
 /**
  * @author Zholaman Zhumanov
@@ -147,12 +156,18 @@ function useDispatchActionHandle() {
         stockParamsSortDirectionAction: (value) => dispatch(stockParamsSortDirectionReducer(value)),
         stockParamsArticleAction: (value) => dispatch(stockParamsArticleReducer(value)),
 
+        // Events
+        eventsDataAction: (data) => dispatch(eventsDataReducer(data)),
+        eventsApiLoaderAction: (value) => dispatch(eventsApiLoaderReducer(value)),
+        eventsParamsPageAction: (value) => dispatch(eventsParamsPageReducer(value)),
+
         // Reset actions
         productsResetDataAction: createDispatchHandler(dispatch, productsResetDataReducer, "productsResetData"),
         resetOfflinePlanAction: createDispatchHandler(dispatch, resetOfflinePlanReducer, "resetOfflinePlanReducer"),
         resetOfflinePlanDetailAction: createDispatchHandler(dispatch, resetOfflinePlanDetailReducer, "resetOfflinePlanDetailReducer"),
         stockStateResetAction: createDispatchHandler(dispatch, stockStateResetReducer, "stockStateResetAction"),
         resetOffSchemaDataAction: createDispatchHandler(dispatch, resetOffSchemaDataReducer, "resetOffSchemaDataAction"),
+        resetEventsDataAction: createDispatchHandler(dispatch, resetEventsDataReducer, "resetEventsDataReducer"),
     }
 }
 

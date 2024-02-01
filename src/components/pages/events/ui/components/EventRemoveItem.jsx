@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import {useApiRequest} from "@/components/shared/hooks";
 import {
@@ -45,7 +47,7 @@ function EventRemoveItem(props) {
     return (
         <AlertDialog>
             <AlertDialogTrigger>
-                <i><TrashIcon/></i>
+                <i><TrashIcon width={20} height={20} color={"red"}/></i>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>

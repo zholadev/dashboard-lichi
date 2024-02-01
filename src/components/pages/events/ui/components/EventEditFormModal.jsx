@@ -98,7 +98,7 @@ function EventEditFormModal(props) {
     return (
         <Dialog>
             <DialogTrigger>
-                <i><Pencil1Icon/></i>
+                <i><Pencil1Icon width={20} height={20}/></i>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
