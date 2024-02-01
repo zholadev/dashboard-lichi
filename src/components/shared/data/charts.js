@@ -19,12 +19,12 @@ export const offlineChartList = [
     },
     {
         "id": 5,
-        "title": "ТОП Продаж",
+        "title": "Товары - ТОП 10 по Продажам",
         "key": "product_top_sale"
     },
     {
         "id": 6,
-        "title": "ТОП Возвратов",
+        "title": "Товары - ТОП 10 по Возвратом",
         "key": "product_top_return"
     },
     {

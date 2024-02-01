@@ -32,10 +32,6 @@ function OfflinePageEditBoard(props) {
 
     const toggleDrag = (value) => events.offDragStartBoardAction(value)
 
-    console.log(
-        offSchemaReportData
-    )
-
     const onDragStart = () => toggleDrag(true)
 
     const checkListIncludes = (result) => {
@@ -123,8 +119,6 @@ function OfflinePageEditBoard(props) {
         }
         events.offBoardNotUseListAction(JSON.parse(localStorage.getItem("schema_not_use_list")))
     }, []);
-
-    console.log(offSchemaContainerData)
 
     return (
         <>

@@ -49,7 +49,7 @@ import {
     offSchemaCountryParamsReducer, offSchemaReportApiLoaderReducer,
     offSchemaStoresDataReducer,
     offSchemaStoresParamsReducer,
-    resetOffSchemaDataReducer,
+    resetOffSchemaDataReducer, resetOffSchemaReportDataReducer,
     toggleOffSchemaApiLoaderAction,
     toggleOffSchemaRenderAction
 } from "@/components/entities/store/model/reducers/offline";
@@ -133,6 +133,7 @@ function useDispatchActionHandle() {
         offBoardNotUseListAction: (data) => dispatch(offBoardNotUseListReducer(data)),
         offBoardReportUseDataAction: (data) => dispatch(offBoardReportUseDataReducer(data)),
         offSchemaContainerDataAction: (data) => dispatch(offSchemaContainerDataReducer(data)),
+        resetOffSchemaReportDataAction: () => dispatch(resetOffSchemaReportDataReducer()),
 
         // Stock actions
         stockGetDataAction: (data) => dispatch(stockGetDataReducer(data)),

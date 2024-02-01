@@ -80,7 +80,6 @@ function ProductsForm(props) {
             events.productsApiLoaderAction,
             {
                 onGetData: (params) => {
-                    console.log(params.data)
                     if (download || productsDownloadParams) {
                         const url = `${domain}/products/`
                         const link = document.createElement('a');

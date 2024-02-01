@@ -3,15 +3,15 @@
 import React, {useMemo} from 'react';
 import {cn} from "@/lib/utils";
 import Image from 'next/image'
+import {CaretSortIcon} from "@radix-ui/react-icons";
+import {Heading} from "@/components/shared/uikit/heading";
+import {TableData} from "@/components/shared/uikit/table";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {NotData} from "@/components/shared/uikit/templates";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useColorWithOpacity, useDispatchActionHandle} from "@/components/shared/hooks";
-import {TableData} from "@/components/shared/uikit/table";
-import {NotData} from "@/components/shared/uikit/templates";
-import {Heading} from "@/components/shared/uikit/heading";
-import {Button} from "@/components/shared/shadcn/ui/button";
-import {CaretSortIcon} from "@radix-ui/react-icons";
 
 /**
  * @author Zholaman Zhumanov

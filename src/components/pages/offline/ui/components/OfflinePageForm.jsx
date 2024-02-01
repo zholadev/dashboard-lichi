@@ -56,10 +56,6 @@ function OfflinePageForm(props) {
     const fetchGetAllSchemaReportData = async (e) => {
         if (e) e.preventDefault()
 
-        if (offSchemaReportData.length > 0) {
-            events.offSchemaReportGetData([])
-        }
-
         Object.values(offSchemaData?.["schema"] || {}).map((schema, index) => {
             const timer = 400 * index
             Object.values(schema?.["content"] || {}).map((content) => {
@@ -293,7 +289,11 @@ function OfflinePageForm(props) {
 
                 <Button
                     disabled={offSchemaApiLoader || loading}
-                    className={cn("w-full")}>
+                    className={cn("w-full")}
+                    onClick={() => {
+                        if (Object.values(offSchemaReportData || {}).length > 0) events.resetOffSchemaReportDataAction()
+                    }}
+                >
                     <LoaderButton loading={offSchemaApiLoader || loading}/>
                     Сформировать
                 </Button>

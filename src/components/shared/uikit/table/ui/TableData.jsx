@@ -1,8 +1,7 @@
 'use client'
 
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {cn} from "@/lib/utils";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/shadcn/ui/table";
 import {
     flexRender,
     getCoreRowModel,
@@ -13,10 +12,12 @@ import {
 import {Heading} from "@/components/shared/uikit/heading";
 import TableToolbar from "@/components/shared/uikit/table/ui/TableToolbar";
 import TableDataPagination from "@/components/shared/uikit/table/ui/TableDataPagination";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/shadcn/ui/table";
 
 /**
  * @author Zholaman Zhumanov
  * @created 29.01.2024
+ * @todo refactoring
  * @param props
  * @returns {Element}
  * @constructor
@@ -31,7 +32,10 @@ function TableData({
                        data,
                        changeLimitHandle,
                        hidePagination,
-                       hideLimitContent
+                       hideLimitContent,
+                       staticLimit,
+                       staticPagination,
+                       staticData
                    }) {
 
     const [sorting, setSorting] = useState([])
@@ -39,21 +43,29 @@ function TableData({
     const [columnFilters, setColumnFilters] = useState([])
     const [columnVisibility, setColumnVisibility] = useState({})
     const [paginationState, setPaginationState] = useState(1)
+    const [paginationLimitState, setPaginationLimitState] = useState(10)
+
+    const staticDataPageCount = useMemo(() => {
+        return Math.floor(data?.length / paginationLimitState)
+    }, [paginationState, paginationLimitState])
+
+    const displayStaticData = useMemo(() => {
+        return data.slice(paginationState * paginationLimitState, (paginationState + 1) * paginationLimitState)
+    }, [paginationState, paginationLimitState])
 
     const table = useReactTable({
-        "data": data,
+        "data": staticData ? displayStaticData : data,
         "columns": columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        pageCount: pageCount ?? 1,
+        pageCount: staticData ? staticDataPageCount || 1 : pageCount || 1,
         state: {
             pagination: {
-                pageIndex: pageIndex - 1 || paginationState - 1 || 0,
-                pageSize: pageSize,
+                pageIndex: staticData && staticPagination ? paginationState - 1 || 0 : pageIndex - 1 || 0,
+                pageSize: staticData && staticLimit ? paginationLimitState : pageSize,
             },
             sorting: sorting,
         },
-        // onPaginationChange: events.stockParamsPageAction,
         manualPagination: true,
         onSortingChange: (newSorting) => {
             setSorting(newSorting)
@@ -123,10 +135,10 @@ function TableData({
                 !hidePagination &&
                 <TableDataPagination
                     table={table}
+                    hideLimitContent={hideLimitContent}
                     pageValue={pageValue || paginationState}
                     changePageHandle={changePageHandle || setPaginationState}
-                    hideLimitContent={hideLimitContent}
-                    changeLimitHandle={changeLimitHandle}
+                    changeLimitHandle={changeLimitHandle || setPaginationLimitState}
                 />
             }
         </div>
