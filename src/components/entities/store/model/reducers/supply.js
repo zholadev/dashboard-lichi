@@ -16,7 +16,10 @@ export const supplySlice = createSlice({
         supplyParamsNetworkId: 1,
         supplyCreateKanbanData: {},
         supplySheetToggle: false,
-        supplyParamsColumnWeekId: '2023-45'
+        supplyParamsColumnWeekId: '2023-45',
+        supplyParamsArticleValue: "",
+        supplySizeListData: [],
+        supplySizeAmountValues: {}
     },
     reducers: {
         getCountryData: (state, action) => {
@@ -61,11 +64,32 @@ export const supplySlice = createSlice({
         supplyParamsDateEndReducer: (state, action) => {
             state.supplyParamsDateEnd = action.payload
         },
+        supplyParamsArticleValueReducer: (state, action) => {
+            state.supplyParamsArticleValue = action.payload
+        },
+        supplySizeListDataReducer: (state, action) => {
+            state.supplySizeListData = action.payload
+        },
+        supplySizeAmountValuesReducer: (state, action) => {
+            state.supplySizeAmountValues = action.payload
+        },
         supplyResetDataReducer: (state) => {
-            state.countryData = [];
-            state.kanbanData = [];
-            state.countryDataLoader = false;
-            state.kanbanDataLoader = false;
+            state.countryData = []
+            state.kanbanData = []
+            state.countryDataLoader = false
+            state.kanbanDataLoader = false
+            state.supplyKanbanColumnData = []
+            state.supplyKanbanColumnApiLoader = false
+            state.supplyParamsDateStartData = []
+            state.supplyParamsDateEndData = []
+            state.supplyParamsDateStart = ""
+            state.supplyParamsDateEnd = ""
+            state.supplyParamsNetworkId = 1
+            state.supplyCreateKanbanData = {}
+            state.supplySheetToggle = false
+            state.supplyParamsColumnWeekId = '2023-45'
+            state.supplyParamsArticleValue = ""
+            state.supplySizeListData = []
         }
     },
 });
@@ -84,5 +108,8 @@ export const {
     supplyParamsDateStartDataReducer,
     supplyParamsDateEndDataReducer,
     supplyParamsDateStartReducer,
-    supplyParamsDateEndReducer
+    supplyParamsDateEndReducer,
+    supplyParamsArticleValueReducer,
+    supplySizeListDataReducer,
+    supplySizeAmountValuesReducer
 } = supplySlice.actions;

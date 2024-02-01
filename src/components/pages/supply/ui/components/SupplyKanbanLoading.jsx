@@ -10,8 +10,6 @@ import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
  * @constructor
  */
 function SupplyKanbanLoading(props) {
-    const {loading} = props
-
     return (
         <div className={cn("border mb-20 p-4 rounded mt-3")}>
             <div

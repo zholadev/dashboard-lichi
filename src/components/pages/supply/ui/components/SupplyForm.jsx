@@ -24,13 +24,13 @@ import {apiGetSupplyKanbanData, apiGetSupplyNetworkData} from "@/components/shar
 /**
  * @author Zholaman Zhumanov
  * @created 25.01.2024
+ * @last-updated 01.02.2024 - Zholaman Zhumanov
+ * @update-description refactoring
  * @todo refactoring
- * @todo state get by redux
  * @returns {JSX.Element}
  * @constructor
  */
 function SupplyForm() {
-
     const events = useDispatchActionHandle()
 
     const {apiFetchHandler} = useApiRequest()
@@ -50,6 +50,7 @@ function SupplyForm() {
         supplyParamsDateStart,
         supplyParamsDateEnd
     } = useAppSelector(state => state.supply)
+
     const fetchSupplyCountryData = async () => {
         await apiFetchHandler(
             apiGetSupplyNetworkData,

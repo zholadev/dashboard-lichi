@@ -7,6 +7,7 @@ import {
     getDateKanbanData,
     supplyKanbanColumnApiLoaderReducer,
     supplyKanbanColumnDataReducer,
+    supplyParamsArticleValueReducer,
     supplyParamsColumnWeekIdReducer,
     supplyParamsDateEndDataReducer,
     supplyParamsDateEndReducer,
@@ -15,7 +16,7 @@ import {
     supplyParamsDateStartReducer,
     supplyParamsNetworkIdReducer,
     supplyResetDataReducer,
-    supplySheetToggleReducer,
+    supplySheetToggleReducer, supplySizeAmountValuesReducer, supplySizeListDataReducer,
     toggleCountryDataLoader,
     toggleKanbanDataLoader
 } from "@/components/entities/store/model/reducers/supply";
@@ -120,6 +121,9 @@ function useDispatchActionHandle() {
         supplyParamsDateEndDataAction: (value) => dispatch(supplyParamsDateEndDataReducer(value)),
         supplyParamsDateStartAction: (data) => dispatch(supplyParamsDateStartReducer(data)),
         supplyParamsDateEndAction: (data) => dispatch(supplyParamsDateEndReducer(data)),
+        supplyParamsArticleValueAction: (data) => dispatch(supplyParamsArticleValueReducer(data)),
+        supplySizeListDataAction: (data) => dispatch(supplySizeListDataReducer(data)),
+        supplySizeAmountValuesAction: (data) => dispatch(supplySizeAmountValuesReducer(data)),
 
         // Products actions
         productsApiLoaderAction: (value) => dispatch(productsApiLoaderReducer(value)),

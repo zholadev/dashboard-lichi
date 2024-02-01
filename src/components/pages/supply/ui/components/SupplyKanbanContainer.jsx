@@ -4,12 +4,12 @@ import SupplyKanbanLoading from "./SupplyKanbanLoading";
 import {Badge} from "@/components/shared/shadcn/ui/badge";
 import {NotData} from "@/components/shared/uikit/templates";
 import {Button} from "@/components/shared/shadcn/ui/button";
+import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
-import {apiGetKanbanColumnData, apiUpdateSupplyKanbanData} from "@/components/shared/services/axios/clientRequests";
 import SupplyKanbanColumnSheet from "@/components/pages/supply/ui/components/SupplyKanbanColumnSheet";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/shared/shadcn/ui/tooltip"
-import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {apiGetKanbanColumnData, apiUpdateSupplyKanbanData} from "@/components/shared/services/axios/clientRequests";
 
 /**
  * @author Zholaman Zhumanov
@@ -20,15 +20,17 @@ import {useAppSelector} from "@/components/entities/store/hooks/hooks";
  * @constructor
  */
 function SupplyKanbanContainer(props) {
-    const {kanbanData, kanbanLoading, updateKanbanData} = props
+    const {updateKanbanData} = props
 
     const events = useDispatchActionHandle()
 
     const {apiFetchHandler} = useApiRequest()
 
     const {
-        supplyParamsNetworkId
-    } = useAppSelector(state => state?.supply)
+        kanbanData,
+        supplyParamsNetworkId,
+        kanbanDataLoader,
+    } = useAppSelector(state => state.supply)
 
     const [animateUpdate, setAnimateUpdate] = useState(false)
     const [selectItem, setSelectItem] = useState({})
@@ -90,8 +92,8 @@ function SupplyKanbanContainer(props) {
         )
     }
 
-    if (kanbanLoading) {
-        return <SupplyKanbanLoading loading={kanbanLoading}/>
+    if (kanbanDataLoader) {
+        return <SupplyKanbanLoading/>
     }
 
     if (Object.values(kanbanData?.["kanban"] || {}).length === 0) {

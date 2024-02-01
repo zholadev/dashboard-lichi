@@ -14,6 +14,7 @@ import {CaretSortIcon} from "@radix-ui/react-icons";
 import {Heading} from "@/components/shared/uikit/heading";
 import {Badge} from "@/components/shared/shadcn/ui/badge";
 import {imgUrl} from "@/components/shared/contants/links";
+import {ContainerBox} from "@/components/entities/container";
 
 const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/ChartReact"), {ssr: false})
 
@@ -403,7 +404,7 @@ function OfflinePageReportData(props) {
 
     return (
         offEditBoard ? null :
-            <div className={cn("w-full border rounded p-5 grid gap-5 will-change-auto")}>
+            <ContainerBox>
                 {
                     Object.values(offBoardReportUseData || {}).map((schemaData, schemaId) => {
                         const reportChart = schemaData?.["data"]?.["report"]
@@ -412,16 +413,16 @@ function OfflinePageReportData(props) {
                         const getChartCurrentData = offlineChartList.filter((item) => item?.key === schemaData?.["key"])
                         return (
                             reportProduct ? (
-                                <div className={cn("border rounded p-5")} key={schemaId}>
+                                <ContainerBox key={schemaId}>
                                     <Heading type={"h3"} cls={"mb-2 mt-4"}>{getChartCurrentData?.[0]?.title}</Heading>
                                     <TableData
                                         data={getTableDataProductTop(schemaData?.["data"]?.["report"])}
                                         columns={getColumnsProductTop(schemaData?.["data"]?.["report"],)}
                                         hidePagination
                                     />
-                                </div>
+                                </ContainerBox>
                             ) : reportTable && !reportChart ? (
-                                <div className={cn("border rounded p-5")} key={schemaId}>
+                                <ContainerBox key={schemaId}>
                                     <Heading type={"h3"} cls={"mb-2 mt-4"}>{getChartCurrentData?.[0]?.title}</Heading>
                                     <TableData
                                         data={reportTable?.["data"]}
@@ -433,9 +434,9 @@ function OfflinePageReportData(props) {
                                         staticLimit={schemaData?.["key"] === 'stores_by_day'}
                                         staticData={schemaData?.["key"] === 'stores_by_day'}
                                     />
-                                </div>
+                                </ContainerBox>
                             ) : reportChart ? (
-                                <div className={"border rounded p-5"} key={schemaId}>
+                                <ContainerBox key={schemaId}>
                                     <ChartReact
                                         title={getChartCurrentData?.[0]?.title}
                                         optionsData={chartApexOptions(reportChart)?.options}
@@ -443,12 +444,12 @@ function OfflinePageReportData(props) {
                                         type={chartApexOptions(reportChart)?.type}
                                         height={chartApexOptions(reportChart)?.height}
                                     />
-                                </div>
+                                </ContainerBox>
                             ) : null
                         )
                     })
                 }
-            </div>
+            </ContainerBox>
     );
 }
 

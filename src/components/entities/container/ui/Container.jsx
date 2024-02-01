@@ -14,7 +14,7 @@ function Container(props) {
     const {children, cls} = props
 
     return (
-        <div className={cn("py-4 md:px-7 px-5 mt-10 w-full", cls)}>
+        <div className={cn("md:py-4 md:px-7 px-2 md:mt-10 mt-2 w-full", cls)}>
             {children}
         </div>
     );

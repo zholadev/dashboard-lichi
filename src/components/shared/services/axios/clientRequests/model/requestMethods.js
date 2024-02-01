@@ -178,7 +178,7 @@ export const apiCreateKanbanColumn = async (data) => {
     return await sendApiPostRequest({
             method: "kanban_item_save",
             object: "supply",
-            params: {data}
+            params: {...data}
         },
         true
     )

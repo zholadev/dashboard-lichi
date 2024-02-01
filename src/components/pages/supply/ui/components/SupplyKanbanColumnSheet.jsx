@@ -3,14 +3,13 @@
 import React, {useMemo} from 'react';
 import {cn} from "@/lib/utils";
 import Image from "next/image";
-import {PlusIcon} from "@radix-ui/react-icons";
 import {TableData} from "@/components/shared/uikit/table";
 import {Heading} from "@/components/shared/uikit/heading";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/shared/shadcn/ui/sheet";
-import {Button} from "@/components/shared/shadcn/ui/button";
 import {ListSkeleton, NotData} from "@/components/shared/uikit/templates";
+import SupplyColumnModal from "@/components/pages/supply/ui/components/SupplyColumnModal";
 
 /**
  * @author Zholaman Zhumanov
@@ -20,7 +19,7 @@ import {ListSkeleton, NotData} from "@/components/shared/uikit/templates";
  * @constructor
  */
 function SupplyKanbanColumnSheet(props) {
-    const {children, week, year} = props
+    const {children, week, year, weekId} = props
 
     const {
         supplyKanbanColumnData,
@@ -129,7 +128,7 @@ function SupplyKanbanColumnSheet(props) {
                 </div>
 
                 <div className={cn("mt-5 mb-8")}>
-                    <Button className={cn("flex items-center gap-2")}>Добавить <PlusIcon/></Button>
+                    <SupplyColumnModal weekId={weekId}/>
                 </div>
 
                 {

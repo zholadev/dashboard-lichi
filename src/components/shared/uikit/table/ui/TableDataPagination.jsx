@@ -5,6 +5,7 @@ import {Button} from "@/components/shared/shadcn/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
 import {ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon} from "@radix-ui/react-icons";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
+import {cn} from "@/lib/utils";
 
 /**
  * @author Zholaman Zhumanov
@@ -70,11 +71,11 @@ function TableDataPagination({table, changePageHandle, pageValue, changeLimitHan
     }
 
     return (
-        <div className="flex items-center lg:flex-row flex-col justify-end px-2 py-4 border-t">
-            <div className="flex-1 text-sm text-muted-foreground">
-                {table?.getFilteredRowModel().rows.length}
-            </div>
-            <div className="flex items-center space-x-6 lg:space-x-8">
+        <div className="flex md:items-center lg:flex-row flex-col justify-end px-2 py-4 border-t">
+            {/*<div className="flex-1 text-sm text-muted-foreground">*/}
+            {/*    {table?.getFilteredRowModel().rows.length}*/}
+            {/*</div>*/}
+            <div className="flex md:items-center md:flex-row flex-col gap-4">
                 {
                     !hideLimitContent &&
                     <div className="flex items-center space-x-2">
@@ -99,47 +100,50 @@ function TableDataPagination({table, changePageHandle, pageValue, changeLimitHan
                     </div>
                 }
 
-                <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-                    Page {table.getState().pagination.pageIndex + 1} of{" "}
-                    {table.getPageCount()}
-                </div>
-                <div className="flex items-center space-x-2">
-                    <Button
-                        variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={selectFirstPage}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <span className="sr-only">Go to first page</span>
-                        <DoubleArrowLeftIcon className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0"
-                        onClick={prevPage}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <span className="sr-only">Go to previous page</span>
-                        <ChevronLeftIcon className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0"
-                        onClick={nextPage}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        <span className="sr-only">Go to next page</span>
-                        <ChevronRightIcon className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
-                        onClick={selectLastPage}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        <span className="sr-only">Go to last page</span>
-                        <DoubleArrowRightIcon className="h-4 w-4"/>
-                    </Button>
+                <div className={cn("flex items-center flex-row gap-3")}>
+                    <div className="flex w-[100px] items-center text-sm font-medium">
+                        Page {table.getState().pagination.pageIndex + 1} of{" "}
+                        {table.getPageCount()}
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                        <Button
+                            variant="outline"
+                            className="hidden h-8 w-8 p-0 lg:flex"
+                            onClick={selectFirstPage}
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            <span className="sr-only">Go to first page</span>
+                            <DoubleArrowLeftIcon className="h-4 w-4"/>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                            onClick={prevPage}
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            <span className="sr-only">Go to previous page</span>
+                            <ChevronLeftIcon className="h-4 w-4"/>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                            onClick={nextPage}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            <span className="sr-only">Go to next page</span>
+                            <ChevronRightIcon className="h-4 w-4"/>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="hidden h-8 w-8 p-0 lg:flex"
+                            onClick={selectLastPage}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            <span className="sr-only">Go to last page</span>
+                            <DoubleArrowRightIcon className="h-4 w-4"/>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
