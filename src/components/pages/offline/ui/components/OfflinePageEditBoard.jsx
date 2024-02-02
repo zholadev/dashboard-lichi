@@ -1,10 +1,21 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {cn} from "@/lib/utils";
-import {MoveIcon} from "@radix-ui/react-icons";
-import {offlineChartList} from "@/components/shared/data/charts";
+import {MoveIcon, PlusIcon, TrashIcon} from "@radix-ui/react-icons";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {useApiRequest, useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
+import {useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/shared/shadcn/ui/dropdown-menu";
+import {offlineChartList} from "@/components/shared/data/charts";
+import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
+import OfflinePageEditToolbar from "@/components/pages/offline/ui/components/OfflinePageEditToolbar";
 
 /**
  * @author Zholaman Zhumanov
@@ -17,8 +28,6 @@ function OfflinePageEditBoard(props) {
     const toastMessage = useToastMessage()
     const events = useDispatchActionHandle()
 
-    const {apiFetchHandler} = useApiRequest()
-
     const {
         offEditBoard,
         offSchemaData,
@@ -30,100 +39,287 @@ function OfflinePageEditBoard(props) {
         offSchemaContainerData
     } = useAppSelector(state => state?.offline)
 
+    const [useListBoard, setUseListBoard] = useState({})
+
     const toggleDrag = (value) => events.offDragStartBoardAction(value)
 
     const onDragStart = () => toggleDrag(true)
+
+    const saveSchemaHandle = () => {
+        localStorage.setItem("schema_hide_reports_saves", JSON.stringify(offBoardNotUseList))
+        localStorage.setItem("schema_show_reports_saves", JSON.stringify(useListBoard))
+    }
 
     const checkListIncludes = (result) => {
         const getItem = offBoardUseList.filter((item) => item?.key == result?.draggableId)
         if (getItem.length > 0) return true
     }
 
-    const onDragEnd = (result) => {
-        if (!result.destination) return;
-
-        if (result?.source?.droppableId === 'not_use_list') {
-            if (checkListIncludes(result)) {
-                toastMessage('Отчет уже есть в списке', 'info')
-                return;
+    const findItemData = (obj) => {
+        if (obj.hasOwnProperty('data')) {
+            return obj.data;
+        }
+        for (let key in obj) {
+            if (typeof (obj[key]) === 'object') {
+                let foundData = findItemData(obj[key]);
+                if (foundData) return foundData;
             }
+        }
+        return null;
+    }
 
-            const itemsFilterDroppable = offBoardNotUseList.filter((item) => item?.key !== result?.draggableId)
+    /**
+     * @author Zholaman Zhumanov
+     * @created 02.02.2024
+     * @description Удаление перемещенного элемента с не используемых
+     * @param dropId
+     */
+    const cutOffUnnecessaryElements = (dropId) => {
+        try {
+            const cutOffUnnecessaryElements = Object.values(offBoardNotUseList || {}).filter((item) => item?.key !== dropId)
+            events.offBoardNotUseListAction([...cutOffUnnecessaryElements])
+        } catch (error) {
+            errorHandler("offlinePageEditBoard", "func/cutOffUnnecessaryElements", `__error: ${error}`)
+        }
+    }
 
-            localStorage.setItem("schema_not_use_list", JSON.stringify([...itemsFilterDroppable]))
+    /**
+     * @author Zholaman Zhumanov
+     * @created 02.02.2024
+     * @description Перемещение в не используемых компонентов и удаление и активного
+     * @param fromContainerId
+     * @param itemType
+     * @param containerIsRemoved
+     */
+    const moveElementToNotUsed = (fromContainerId, itemType, containerIsRemoved) => {
+        const useElements = useListBoard
 
-            events.offBoardNotUseListAction([...itemsFilterDroppable])
+        console.log("item", itemType, fromContainerId)
 
-            const itemsFilter = offlineChartList.filter((item) => item?.key == result?.draggableId)
+        // Верните ключи для fromContainer using Array.prototype.find
+        const fromKey = Object.keys(useElements).find(key => useElements[key].container === fromContainerId);
 
-            events.offBoardUseListAction([...offBoardUseList, ...itemsFilter])
-
-            localStorage.setItem("schema_use_list", JSON.stringify([...offBoardUseList, ...itemsFilter]))
-
-        } else if (result?.source?.droppableId === 'use_list') {
-            const itemsFilter = offBoardUseList.filter((item) => item?.key !== result?.draggableId)
-
-            localStorage.setItem("schema_use_list", JSON.stringify([...itemsFilter]))
-
-            events.offBoardUseListAction([...itemsFilter])
-
-            const itemsFilterDroppable = offlineChartList.filter((item) => item?.key == result?.draggableId)
-
-            localStorage.setItem("schema_not_use_list", JSON.stringify([...offBoardNotUseList, ...itemsFilterDroppable]))
-
-            events.offBoardNotUseListAction([...offBoardNotUseList, ...itemsFilterDroppable])
-        } else {
+        // Проверяем, не является ли индекс недействительным
+        if (!fromKey) {
+            toastMessage("Invalid container ID", "error");
             return;
         }
 
-        toggleDrag(false)
-    };
+        const fromContainer = useElements[fromKey];
+        const itemKey = Object.keys(fromContainer.items).find(key => fromContainer.items[key].type === itemType);
 
-    const getChildCounts = (childCount = 1) => {
-        const keys = [...Array(childCount)?.keys()]
+        if (!itemKey) {
+            toastMessage(`No item of type "${itemType}" found in container ${fromContainerId}`, "error");
+            return;
+        }
 
-        return keys.map((child, index) => {
+        // save the moved item and remove it from the fromContainer
+        const movedItem = fromContainer.items[itemKey];
+        delete fromContainer.items[itemKey];
+
+        // Push the movedItem to notUseElements in correct format
+        events.offBoardNotUseListAction(
+            [
+                ...offBoardNotUseList,
+                {
+                    id: movedItem.data.id,
+                    title: movedItem.data.title,
+                    key: movedItem.data.key
+                }
+            ]
+        );
+
+        if (!containerIsRemoved) {
+            setUseListBoard(prevState => ({
+                ...prevState,
+                [fromKey]: fromContainer
+            }));
+        } else {
+            const getOtherElements = Object.values(useListBoard || {}).filter((item) => item?.container !== fromContainerId)
+            setUseListBoard(getOtherElements)
+        }
+    }
+
+    /**
+     * @author Zholaman Zhumanov
+     * @created 02.02.2024
+     * @description Сохранение новых данных для дэшборда (показ в доске)
+     * @param container
+     * @param containerId
+     * @param getCurrentData
+     * @param itemType
+     * @returns {*}
+     */
+    const savingTypes = (container, containerId, getCurrentData, itemType) => {
+        try {
             return {
-                "id": index,
-                "type": ""
+                ...container[containerId]?.items,
+                [itemType]: {
+                    "id": itemType,
+                    "type": itemType,
+                    "data": getCurrentData?.[0]
+                }
+            }
+
+        } catch (error) {
+            errorHandler("offlinePageEditBoard", "func/savingTypes", `__error: ${error}`)
+        }
+    }
+
+    const deleteContainer = (id) => {
+        console.log('delete id', id)
+
+        const fromContainer = Object.values(useListBoard || {})?.filter((item) => item?.container === id);
+
+        if (!fromContainer) {
+            toastMessage("Invalid container ID - func/deleteContainer", "error");
+            return;
+        }
+
+        // Итерируемся по элементам в данном контейнере и перемещаем их
+        Object.values(fromContainer?.[0]?.items || {}).map((value) => {
+            const itemType = value.type;
+            console.log(itemType)
+            moveElementToNotUsed(id, itemType, true);
+        });
+    }
+
+    /**
+     * @author Zholaman Zhumanov
+     * @created 02.02.2024
+     * @description перемещение между активными досками
+     * @param result
+     * @param itemType
+     * @param fromContainerId
+     * @param toContainerId
+     */
+    const moveItemsBetweenContainerTest = (result, itemType, fromContainerId, toContainerId) => {
+        try {
+            // Find the keys for the fromContainer and toContainer
+            const fromKey = Object.keys(useListBoard).find(key => useListBoard[key].container === fromContainerId);
+            const toKey = Object.keys(useListBoard).find(key => useListBoard[key].container === toContainerId);
+
+            if (!fromKey || !toKey) {
+                toastMessage("Invalid container IDs", "error");
+                return;
+            }
+
+            const fromContainer = useListBoard[fromKey];
+            const toContainer = useListBoard[toKey];
+
+            // Find the item in the fromContainer
+            const itemKey = Object.keys(fromContainer.items).find(key => fromContainer.items[key].type === itemType);
+
+            // Check if item already exists in toContainer
+            if (toContainer.items[itemKey]) {
+                toastMessage("Уже содержится выберите другой", "info")
+                return;
+            }
+
+            if (!itemKey) {
+                toastMessage(`No item of type "${itemType}" found in container ${fromContainerId}`, "error");
+                return;
+            }
+
+            // Move the item from the fromContainer to the toContainer
+            const movedItem = fromContainer.items[itemKey];
+            delete fromContainer.items[itemKey];
+            toContainer.items[itemKey] = movedItem;
+        } catch (error) {
+            errorHandler("offlinePageEditBoard", "func/moveItemsBetweenContainerTest", `__error: ${error}`)
+        }
+    }
+
+    const saveDataToAContainer = (droppableData) => {
+        const {containerId, grid, itemType, dropId} = droppableData
+
+        const getCurrentItemData = offlineChartList.filter((item) => item?.key == dropId)
+
+        setUseListBoard(container => {
+            return {
+                ...container,
+                [containerId]: {
+                    "container": containerId,
+                    "grid": parseInt(grid),
+                    "items": savingTypes(container, containerId, getCurrentItemData, itemType),
+                }
             }
         })
     }
 
-    const addNewContainer = (childCount) => {
-        if (Object.values(offSchemaContainerData || {}).length === 0) {
-            events.offSchemaContainerDataAction({
-                "container": 1,
-                "type": "container",
-                "items": getChildCounts(childCount)
-            })
-        } else {
-            events.offSchemaContainerDataAction({
-                "container": Object.values(offSchemaContainerData || {}).length + 1,
-                "type": "container",
-                "items": getChildCounts(childCount)
-            })
-        }
+    const onDragEnd = (res) => {
+        if (!res.destination) return
+        console.log(res)
 
+        const itemDroppableId = res?.draggableId?.split("-")
+        const containerData = res?.destination?.droppableId?.split('_')
+        const sourceContainerData = res?.source?.droppableId?.split('_')
+
+        if (res?.source?.droppableId === 'schema_hide_reports' && containerData?.[0] === 'container') {
+            console.log('forward')
+            checkListIncludes(itemDroppableId?.[0])
+            cutOffUnnecessaryElements(itemDroppableId?.[0])
+            saveDataToAContainer({
+                "containerId": containerData?.[1],
+                "grid": containerData?.[3],
+                "itemType": itemDroppableId?.[0],
+                "dropId": itemDroppableId?.[0],
+            })
+        } else if (res?.destination?.droppableId === 'schema_hide_reports' && sourceContainerData?.[0] === 'container') {
+            console.log('back')
+            moveElementToNotUsed(sourceContainerData?.[1], itemDroppableId?.[0])
+        } else if (containerData?.[0] === 'container' && sourceContainerData?.[0] === 'container') {
+            console.log('between')
+            moveItemsBetweenContainerTest(res, itemDroppableId?.[0], sourceContainerData?.[1], containerData?.[1])
+        }
     }
 
+    const addNewContainer = (childCount) => {
+        if (Object.values(useListBoard || {}).length === 0) {
+            setUseListBoard({
+                1: {
+                    "container": 1,
+                    "type": "container",
+                    "grid": childCount,
+                    "items": []
+                }
+            })
+        } else {
+            setUseListBoard(container => {
+                return {
+                    ...container,
+                    [Object.values(useListBoard || {}).length + 1]: {
+                        "container": Object.values(useListBoard || {}).length + 1,
+                        "type": "container",
+                        "grid": childCount,
+                        "items": []
+                    }
+                }
+            })
+        }
+    }
+
+    console.log("list", useListBoard)
+
     useEffect(() => {
-        if (!localStorage.getItem("schema_use_list")) return
-        events.offBoardUseListAction(JSON.parse(localStorage.getItem("schema_use_list")))
+        if (!localStorage.getItem("schema_show_reports_saves")) return
+        setUseListBoard(JSON.parse(localStorage.getItem("schema_show_reports_saves")))
     }, [])
 
     useEffect(() => {
-        if (Object.values(localStorage.getItem("schema_not_use_list") || {}).length === 0) {
+        if (Object.values(localStorage.getItem("schema_hide_reports_saves") || {}).length === 0) {
             events.offBoardNotUseListAction([...offlineChartList])
             return
         }
-        events.offBoardNotUseListAction(JSON.parse(localStorage.getItem("schema_not_use_list")))
+        events.offBoardNotUseListAction(JSON.parse(localStorage.getItem("schema_hide_reports_saves")))
     }, []);
 
     return (
         <>
+            <OfflinePageEditToolbar confirmDataClick={saveSchemaHandle}/>
+
             <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
-                <Droppable droppableId="not_use_list">
+                <Droppable droppableId="schema_hide_reports">
                     {(provided) => (
                         <ul className={
                             cn("w-full border p-4 my-5 flex items-center rounded flex-wrap content-stretch justify-between gap-5",
@@ -132,7 +328,7 @@ function OfflinePageEditBoard(props) {
                         }
                             {...provided.droppableProps}
                             ref={provided.innerRef}>
-                            {offBoardNotUseList.map((item, index) => (
+                            {Object.values(offBoardNotUseList || {}).map((item, index) => (
                                 <Draggable key={item?.key} draggableId={item?.key?.toString()} index={index}>
                                     {(provided) => (
                                         <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs"
@@ -149,120 +345,101 @@ function OfflinePageEditBoard(props) {
                         </ul>
                     )}
                 </Droppable>
-                <Droppable droppableId="use_list">
-                    {(provided) => (
-                        <ul className={
-                            cn("w-full border p-4 my-5 rounded delay-75",
-                                offEditBoard ? "opacity-100 block" : "opacity-0 hidden",
-                                offDragStartBoard ? "bg-green-100 border-2 border-amber-400" : ""
-                            )
-                        }
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}>
-                            {offBoardUseList.map((item, index) => (
-                                <Draggable key={item?.id} draggableId={item?.key?.toString()} index={index}>
-                                    {(provided) => (
-                                        <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs mb-5"
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            ref={provided.innerRef}>
-                                            <MoveIcon/>
-                                            {item.title}
-                                        </li>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </ul>
-                    )}
-                </Droppable>
+
+                <div
+                    className={cn("w-full py-10 mb-10 flex justify-end", offEditBoard ? "opacity-100 flex" : "opacity-0 hidden")}>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button className={cn("flex items-center gap-2 ")}>
+                                Добавить контейнер <PlusIcon/>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-[150px]">
+                            <DropdownMenuLabel>Выберите контейнер</DropdownMenuLabel>
+                            <DropdownMenuSeparator/>
+                            <DropdownMenuItem onClick={() => addNewContainer(1)}>
+                                <div className={cn("grid grid-cols-1 p-1 w-full min-w-[100px]")}>
+                                    <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>
+                                </div>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem onClick={() => addNewContainer(2)}>
+                                <div className={cn("grid grid-cols-2 gap-2 p-1 w-full min-w-[100px]")}>
+                                    <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>
+                                    <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>
+                                </div>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem onClick={() => addNewContainer(3)}>
+                                <div className={cn("grid grid-cols-3 gap-2 p-1 w-full min-w-[100px]")}>
+                                    <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>
+                                    <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>
+                                    <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>
+                                </div>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+
+                {
+                    offEditBoard &&
+                    Object.values(useListBoard || {})?.map((container, containerId) => {
+                        return (
+                            <div key={containerId}>
+                                <div className={cn("w-full flex justify-end")}>
+                                    <Button variant={'secondary'}
+                                            onClick={() => deleteContainer(container?.["container"])}><TrashIcon/></Button>
+                                </div>
+                                <Droppable key={containerId}
+                                           droppableId={`container_${containerId + 1}_grid_${container?.grid}`}>
+                                    {(provided, snapshot) => {
+                                        return (
+                                            <div className={
+                                                cn(`w-full border p-4 my-5 rounded grid gap-5 grid-cols-${container?.grid} delay-75`,)
+                                            }
+                                                 {...provided.droppableProps}
+                                                 ref={provided.innerRef}
+                                            >
+                                                {Object.entries(container?.["items"] || {}).map(([key, value], index) => {
+                                                    const data = findItemData(value)
+                                                    return (
+                                                        <Draggable
+                                                            key={value?.id}
+                                                            draggableId={`${value.type}-id-${container?.container}-${index}`}
+                                                            index={index + 1}
+                                                        >
+                                                            {(provided, snapshot) => {
+                                                                return (
+                                                                    <div
+                                                                        className="h-full border rounded p-5 flex items-center cursor-pointer gap-3 text-xs mb-5"
+                                                                        {...provided.draggableProps}
+                                                                        {...provided.dragHandleProps}
+                                                                        ref={provided.innerRef}>
+                                                                        <MoveIcon/>
+                                                                        {data?.title}
+                                                                    </div>
+                                                                )
+                                                            }}
+                                                        </Draggable>
+                                                    )
+                                                })}
+                                                {provided.placeholder}
+                                                {
+                                                    snapshot.isDraggingOver &&
+                                                    <div
+                                                        className={cn("rounded bg-green-300 w-full h-full")}></div>
+                                                }
+                                            </div>
+                                        )
+                                    }}
+                                </Droppable>
+                            </div>
+                        )
+                    })
+                }
             </DragDropContext>
-
-            {/*<div className={cn("w-full h-full border rounded p-5")}>*/}
-            {/*    <div className={cn("w-full flex justify-end mb-4")}>*/}
-            {/*        <DropdownMenu>*/}
-            {/*            <DropdownMenuTrigger asChild>*/}
-            {/*                <Button className={cn("flex items-center gap-2 ")}>*/}
-            {/*                    Добавить контейнер<PlusIcon/>*/}
-            {/*                </Button>*/}
-            {/*            </DropdownMenuTrigger>*/}
-            {/*            <DropdownMenuContent align="end" className="w-[150px]">*/}
-            {/*                <DropdownMenuLabel>Выберите контейнер</DropdownMenuLabel>*/}
-            {/*                <DropdownMenuSeparator/>*/}
-            {/*                <DropdownMenuItem onClick={() => addNewContainer(1)}>*/}
-            {/*                    <div className={cn("grid grid-cols-1 p-1 w-[100px]")}>*/}
-            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
-            {/*                    </div>*/}
-            {/*                </DropdownMenuItem>*/}
-
-            {/*                <DropdownMenuItem onClick={() => addNewContainer(2)}>*/}
-            {/*                    <div className={cn("grid grid-cols-2 gap-2 p-1 w-[100px]")}>*/}
-            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
-            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
-            {/*                    </div>*/}
-            {/*                </DropdownMenuItem>*/}
-
-            {/*                <DropdownMenuItem onClick={() => addNewContainer(3)}>*/}
-            {/*                    <div className={cn("grid grid-cols-3 gap-2 p-1 w-[100px]")}>*/}
-            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
-            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
-            {/*                        <div className={cn("border border-cyan-400 w-full h-[20px]")}></div>*/}
-            {/*                    </div>*/}
-            {/*                </DropdownMenuItem>*/}
-            {/*            </DropdownMenuContent>*/}
-            {/*        </DropdownMenu>*/}
-
-            {/*    </div>*/}
-
-            {/*    {*/}
-            {/*        Object.values(offSchemaContainerData || {}).map((schemaContentItem, schemaContentId) => {*/}
-            {/*            return (*/}
-            {/*                <div key={schemaContentId}*/}
-            {/*                     className={cn(`grid grid-cols-1 p-2 md:grid-cols-${schemaContentItem?.items?.length} gap-5 mb-5 border rounded`)}>*/}
-            {/*                    {*/}
-            {/*                        schemaContentItem?.items?.map((childItem, childId) => {*/}
-            {/*                            return (*/}
-            {/*                                <div key={childId} className={cn("border rounded p-3")}>*/}
-
-            {/*                                </div>*/}
-            {/*                            )*/}
-            {/*                        })*/}
-            {/*                    }*/}
-            {/*                </div>*/}
-            {/*            )*/}
-            {/*        })*/}
-            {/*    }*/}
-            {/*</div>*/}
         </>
     );
 }
 
 export default OfflinePageEditBoard;
-// <Droppable droppableId="use_list">
-//     {(provided) => (
-//         <ul className={
-//             cn("w-full border p-4 my-5 rounded delay-75",
-//                 offEditBoard ? "opacity-100 block" : "opacity-0 hidden",
-//                 offDragStartBoard ? "bg-green-100 border-2 border-amber-400" : ""
-//             )
-//         }
-//             {...provided.droppableProps}
-//             ref={provided.innerRef}>
-//             {offBoardUseList.map((item, index) => (
-//                 <Draggable key={item?.id} draggableId={item?.key?.toString()} index={index}>
-//                     {(provided) => (
-//                         <li className="flex-1 h-full border rounded p-5 cursor-pointer flex items-center gap-3 text-xs mb-5"
-//                             {...provided.draggableProps}
-//                             {...provided.dragHandleProps}
-//                             ref={provided.innerRef}>
-//                             <MoveIcon/>
-//                             {item.title}
-//                         </li>
-//                     )}
-//                 </Draggable>
-//             ))}
-//             {provided.placeholder}
-//         </ul>
-//     )}
-// </Droppable>
-

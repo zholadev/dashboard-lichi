@@ -13,28 +13,34 @@ import {useAppSelector} from "@/components/entities/store/hooks/hooks";
  * @constructor
  */
 function OfflinePageEditToolbar(props) {
+    const {confirmDataClick} = props
     const {
         offEditBoard
     } = useAppSelector(state => state?.offline)
 
     const events = useDispatchActionHandle()
 
-    const buttonClickEvent = () => events.offEditBoardAction(!offEditBoard)
+    const cancelClickHandle = () => events.offEditBoardAction(!offEditBoard)
+
+    const confirmClickHandle = () => {
+        cancelClickHandle()
+        confirmDataClick()
+    }
 
     return (
         <div className={cn("flex items-center mb-3 gap-3")}>
             <Button
                 variant={"outline"}
                 className={cn("flex items-center gap-1")}
-                onClick={buttonClickEvent}
+                onClick={cancelClickHandle}
             >
-                Редактировать <Pencil2Icon/>
+                {offEditBoard ? 'Отмена' : 'Редактировать'} <Pencil2Icon/>
             </Button>
 
             {
                 offEditBoard &&
                 <Button
-                    onClick={buttonClickEvent}
+                    onClick={confirmClickHandle}
                 >
                     Подтвердить
                 </Button>

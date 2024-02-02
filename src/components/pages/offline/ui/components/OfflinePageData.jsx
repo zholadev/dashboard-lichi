@@ -46,6 +46,7 @@ function OfflinePageData() {
     }, []);
 
     useEffect(() => {
+
         setTimeout(() => {
             const getCurrentData = Object.values(offSchemaReportData || {}).filter(item => {
                 return offBoardUseList.some(board => board?.key === item?.key)
@@ -61,7 +62,6 @@ function OfflinePageData() {
 
     return (
         <>
-            <OfflinePageEditToolbar/>
             <OfflinePageEditBoard/>
             <OfflinePageReportData/>
         </>
