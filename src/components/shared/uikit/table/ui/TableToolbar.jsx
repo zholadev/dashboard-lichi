@@ -2,6 +2,7 @@
 
 import React from 'react';
 import TableViewOptions from "./TableViewOptions";
+import TableSortToolbar from "@/components/shared/uikit/table/ui/TableSortToolbar";
 
 /**
  * @author Zholaman Zhumanov
@@ -11,11 +12,17 @@ import TableViewOptions from "./TableViewOptions";
  * @constructor
  */
 function TableToolbar(props) {
-    const {table, column} = props
+    const {table, sortToolbar, sortSelectHandler, sortData} = props
 
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center w-full justify-end gap-3">
             <TableViewOptions table={table}/>
+            <TableSortToolbar
+                table={table}
+                sortData={sortData}
+                sortToolbar={sortToolbar}
+                sortSelectHandler={sortSelectHandler}
+            />
         </div>
     );
 }

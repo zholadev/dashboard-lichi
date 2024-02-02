@@ -21,7 +21,7 @@ import {
     toggleKanbanDataLoader
 } from "@/components/entities/store/model/reducers/supply";
 import {
-    getProductsData,
+    getProductsData, productParamsSortDirectionReducer, productParamsSortNameReducer,
     productsApiLoaderReducer,
     productsArticleParamsReducer,
     productsCategoryParamsReducer,
@@ -135,6 +135,8 @@ function useDispatchActionHandle() {
         productsGetProductsData: (data) => dispatch(getProductsData(data)),
         productsDownloadParamsAction: (value) => dispatch(productsDownloadParamsReducer(value)),
         productsArticleParamsReducerAction: (value) => dispatch(productsArticleParamsReducer(value)),
+        productParamsSortNameAction: (value) => dispatch(productParamsSortNameReducer(value)),
+        productParamsSortDirectionAction: (value) => dispatch(productParamsSortDirectionReducer(value)),
 
         // Offline actions
         offlinePlanDataAction: (data) => dispatch(offlinePlanDataReducer(data)),

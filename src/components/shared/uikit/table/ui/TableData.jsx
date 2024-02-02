@@ -35,7 +35,10 @@ function TableData({
                        hideLimitContent,
                        staticLimit,
                        staticPagination,
-                       staticData
+                       staticData,
+                       sortToolbar,
+                       sortSelectHandler,
+                       sortData
                    }) {
 
     const [sorting, setSorting] = useState([])
@@ -82,7 +85,13 @@ function TableData({
     return (
         <div className="space-y-4">
             <div className={cn("py-2 px-3")}>
-                <TableToolbar table={table} column={columns}/>
+                <TableToolbar
+                    sortSelectHandler={sortSelectHandler}
+                    sortData={sortData}
+                    sortToolbar={sortToolbar}
+                    table={table}
+                    column={columns}
+                />
             </div>
             <Table>
                 <TableHeader className={cn("bg-secondary")}>

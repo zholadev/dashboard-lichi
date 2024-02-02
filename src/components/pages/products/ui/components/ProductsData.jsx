@@ -3,10 +3,8 @@
 import React, {useMemo} from 'react';
 import {cn} from "@/lib/utils";
 import Image from 'next/image'
-import {CaretSortIcon} from "@radix-ui/react-icons";
 import {Heading} from "@/components/shared/uikit/heading";
 import {TableData} from "@/components/shared/uikit/table";
-import {Button} from "@/components/shared/shadcn/ui/button";
 import {NotData} from "@/components/shared/uikit/templates";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
@@ -33,6 +31,17 @@ function ProductsData() {
     const colorWithOpacity = useColorWithOpacity()
     const events = useDispatchActionHandle()
 
+    const sortHandler = (type) => {
+        try {
+            const sortItem = productsData?.table?.head?.[type]
+            console.log(sortItem)
+            events.productParamsSortNameAction(type)
+            events.productParamsSortDirectionAction(sortItem?.sort !== 1 ? 1 : -1)
+        } catch (error) {
+            errorHandler("stockPageData", "sortHandler")
+        }
+    }
+
     const getTableColumns = useMemo(() => {
         try {
             return Object.keys(productsData?.table?.head || {}).map((key) => {
@@ -49,6 +58,7 @@ function ProductsData() {
                                 />
                             </div>
                         ),
+                        enableSorting: false,
                         "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
                     }
                 } else if (key === 'name') {
@@ -60,22 +70,13 @@ function ProductsData() {
                                 <Heading type={'h4'}>{row?.["original"]?.["article"]}</Heading>
                             </div>
                         ),
+                        enableSorting: false,
                         "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
                     }
-                } else if (productsReportParams === 'by_colors' && productsDetailByStore && key !== 'store' && key !== 'total') {
+                } else if (productsReportParams === 'by_colors' || productsReportParams === 'by_sizes' && productsDetailByStore && key !== 'store' && key !== 'total') {
                     return {
                         "accessorKey": key,
-                        "header": ({column}) => {
-                            return (
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                                >
-                                    {productsData?.["table"]?.["head"]?.[key]?.["label"]}
-                                    <CaretSortIcon className="ml-2 h-4 w-4"/>
-                                </Button>
-                            )
-                        },
+                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
                         cell: ({row}) => {
                             return (
                                 <div className={cn("w-full h-full relative")}>
@@ -88,11 +89,13 @@ function ProductsData() {
                                 </div>
                             )
                         },
+                        enableSorting: false,
                     }
                 } else {
                     return {
                         "accessorKey": key,
                         "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                        enableSorting: !productsDetailByStore || key !== 'store' || key !== 'total'
                     }
                 }
             })
@@ -132,6 +135,9 @@ function ProductsData() {
                 pageValue={productsPageParams}
                 changeLimitHandle={events.productsLimitParamsAction}
                 changePageHandle={events.productsPageParamsAction}
+                sortToolbar
+                sortData={productsData?.["table"]?.["head"]}
+                sortSelectHandler={sortHandler}
             />
         </div>
     );

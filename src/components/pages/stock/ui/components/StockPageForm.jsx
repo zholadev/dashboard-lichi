@@ -88,7 +88,7 @@ function StockPageForm(props) {
     useEffect(() => {
         if (stockData.length === 0) return
         fetchStockData()
-    }, [stockPageParams, stockLimitParams]);
+    }, [stockPageParams, stockLimitParams, stockSortParams, stockSortDirection]);
 
     return (
         <>

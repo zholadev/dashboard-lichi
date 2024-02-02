@@ -9,6 +9,7 @@ export function middleware(request) {
     }
 
     if (!currentUser && path !== '/login') {
+        request.cookies.remove('dashboard-token')
         return NextResponse.redirect(new URL('/login', request.url))
     }
 }

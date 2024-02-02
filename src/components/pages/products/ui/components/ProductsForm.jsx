@@ -43,6 +43,7 @@ function ProductsForm(props) {
 
     const {
         productsReportParams,
+        productParamsSortName,
         productsCategoryParams,
         productsPageParams,
         productsDetailByStore,
@@ -50,7 +51,8 @@ function ProductsForm(props) {
         productsData,
         productsApiLoader,
         productsArticleParams,
-        productsDownloadParams
+        productsDownloadParams,
+        productParamsSortDirection
     } = useAppSelector(state => state.products)
 
     const [date, setDate] = useState({
@@ -71,7 +73,11 @@ function ProductsForm(props) {
             detail_by_store: productsDetailByStore ? "1" : "0",
             page: parseInt(productsPageParams) ?? 1,
             report: productsReportParams,
-            sort_direction: -1
+            sort_direction: productParamsSortDirection
+        }
+
+        if (productParamsSortName) {
+            apiParams['sort'] = productParamsSortName
         }
 
         await apiFetchHandler(
@@ -99,7 +105,7 @@ function ProductsForm(props) {
     useEffect(() => {
         if (productsData.length === 0) return
         fetchProductsData()
-    }, [productsLimitParams, productsPageParams]);
+    }, [productsLimitParams, productsPageParams, productsReportParams, productParamsSortDirection]);
 
     useEffect(() => {
         return () => {
@@ -167,10 +173,10 @@ function ProductsForm(props) {
                     </SelectTrigger>
                     <SelectContent>
                         {
-                            categories.map((categoryItem) => {
+                            categories.map((categoryItem, index) => {
                                 return (
                                     categoryItem?.["is_submenu"] ? (
-                                        <SelectGroup className={cn("mb-3")} key={categoryItem.id}>
+                                        <SelectGroup className={cn("mb-3")} key={index}>
                                             <SelectLabel
                                                 className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
                                             {
@@ -187,7 +193,7 @@ function ProductsForm(props) {
                                         </SelectGroup>
                                     ) : (
                                         <SelectItem
-                                            key={categoryItem.id}
+                                            key={index}
                                             value={categoryItem.category}
                                         >
                                             {categoryItem.title}

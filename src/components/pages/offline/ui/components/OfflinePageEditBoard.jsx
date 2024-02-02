@@ -20,11 +20,10 @@ import OfflinePageEditToolbar from "@/components/pages/offline/ui/components/Off
 /**
  * @author Zholaman Zhumanov
  * @created 31.01.2024
- * @param props
  * @returns {Element}
  * @constructor
  */
-function OfflinePageEditBoard(props) {
+function OfflinePageEditBoard() {
     const toastMessage = useToastMessage()
     const events = useDispatchActionHandle()
 
@@ -93,8 +92,6 @@ function OfflinePageEditBoard(props) {
      */
     const moveElementToNotUsed = (fromContainerId, itemType, containerIsRemoved) => {
         const useElements = useListBoard
-
-        console.log("item", itemType, fromContainerId)
 
         // Верните ключи для fromContainer using Array.prototype.find
         const fromKey = Object.keys(useElements).find(key => useElements[key].container === fromContainerId);
@@ -167,8 +164,6 @@ function OfflinePageEditBoard(props) {
     }
 
     const deleteContainer = (id) => {
-        console.log('delete id', id)
-
         const fromContainer = Object.values(useListBoard || {})?.filter((item) => item?.container === id);
 
         if (!fromContainer) {
@@ -176,12 +171,19 @@ function OfflinePageEditBoard(props) {
             return;
         }
 
+
+        if (Object.values(fromContainer?.[0]?.items || {}).length > 0) {
+            Object.values(fromContainer?.[0]?.items || {}).map((value) => {
+                const itemType = value.type;
+                console.log(itemType)
+                moveElementToNotUsed(id, itemType, true);
+            });
+        } else {
+            const getOtherElements = Object.values(useListBoard || {}).filter((item) => item?.container !== id)
+            setUseListBoard(getOtherElements)
+        }
         // Итерируемся по элементам в данном контейнере и перемещаем их
-        Object.values(fromContainer?.[0]?.items || {}).map((value) => {
-            const itemType = value.type;
-            console.log(itemType)
-            moveElementToNotUsed(id, itemType, true);
-        });
+
     }
 
     /**
@@ -298,8 +300,6 @@ function OfflinePageEditBoard(props) {
             })
         }
     }
-
-    console.log("list", useListBoard)
 
     useEffect(() => {
         if (!localStorage.getItem("schema_show_reports_saves")) return

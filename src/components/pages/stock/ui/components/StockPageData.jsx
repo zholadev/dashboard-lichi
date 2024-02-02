@@ -14,6 +14,7 @@ import {NotData} from "@/components/shared/uikit/templates";
 /**
  * @author Zholaman Zhumanov
  * @created 29.01.2024
+ * @todo refactoring
  * @param props
  * @returns {Element}
  * @constructor
@@ -27,6 +28,16 @@ function StockPageData(props) {
     } = useAppSelector(state => state.stock)
 
     const events = useDispatchActionHandle()
+
+    const sortHandler = (type, value) => {
+        try {
+            const sortItem = stockData?.table?.head?.[type]
+            events.stockParamsSortAction(type)
+            events.stockParamsSortDirectionAction(sortItem?.sort !== 1 ? 1 : -1)
+        } catch (error) {
+            errorHandler("stockPageData", "sortHandler")
+        }
+    }
 
     const getTableColumns = useMemo(() => {
         try {
@@ -44,6 +55,7 @@ function StockPageData(props) {
                                 />
                             </div>
                         ),
+                        enableSorting: false,
                         "header": ({column}) => {
                             return (
                                 <Button
@@ -72,7 +84,8 @@ function StockPageData(props) {
                         },
                         cell: ({row}) => (
                             <Heading type={'h5'}>{row.original?.["date"]}</Heading>
-                        )
+                        ),
+                        "sort": stockData?.table?.head?.[key]?.sort
                     }
                 } else if (key === "amount") {
                     return {
@@ -94,7 +107,8 @@ function StockPageData(props) {
                                 <Heading cls={cn("text-cyan-400")}
                                          type={'h5'}>{row.original?.["amount_visible"]}</Heading>
                             </div>
-                        )
+                        ),
+                        "sort": stockData?.table?.head?.[key]?.sort
                     }
                 } else {
                     return {
@@ -148,6 +162,9 @@ function StockPageData(props) {
                 pageSize={stockLimitParams}
                 pageValue={stockPageParams}
                 changePageHandle={events.stockParamsPageAction}
+                sortToolbar
+                sortData={stockData?.table?.head}
+                sortSelectHandler={sortHandler}
             />
         </div>
     );

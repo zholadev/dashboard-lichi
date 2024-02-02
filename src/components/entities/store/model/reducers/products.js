@@ -11,7 +11,9 @@ export const productsSlice = createSlice({
         productsLimitParams: 10,
         productsCategoryParams: "",
         productsDetailByStore: false,
-        productsArticleParams: ""
+        productsArticleParams: "",
+        productParamsSortName: "",
+        productParamsSortDirection: -1
     },
     reducers: {
         getProductsData: (state, action) => {
@@ -41,6 +43,12 @@ export const productsSlice = createSlice({
         productsArticleParamsReducer: (state, action) => {
             state.productsArticleParams = action.payload;
         },
+        productParamsSortNameReducer: (state, action) => {
+            state.productParamsSortName = action.payload;
+        },
+        productParamsSortDirectionReducer: (state, action) => {
+            state.productParamsSortDirection = action.payload;
+        },
         productsResetDataReducer: (state) => {
             state.productsData = [];
             state.productsApiLoader = false;
@@ -63,5 +71,7 @@ export const {
     productsDetailByStoreReducer,
     productsLimitParamsReducer,
     productsDownloadParamsReducer,
-    productsArticleParamsReducer
+    productsArticleParamsReducer,
+    productParamsSortNameReducer,
+    productParamsSortDirectionReducer
 } = productsSlice.actions;
