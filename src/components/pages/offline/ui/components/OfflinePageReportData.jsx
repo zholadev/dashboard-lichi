@@ -40,7 +40,9 @@ function OfflinePageReportData(props) {
     }
 
     useEffect(() => {
-        getSchemaGridData()
+        if (Object.values(offSchemaSavesData || {}).length === 0 && localStorage.getItem("schema_show_reports_saves")) {
+            getSchemaGridData()
+        }
     }, []);
 
     if (offSchemaReportApiLoader) {

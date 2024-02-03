@@ -46,6 +46,8 @@ function OfflinePageEditBoard() {
     const saveSchemaHandle = () => {
         localStorage.setItem("schema_hide_reports_saves", JSON.stringify(offBoardNotUseList))
         localStorage.setItem("schema_show_reports_saves", JSON.stringify(useListBoard))
+
+        events.offSchemaSavesDataAction(useListBoard)
     }
 
     const checkListIncludes = (result) => {
