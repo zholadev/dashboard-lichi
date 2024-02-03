@@ -30,10 +30,9 @@ function OfflinePageReportData(props) {
         offSchemaReportApiLoader
     } = useAppSelector(state => state?.offline)
 
-    const schemaShowSavesLocalStorage = localStorage.getItem("schema_show_reports_saves")
-
     const getSchemaGridData = () => {
         try {
+            const schemaShowSavesLocalStorage = localStorage.getItem("schema_show_reports_saves")
             events.offSchemaSavesDataAction(JSON.parse(schemaShowSavesLocalStorage))
         } catch (error) {
             errorHandler("offlinePageReportData", "func/getSchemaGridData", error)
@@ -42,7 +41,7 @@ function OfflinePageReportData(props) {
 
     useEffect(() => {
         getSchemaGridData()
-    }, [schemaShowSavesLocalStorage]);
+    }, []);
 
     if (offSchemaReportApiLoader) {
         return (

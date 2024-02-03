@@ -89,6 +89,7 @@ export const offlineSlice = createSlice({
         },
         resetOffSchemaReportDataReducer: (state) => {
             state.offSchemaContainerData = []
+            state.offSchemaReportData = []
         },
         offSchemaSavesDataReducer: (state, action) => {
             state.offSchemaSavesData = action.payload
