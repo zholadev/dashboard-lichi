@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {cn} from "@/lib/utils";
 import {Pencil2Icon} from "@radix-ui/react-icons";
 import {Button} from "@/components/shared/shadcn/ui/button";
 import {useDispatchActionHandle} from "@/components/shared/hooks";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 
 /**
  * @author Zholaman Zhumanov
@@ -14,18 +15,43 @@ import {useAppSelector} from "@/components/entities/store/hooks/hooks";
  */
 function OfflinePageEditToolbar(props) {
     const {confirmDataClick} = props
+
     const {
         offEditBoard
     } = useAppSelector(state => state?.offline)
 
     const events = useDispatchActionHandle()
 
-    const cancelClickHandle = () => events.offEditBoardAction(!offEditBoard)
+    /**
+     * @author Zholaman Zhumanov
+     * @description cancel, confirm and reset events
+     * @type func
+     */
+    const cancelClickHandle = useCallback(() => {
+        try {
+            events.offEditBoardAction(!offEditBoard)
+        } catch (error) {
+            errorHandler("offPageEditToolbar", "cancelClickHandle", error)
+        }
+    }, [offEditBoard])
 
-    const confirmClickHandle = () => {
-        cancelClickHandle()
-        confirmDataClick()
-    }
+    const confirmClickHandle = useCallback(() => {
+        try {
+            cancelClickHandle()
+            confirmDataClick()
+        } catch (error) {
+            errorHandler("offPageEditToolbar", "confirmClickHandle", error)
+        }
+    }, [cancelClickHandle, confirmDataClick])
+
+    const resetClickHandle = useCallback(() => {
+        try {
+            localStorage.removeItem("schema_hide_reports_saves")
+            localStorage.removeItem("schema_show_reports_saves")
+        } catch (error) {
+            errorHandler("offPageEditToolbar", "resetClickHandle", error)
+        }
+    }, [])
 
     return (
         <div className={cn("flex items-center mb-3 gap-3")}>
@@ -45,6 +71,15 @@ function OfflinePageEditToolbar(props) {
                     Подтвердить
                 </Button>
             }
+
+            {/*{*/}
+            {/*    offEditBoard &&*/}
+            {/*    <Button*/}
+            {/*        onClick={resetClickHandle}*/}
+            {/*    >*/}
+            {/*        Сбросить*/}
+            {/*    </Button>*/}
+            {/*}*/}
         </div>
     );
 }

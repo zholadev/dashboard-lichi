@@ -1,9 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {cn} from "@/lib/utils";
-import {MoveIcon, PlusIcon, TrashIcon} from "@radix-ui/react-icons";
-import {useAppSelector} from "@/components/entities/store/hooks/hooks";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
 import {Button} from "@/components/shared/shadcn/ui/button";
 import {
     DropdownMenu,
@@ -14,7 +10,11 @@ import {
     DropdownMenuTrigger
 } from "@/components/shared/shadcn/ui/dropdown-menu";
 import {offlineChartList} from "@/components/shared/data/charts";
+import {MoveIcon, PlusIcon, TrashIcon} from "@radix-ui/react-icons";
+import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
+import {useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
 import OfflinePageEditToolbar from "@/components/pages/offline/ui/components/OfflinePageEditToolbar";
 
 /**
@@ -43,6 +43,9 @@ function OfflinePageEditBoard() {
     const toggleDrag = (value) => events.offDragStartBoardAction(value)
 
     const onDragStart = () => toggleDrag(true)
+
+    const schemaHideSavesLocalStorage = localStorage.getItem("schema_hide_reports_saves")
+    const schemaShowSavesLocalStorage = localStorage.getItem("schema_show_reports_saves")
 
     const saveSchemaHandle = () => {
         localStorage.setItem("schema_hide_reports_saves", JSON.stringify(offBoardNotUseList))
@@ -147,7 +150,7 @@ function OfflinePageEditBoard() {
      * @param itemType
      * @returns {*}
      */
-    const savingTypes = (container, containerId, getCurrentData, itemType) => {
+    const savingTypes = useCallback((container, containerId, getCurrentData, itemType) => {
         try {
             return {
                 ...container[containerId]?.items,
@@ -161,30 +164,36 @@ function OfflinePageEditBoard() {
         } catch (error) {
             errorHandler("offlinePageEditBoard", "func/savingTypes", `__error: ${error}`)
         }
-    }
+    }, [useListBoard, offBoardNotUseList])
 
-    const deleteContainer = (id) => {
-        const fromContainer = Object.values(useListBoard || {})?.filter((item) => item?.container === id);
+    /**
+     * @author Zholaman Zhumanov
+     * @created 02.02.2024
+     * @desciption Удаление контейнера по id с обьекта активных в доске
+     * @type {(function(*): void)|*}
+     */
+    const deleteContainer = useCallback((id) => {
+        try {
+            const fromContainer = Object.values(useListBoard || {})?.filter((item) => item?.container === id);
 
-        if (!fromContainer) {
-            toastMessage("Invalid container ID - func/deleteContainer", "error");
-            return;
+            if (!fromContainer) {
+                toastMessage("Invalid container ID - func/deleteContainer", "error");
+                return;
+            }
+
+            if (Object.values(fromContainer?.[0]?.items || {}).length > 0) {
+                Object.values(fromContainer?.[0]?.items || {}).map((value) => {
+                    const itemType = value.type;
+                    moveElementToNotUsed(id, itemType, true);
+                });
+            } else {
+                const getOtherElements = Object.values(useListBoard || {}).filter((item) => item?.container !== id)
+                setUseListBoard(getOtherElements)
+            }
+        } catch (error) {
+            errorHandler("editBoard", "deleteContainer", error)
         }
-
-
-        if (Object.values(fromContainer?.[0]?.items || {}).length > 0) {
-            Object.values(fromContainer?.[0]?.items || {}).map((value) => {
-                const itemType = value.type;
-                console.log(itemType)
-                moveElementToNotUsed(id, itemType, true);
-            });
-        } else {
-            const getOtherElements = Object.values(useListBoard || {}).filter((item) => item?.container !== id)
-            setUseListBoard(getOtherElements)
-        }
-        // Итерируемся по элементам в данном контейнере и перемещаем их
-
-    }
+    }, [useListBoard, offBoardNotUseList])
 
     /**
      * @author Zholaman Zhumanov
@@ -195,9 +204,9 @@ function OfflinePageEditBoard() {
      * @param fromContainerId
      * @param toContainerId
      */
-    const moveItemsBetweenContainerTest = (result, itemType, fromContainerId, toContainerId) => {
+    const moveItemsBetweenContainerTest = useCallback((result, itemType, fromContainerId, toContainerId) => {
         try {
-            // Find the keys for the fromContainer and toContainer
+            // найти данные от и из контейнера
             const fromKey = Object.keys(useListBoard).find(key => useListBoard[key].container === fromContainerId);
             const toKey = Object.keys(useListBoard).find(key => useListBoard[key].container === toContainerId);
 
@@ -209,10 +218,10 @@ function OfflinePageEditBoard() {
             const fromContainer = useListBoard[fromKey];
             const toContainer = useListBoard[toKey];
 
-            // Find the item in the fromContainer
+            // Найти items из данных
             const itemKey = Object.keys(fromContainer.items).find(key => fromContainer.items[key].type === itemType);
 
-            // Check if item already exists in toContainer
+            // Проверка есть ли данные items и внутри элемент
             if (toContainer.items[itemKey]) {
                 toastMessage("Уже содержится выберите другой", "info")
                 return;
@@ -223,96 +232,113 @@ function OfflinePageEditBoard() {
                 return;
             }
 
-            // Move the item from the fromContainer to the toContainer
+            // Сохраенение новых данных
             const movedItem = fromContainer.items[itemKey];
             delete fromContainer.items[itemKey];
             toContainer.items[itemKey] = movedItem;
         } catch (error) {
             errorHandler("offlinePageEditBoard", "func/moveItemsBetweenContainerTest", `__error: ${error}`)
         }
-    }
+    }, [useListBoard, offBoardNotUseList])
 
-    const saveDataToAContainer = (droppableData) => {
-        const {containerId, grid, itemType, dropId} = droppableData
+    const saveDataToAContainer = useCallback((droppableData) => {
+        try {
+            const {containerId, grid, itemType, dropId} = droppableData
 
-        const getCurrentItemData = offlineChartList.filter((item) => item?.key == dropId)
+            const getCurrentItemData = offlineChartList.filter((item) => item?.key == dropId)
 
-        setUseListBoard(container => {
-            return {
-                ...container,
-                [containerId]: {
-                    "container": containerId,
-                    "grid": parseInt(grid),
-                    "items": savingTypes(container, containerId, getCurrentItemData, itemType),
-                }
-            }
-        })
-    }
-
-    const onDragEnd = (res) => {
-        if (!res.destination) return
-        console.log(res)
-
-        const itemDroppableId = res?.draggableId?.split("-")
-        const containerData = res?.destination?.droppableId?.split('_')
-        const sourceContainerData = res?.source?.droppableId?.split('_')
-
-        if (res?.source?.droppableId === 'schema_hide_reports' && containerData?.[0] === 'container') {
-            console.log('forward')
-            checkListIncludes(itemDroppableId?.[0])
-            cutOffUnnecessaryElements(itemDroppableId?.[0])
-            saveDataToAContainer({
-                "containerId": containerData?.[1],
-                "grid": containerData?.[3],
-                "itemType": itemDroppableId?.[0],
-                "dropId": itemDroppableId?.[0],
-            })
-        } else if (res?.destination?.droppableId === 'schema_hide_reports' && sourceContainerData?.[0] === 'container') {
-            console.log('back')
-            moveElementToNotUsed(sourceContainerData?.[1], itemDroppableId?.[0])
-        } else if (containerData?.[0] === 'container' && sourceContainerData?.[0] === 'container') {
-            console.log('between')
-            moveItemsBetweenContainerTest(res, itemDroppableId?.[0], sourceContainerData?.[1], containerData?.[1])
-        }
-    }
-
-    const addNewContainer = (childCount) => {
-        if (Object.values(useListBoard || {}).length === 0) {
-            setUseListBoard({
-                1: {
-                    "container": 1,
-                    "type": "container",
-                    "grid": childCount,
-                    "items": []
-                }
-            })
-        } else {
             setUseListBoard(container => {
                 return {
                     ...container,
-                    [Object.values(useListBoard || {}).length + 1]: {
-                        "container": Object.values(useListBoard || {}).length + 1,
+                    [containerId]: {
+                        "container": containerId,
+                        "grid": parseInt(grid),
+                        "items": savingTypes(container, containerId, getCurrentItemData, itemType),
+                    }
+                }
+            })
+        } catch (error) {
+            errorHandler("offlinePageEditBoard", "func/saveDataToAContainer", `__error: ${error}`)
+        }
+    }, [useListBoard, offBoardNotUseList])
+
+    const onDragEnd = useCallback((res) => {
+        try {
+            if (!res.destination) return
+
+            const itemDroppableId = res?.draggableId?.split("-")
+            const containerData = res?.destination?.droppableId?.split('_')
+            const sourceContainerData = res?.source?.droppableId?.split('_')
+
+            if (res?.source?.droppableId === 'schema_hide_reports' && containerData?.[0] === 'container') {
+                console.log('forward')
+                checkListIncludes(itemDroppableId?.[0])
+                cutOffUnnecessaryElements(itemDroppableId?.[0])
+                saveDataToAContainer({
+                    "containerId": containerData?.[1],
+                    "grid": containerData?.[3],
+                    "itemType": itemDroppableId?.[0],
+                    "dropId": itemDroppableId?.[0],
+                })
+            } else if (res?.destination?.droppableId === 'schema_hide_reports' && sourceContainerData?.[0] === 'container') {
+                console.log('back')
+                moveElementToNotUsed(sourceContainerData?.[1], itemDroppableId?.[0])
+            } else if (containerData?.[0] === 'container' && sourceContainerData?.[0] === 'container') {
+                console.log('between')
+                moveItemsBetweenContainerTest(res, itemDroppableId?.[0], sourceContainerData?.[1], containerData?.[1])
+            }
+        } catch (error) {
+            errorHandler("offlinePageEditBoard", "func/onDragEnd", `__error: ${error}`)
+        }
+    }, [useListBoard, offBoardNotUseList])
+
+    const addNewContainer = useCallback((childCount) => {
+        try {
+            if (Object.values(useListBoard || {}).length === 0) {
+                setUseListBoard({
+                    1: {
+                        "container": 1,
                         "type": "container",
                         "grid": childCount,
                         "items": []
                     }
-                }
-            })
+                })
+            } else {
+                setUseListBoard(container => {
+                    return {
+                        ...container,
+                        [Object.values(useListBoard || {}).length + 1]: {
+                            "container": Object.values(useListBoard || {}).length + 1,
+                            "type": "container",
+                            "grid": childCount,
+                            "items": []
+                        }
+                    }
+                })
+            }
+        } catch (error) {
+            errorHandler("offlinePageEditBoard", "func/addNewContainer", `__error: ${error}`)
         }
-    }
+    }, [useListBoard, offBoardNotUseList])
+
+    // Инициализация данных
+    const initialDataStates = useCallback(() => {
+        try {
+            if (Object.values(localStorage.getItem("schema_hide_reports_saves") || {}).length === 0) {
+                events.offBoardNotUseListAction([...offlineChartList])
+                return
+            }
+
+            setUseListBoard(JSON.parse(localStorage.getItem("schema_show_reports_saves")))
+            events.offBoardNotUseListAction(JSON.parse(localStorage.getItem("schema_hide_reports_saves")))
+        } catch (e) {
+            errorHandler("offlinePageEditBoard", "func/initialDataStates", `__error: ${error}`)
+        }
+    }, [schemaHideSavesLocalStorage, schemaShowSavesLocalStorage])
 
     useEffect(() => {
-        if (!localStorage.getItem("schema_show_reports_saves")) return
-        setUseListBoard(JSON.parse(localStorage.getItem("schema_show_reports_saves")))
-    }, [])
-
-    useEffect(() => {
-        if (Object.values(localStorage.getItem("schema_hide_reports_saves") || {}).length === 0) {
-            events.offBoardNotUseListAction([...offlineChartList])
-            return
-        }
-        events.offBoardNotUseListAction(JSON.parse(localStorage.getItem("schema_hide_reports_saves")))
-    }, []);
+        initialDataStates()
+    }, [schemaHideSavesLocalStorage, schemaShowSavesLocalStorage])
 
     return (
         <>

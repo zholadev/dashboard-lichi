@@ -3,15 +3,15 @@
 import React, {useMemo} from 'react';
 import {cn} from "@/lib/utils";
 import Image from 'next/image'
+import {CaretSortIcon} from "@radix-ui/react-icons";
 import {Heading} from "@/components/shared/uikit/heading";
 import {TableData} from "@/components/shared/uikit/table";
 import {NotData} from "@/components/shared/uikit/templates";
+import {Button} from "@/components/shared/shadcn/ui/button";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useColorWithOpacity, useDispatchActionHandle} from "@/components/shared/hooks";
-import {Button} from "@/components/shared/shadcn/ui/button";
-import {CaretSortIcon} from "@radix-ui/react-icons";
 
 /**
  * @author Zholaman Zhumanov
@@ -30,8 +30,8 @@ function ProductsData() {
         productsDetailByStore
     } = useAppSelector(state => state.products)
 
-    const colorWithOpacity = useColorWithOpacity()
     const events = useDispatchActionHandle()
+    const colorWithOpacity = useColorWithOpacity()
 
     const sortHandler = (type) => {
         try {
@@ -66,18 +66,28 @@ function ProductsData() {
                     return {
                         "accessorKey": key,
                         cell: ({row}) => (
-                            <div>
+                            <div> 
                                 <Heading type={'h4'} cls={cn("mb-1")}>{row?.["original"]?.["category"]}</Heading>
                                 <Heading type={'h4'}>{row?.["original"]?.["article"]}</Heading>
                             </div>
                         ),
                         enableSorting: !!(productsData?.["table"]?.["head"]?.[key]?.["sort"]),
-                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                        "header": ({column}) => {
+                            return (
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                >
+
+                                    <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                </Button>
+                            )
+                        },
                     }
-                } else if (productsReportParams === 'by_colors' || productsReportParams === 'by_sizes' && productsDetailByStore && key !== 'store' && key !== 'total') {
+                } else if (productsReportParams === 'by_colors' || productsReportParams === 'by_sizes' && productsDetailByStore && key !== 'store' || key !== 'total') {
                     return {
                         "accessorKey": key,
-                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
+                        "header": <h4 dangerouslySetInnerHTML={{__html: productsData?.["table"]?.["head"]?.[key]?.["label"]}}></h4>,
                         cell: ({row}) => {
                             return (
                                 <div className={cn("w-full h-full relative")}>
@@ -98,7 +108,13 @@ function ProductsData() {
                         enableSorting: !!(productsData?.["table"]?.["head"]?.[key]?.["sort"]),
                         "header": ({column}) => {
                             return (
-                                <h4 dangerouslySetInnerHTML={{__html: productsData?.["table"]?.["head"]?.[key]?.["label"]}}></h4>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                                >
+                                    <h4 dangerouslySetInnerHTML={{__html: productsData?.["table"]?.["head"]?.[key]?.["label"]}}></h4>
+                                    <CaretSortIcon className="ml-2 h-4 w-4"/>
+                                </Button>
                             )
                         },
                     }
