@@ -10,6 +10,8 @@ import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/shared/shadcn/ui/sheet";
 import {ListSkeleton, NotData} from "@/components/shared/uikit/templates";
 import SupplyColumnModal from "@/components/pages/supply/ui/components/SupplyColumnModal";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {Pencil1Icon, TrashIcon} from "@radix-ui/react-icons";
 
 /**
  * @author Zholaman Zhumanov
@@ -19,7 +21,7 @@ import SupplyColumnModal from "@/components/pages/supply/ui/components/SupplyCol
  * @constructor
  */
 function SupplyKanbanColumnSheet(props) {
-    const {children, week, year, weekId} = props
+    const {children, week, year, weekId, updateKanbanData} = props
 
     const {
         supplyKanbanColumnData,
@@ -32,7 +34,7 @@ function SupplyKanbanColumnSheet(props) {
                 {
                     "accessorKey": "sk_photo",
                     cell: ({row}) => (
-                        <div className={cn("w-[200px] flex justify-center items-center")}>
+                        <div className={cn("min-w-[200px] w-full flex justify-center items-center")}>
                             <Image
                                 width={90}
                                 height={100}
@@ -90,6 +92,16 @@ function SupplyKanbanColumnSheet(props) {
                     ),
                     "header": 'Дата поставки',
                 },
+                {
+                    "accessorKey": "",
+                    cell: ({row}) => (
+                        <div className={cn("")}>
+                            <Button variant={"ghost"} className={cn("mb-3")}><Pencil1Icon/></Button>
+                            <Button variant={"ghost"} className={cn("text-red-500")}><TrashIcon/></Button>
+                        </div>
+                    ),
+                    "header": 'Изменить/Удалить',
+                },
             ]
         } catch (error) {
             errorHandler("supplyKanbanSheet", "memo/tableColumns", error)
@@ -128,7 +140,7 @@ function SupplyKanbanColumnSheet(props) {
                 </div>
 
                 <div className={cn("mt-5 mb-8")}>
-                    <SupplyColumnModal weekId={weekId}/>
+                    <SupplyColumnModal updateKanbanData={updateKanbanData} weekId={weekId}/>
                 </div>
 
                 {

@@ -144,6 +144,7 @@ function SupplyKanbanContainer(props) {
                                     week={value?.sub_label}
                                     weekId={value?.id}
                                     year={value?.label}
+                                    updateKanbanData={updateKanbanData}
                                 >
                                     <div
                                         onClick={() => fetchGetKanbanColumnData(value?.id)}

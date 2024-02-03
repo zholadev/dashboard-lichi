@@ -16,7 +16,7 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@
  * @constructor
  */
 function SupplyColumnModal(props) {
-    const {weekId} = props
+    const {weekId, updateKanbanData} = props
 
     return (
         <Dialog>
@@ -25,11 +25,11 @@ function SupplyColumnModal(props) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Добавить товар</DialogTitle>
+                    <DialogTitle className={cn("mb-3")}>Добавить товар</DialogTitle>
                 </DialogHeader>
 
                 <SupplyColumnSearchArticle/>
-                <SupplyColumnCreateForm weekId={weekId}/>
+                <SupplyColumnCreateForm updateKanbanData={updateKanbanData} weekId={weekId}/>
             </DialogContent>
         </Dialog>
     );

@@ -19,7 +19,7 @@ import {apiCreateKanbanColumn} from "@/components/shared/services/axios/clientRe
  * @constructor
  */
 function SupplyColumnCreateForm(props) {
-    const {weekId} = props
+    const {weekId, updateKanbanData} = props
 
     const events = useDispatchActionHandle()
 
@@ -58,13 +58,15 @@ function SupplyColumnCreateForm(props) {
             apiCreateKanbanColumn,
             [
                 {
-                    items: {
+                    item: {
                         "sk_id": "",
                         "sk_week_id": weekId,
                         "sk_item_id": supplyParamsArticleValue,
                         "sk_network_id": supplyParamsNetworkId,
-                        "amount_by_size": {
-                            ...sizesAmounts
+                        "sk_data": {
+                            "amount_by_size": {
+                                ...sizesAmounts
+                            }
                         }
                     }
                 }
@@ -75,6 +77,7 @@ function SupplyColumnCreateForm(props) {
                     if (params.success) {
                         setSizes({})
                         events.supplySizeListDataAction("")
+                        updateKanbanData()
                     }
                 }
             }

@@ -108,6 +108,12 @@ function SupplyForm() {
         }
     }, [countryData]);
 
+    useEffect(() => {
+        return () => {
+            events.supplyResetDataAction()
+        }
+    }, []);
+
     return (
         <>
             <div className={cn("border mb-20 p-4 rounded mt-3")}>
