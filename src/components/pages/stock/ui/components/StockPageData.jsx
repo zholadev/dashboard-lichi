@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react';
-import {useDispatchActionHandle} from "@/components/shared/hooks";
+import {useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
 import Image from "next/image";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
@@ -28,10 +28,15 @@ function StockPageData(props) {
     } = useAppSelector(state => state.stock)
 
     const events = useDispatchActionHandle()
+    const toastMessage = useToastMessage()
 
     const sortHandler = (type, value) => {
         try {
             const sortItem = stockData?.table?.head?.[type]
+            if (!sortItem) {
+                toastMessage("Произошла ошибка! Сообщите разработчику", "error")
+            }
+
             events.stockParamsSortAction(type)
             events.stockParamsSortDirectionAction(sortItem?.sort !== 1 ? 1 : -1)
         } catch (error) {
@@ -85,7 +90,7 @@ function StockPageData(props) {
                         cell: ({row}) => (
                             <Heading type={'h5'}>{row.original?.["date"]}</Heading>
                         ),
-                        "sort": stockData?.table?.head?.[key]?.sort
+                        enableSorting: !!(stockData?.table?.head?.[key]?.sort)
                     }
                 } else if (key === "amount") {
                     return {
@@ -108,7 +113,7 @@ function StockPageData(props) {
                                          type={'h5'}>{row.original?.["amount_visible"]}</Heading>
                             </div>
                         ),
-                        "sort": stockData?.table?.head?.[key]?.sort
+                        enableSorting: !!(stockData?.table?.head?.[key]?.sort)
                     }
                 } else {
                     return {
@@ -124,6 +129,7 @@ function StockPageData(props) {
                                 </Button>
                             )
                         },
+                        enableSorting: !!(stockData?.table?.head?.[key]?.sort)
                     }
                 }
             })
@@ -162,6 +168,7 @@ function StockPageData(props) {
                 pageSize={stockLimitParams}
                 pageValue={stockPageParams}
                 changePageHandle={events.stockParamsPageAction}
+                changeLimitHandle={events.stockParamsLimitAction}
                 sortToolbar
                 sortData={stockData?.table?.head}
                 sortSelectHandler={sortHandler}

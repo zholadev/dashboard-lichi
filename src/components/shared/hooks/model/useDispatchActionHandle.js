@@ -21,14 +21,14 @@ import {
     toggleKanbanDataLoader
 } from "@/components/entities/store/model/reducers/supply";
 import {
-    getProductsData, productParamsSortDirectionReducer, productParamsSortNameReducer,
+    getProductsData, productParamsSortDirectionReducer, productParamsSortNameReducer, productParamsStoresReducer,
     productsApiLoaderReducer,
     productsArticleParamsReducer,
     productsCategoryParamsReducer,
     productsDetailByStoreReducer,
     productsDownloadParamsReducer,
     productsLimitParamsReducer,
-    productsPageParamsReducer,
+    productsPageParamsReducer, productsParamsTriggerApiReducer,
     productsReportParamsReducer,
     productsResetDataReducer
 } from "@/components/entities/store/model/reducers/products";
@@ -80,7 +80,7 @@ import {
     stockParamsReportReducer,
     stockParamsSortDirectionReducer,
     stockParamsSortReducer,
-    stockStateResetReducer
+    stockStateResetReducer, stockTriggerApiDataReducer
 } from "@/components/entities/store/model/reducers/stock";
 import {
     eventsApiLoaderReducer,
@@ -127,16 +127,27 @@ function useDispatchActionHandle() {
 
         // Products actions
         productsApiLoaderAction: (value) => dispatch(productsApiLoaderReducer(value)),
-        productsPageParamsAction: (value) => dispatch(productsPageParamsReducer(value)),
+        productsPageParamsAction: (value) => {
+            dispatch(productsPageParamsReducer(value))
+            dispatch(productsParamsTriggerApiReducer(value))
+        },
         productsReportParamsAction: (value) => dispatch(productsReportParamsReducer(value)),
         productsCategoryParamsAction: (value) => dispatch(productsCategoryParamsReducer(value)),
-        productsLimitParamsAction: (value) => dispatch(productsLimitParamsReducer(value)),
+        productsLimitParamsAction: (value) => {
+            dispatch(productsLimitParamsReducer(value))
+            dispatch(productsParamsTriggerApiReducer(value))
+        },
         productsDetailByStoreParamsAction: (value) => dispatch(productsDetailByStoreReducer(value)),
         productsGetProductsData: (data) => dispatch(getProductsData(data)),
         productsDownloadParamsAction: (value) => dispatch(productsDownloadParamsReducer(value)),
         productsArticleParamsReducerAction: (value) => dispatch(productsArticleParamsReducer(value)),
         productParamsSortNameAction: (value) => dispatch(productParamsSortNameReducer(value)),
-        productParamsSortDirectionAction: (value) => dispatch(productParamsSortDirectionReducer(value)),
+        productParamsSortDirectionAction: (value) => {
+            dispatch(productParamsSortDirectionReducer(value))
+            dispatch(productsParamsTriggerApiReducer(value))
+        },
+        productParamsStoresAction: (value) => dispatch(productParamsStoresReducer(value)),
+        productsParamsTriggerApiAction: (value) => dispatch(productsParamsTriggerApiReducer(value)),
 
         // Offline actions
         offlinePlanDataAction: (data) => dispatch(offlinePlanDataReducer(data)),
@@ -175,14 +186,24 @@ function useDispatchActionHandle() {
         // Stock actions
         stockGetDataAction: (data) => dispatch(stockGetDataReducer(data)),
         stockApiLoaderAction: (value) => dispatch(stockApiLoaderReducer(value)),
-        stockParamsPageAction: (value) => dispatch(stockParamsPageReducer(value)),
-        stockParamsLimitAction: (value) => dispatch(stockParamsLimitReducer(value)),
+        stockParamsPageAction: (value) => {
+            dispatch(stockParamsPageReducer(value))
+            dispatch(stockTriggerApiDataReducer(value))
+        },
+        stockParamsLimitAction: (value) => {
+            dispatch(stockParamsLimitReducer(value))
+            dispatch(stockTriggerApiDataReducer(value))
+        },
         stockParamsGuidCategoryAction: (value) => dispatch(stockParamsGuidCategoryReducer(value)),
         stockParamsNameAction: (value) => dispatch(stockParamsNameReducer(value)),
         stockParamsReportAction: (value) => dispatch(stockParamsReportReducer(value)),
         stockParamsSortAction: (value) => dispatch(stockParamsSortReducer(value)),
-        stockParamsSortDirectionAction: (value) => dispatch(stockParamsSortDirectionReducer(value)),
+        stockParamsSortDirectionAction: (value) => {
+            dispatch(stockParamsSortDirectionReducer(value))
+            dispatch(stockTriggerApiDataReducer(value))
+        },
         stockParamsArticleAction: (value) => dispatch(stockParamsArticleReducer(value)),
+        stockTriggerApiDataAction: (value) => dispatch(stockTriggerApiDataReducer(value)),
 
         // Events
         eventsDataAction: (data) => dispatch(eventsDataReducer(data)),

@@ -22,13 +22,17 @@ import {
 import {LoaderButton} from "@/components/shared/uikit/loader";
 import {categories} from "@/components/shared/data/categories";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import MultiSelect from "@/components/shared/uikit/multiselect/ui/MultiSelect";
 import {apiGetProductsListData} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {useApiRequest, useDispatchActionHandle, useGetDomain, usePreviousFriday} from "@/components/shared/hooks";
+import {storesStaticData} from "@/components/shared/data/stores";
 
 /**
  * @author Zholaman Zhumanov
  * @created 26.01.2024
+ * @last-updated 03.02.2024
+ * @update-description multi select and refactoring
  * @param props
  * @returns {Element}
  * @constructor
@@ -52,7 +56,9 @@ function ProductsForm(props) {
         productsApiLoader,
         productsArticleParams,
         productsDownloadParams,
-        productParamsSortDirection
+        productParamsSortDirection,
+        productParamsStores,
+        productsParamsTriggerApi
     } = useAppSelector(state => state.products)
 
     const [date, setDate] = useState({
@@ -74,6 +80,10 @@ function ProductsForm(props) {
             page: parseInt(productsPageParams) ?? 1,
             report: productsReportParams,
             sort_direction: productParamsSortDirection
+        }
+
+        if (productParamsStores && productsDetailByStore) {
+            apiParams['stores'] = [...productParamsStores]
         }
 
         if (productParamsSortName) {
@@ -105,7 +115,7 @@ function ProductsForm(props) {
     useEffect(() => {
         if (productsData.length === 0) return
         fetchProductsData()
-    }, [productsLimitParams, productsPageParams, productsReportParams, productParamsSortDirection]);
+    }, [productsParamsTriggerApi]);
 
     useEffect(() => {
         return () => {
@@ -116,118 +126,127 @@ function ProductsForm(props) {
     return (
         <div className={cn("w-100 border mb-20 p-4 rounded mt-3")}>
             <form
-                  className={cn("grid gap-10 2xl:grid-cols-3 md:grid-cols-2 grid-cols-1 mb-10 items-center")}>
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button
-                            id="date"
-                            variant={"outline"}
-                            className={cn(
-                                "justify-start text-left font-normal",
-                                !date && "text-muted-foreground"
-                            )}
-                        >
-                            <CalendarIcon className="mr-2 h-4 w-4"/>
-                            {date?.from ? (
-                                date.to ? (
-                                    <>
-                                        {format(date.from, "LLL dd, y")} -{" "}
-                                        {format(date.to, "LLL dd, y")}
-                                    </>
-                                ) : (
-                                    format(date.from, "LLL dd, y")
-                                )
-                            ) : (
-                                <span>Выберите дату</span>
-                            )}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                            initialFocus
-                            mode="range"
-                            defaultMonth={date?.from}
-                            selected={date}
-                            onSelect={setDate}
-                            numberOfMonths={2}
-                            locate={ru}
-                        />
-                    </PopoverContent>
-                </Popover>
+                className={cn("grid gap-10 2xl:grid-cols-3 md:grid-cols-2 grid-cols-1 mb-10 items-center")}>
 
-                <Select onValueChange={value => events.productsReportParamsAction(value)}>
-                    <SelectTrigger className="w-100">
-                        <SelectValue placeholder="Отчет"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="by_articles">По артикулам</SelectItem>
-                        <SelectItem value="by_colors">По цветам</SelectItem>
-                        <SelectItem value="by_sizes">По размерам</SelectItem>
-                        <SelectItem value="by_sizes2">По размерам [Test2]</SelectItem>
-                    </SelectContent>
-                </Select>
-
-                <Select onValueChange={value => events.productsCategoryParamsAction(value)}>
-                    <SelectTrigger className="w-100">
-                        <SelectValue placeholder="Категория товара"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        {
-                            categories.map((categoryItem, index) => {
-                                return (
-                                    categoryItem?.["is_submenu"] ? (
-                                        <SelectGroup className={cn("mb-3")} key={index}>
-                                            <SelectLabel
-                                                className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
-                                            {
-                                                categoryItem.items.map((childCategory) => {
-                                                    return (
-                                                        <SelectItem
-                                                            key={childCategory.id}
-                                                            value={childCategory.category}>
-                                                            {childCategory.title}
-                                                        </SelectItem>
-                                                    )
-                                                })
-                                            }
-                                        </SelectGroup>
+                <div className={cn("w-full flex flex-col gap-3")}>
+                    <Label>Отчетный период</Label>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                id="date"
+                                variant={"outline"}
+                                className={cn(
+                                    "justify-start text-left font-normal",
+                                    !date && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4"/>
+                                {date?.from ? (
+                                    date.to ? (
+                                        <>
+                                            {format(date.from, "LLL dd, y")} -{" "}
+                                            {format(date.to, "LLL dd, y")}
+                                        </>
                                     ) : (
-                                        <SelectItem
-                                            key={index}
-                                            value={categoryItem.category}
-                                        >
-                                            {categoryItem.title}
-                                        </SelectItem>
+                                        format(date.from, "LLL dd, y")
                                     )
-                                )
-                            })
-                        }
-                    </SelectContent>
-                </Select>
+                                ) : (
+                                    <span>Выберите дату</span>
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                initialFocus
+                                mode="range"
+                                defaultMonth={date?.from}
+                                selected={date}
+                                onSelect={setDate}
+                                numberOfMonths={2}
+                                locate={ru}
+                            />
+                        </PopoverContent>
+                    </Popover>
+                </div>
 
-                <Input
-                    id={'article'}
-                    name={'article'}
-                    type={'text'}
-                    defaultValue={productsArticleParams}
-                    onChange={event => events.productsArticleParamsReducerAction(event.target.value)}
-                />
+
+                <div className={cn("w-full flex flex-col gap-3")}>
+                    <Label>Отчет</Label>
+                    <Select onValueChange={value => events.productsReportParamsAction(value)}>
+                        <SelectTrigger className="w-100">
+                            <SelectValue placeholder="Отчет"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="by_articles">По артикулам</SelectItem>
+                            <SelectItem value="by_colors">По цветам</SelectItem>
+                            <SelectItem value="by_sizes">По размерам</SelectItem>
+                            <SelectItem value="by_sizes2">По размерам [Test2]</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className={cn("w-full flex flex-col gap-3")}>
+                    <Label>Категория товара</Label>
+                    <Select onValueChange={value => events.productsCategoryParamsAction(value)}>
+                        <SelectTrigger className="w-100">
+                            <SelectValue placeholder="Категория товара"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            {
+                                categories.map((categoryItem, index) => {
+                                    return (
+                                        categoryItem?.["is_submenu"] ? (
+                                            <SelectGroup className={cn("mb-3")} key={index}>
+                                                <SelectLabel
+                                                    className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
+                                                {
+                                                    categoryItem.items.map((childCategory) => {
+                                                        return (
+                                                            <SelectItem
+                                                                key={childCategory.id}
+                                                                value={childCategory.category}>
+                                                                {childCategory.title}
+                                                            </SelectItem>
+                                                        )
+                                                    })
+                                                }
+                                            </SelectGroup>
+                                        ) : (
+                                            <SelectItem
+                                                key={index}
+                                                value={categoryItem.category}
+                                            >
+                                                {categoryItem.title}
+                                            </SelectItem>
+                                        )
+                                    )
+                                })
+                            }
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className={cn("w-full flex flex-col gap-3")}>
+                    <Label>Артикул</Label>
+                    <Input
+                        id={'article'}
+                        name={'article'}
+                        type={'text'}
+                        defaultValue={productsArticleParams}
+                        onChange={event => events.productsArticleParamsReducerAction(event.target.value)}
+                    />
+                </div>
 
                 {
                     productsDetailByStore &&
-                    <Select>
-                        <SelectTrigger className="w-100">
-                            <SelectValue placeholder="Выберите магазины"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="ru">Астана</SelectItem>
-                            <SelectItem value="kz">Павло</SelectItem>
-                            <SelectItem value="uae">Алматы</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div className={cn("w-full flex flex-col gap-3")}>
+                        <Label>Выберите магазины</Label>
+                        <MultiSelect data={storesStaticData} getValueSelected={events.productParamsStoresAction}/>
+                    </div>
                 }
 
             </form>
+
             <div className={cn("flex items-center flex-wrap gap-10")}>
                 <div className="flex items-center space-x-2">
                     <Switch

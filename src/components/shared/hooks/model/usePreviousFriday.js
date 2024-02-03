@@ -15,13 +15,14 @@ function usePreviousFriday() {
         let lastFriday;
 
         // Если сегодня пятница
-        if (dayOfWeek === 5) {
-            lastFriday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-        } else {
-            // Если сегодня не пятница
-            const diff = dayOfWeek >= 5 ? dayOfWeek - 5 : 5 + (7 - dayOfWeek);
-            lastFriday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - diff);
-        }
+        // if (dayOfWeek === 5) {
+            // Устанавливаем дату на прошлую пятницу (7 дней назад)
+            lastFriday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 14);
+        // } else {
+        //     // Если сегодня не пятница
+        //     const diff = dayOfWeek >= 5 ? dayOfWeek - 5 : 5 + (7 - dayOfWeek);
+        //     lastFriday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - diff);
+        // }
 
         return lastFriday;
     }, []);

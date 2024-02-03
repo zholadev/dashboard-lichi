@@ -12,6 +12,7 @@ export const stockSlice = createSlice({
         stockReportParams: "group_by_size",
         stockSortParams: "name",
         stockSortDirection: -1,
+        stockTriggerApiData: "",
         stockArticleParams: ""
     },
     reducers: {
@@ -25,31 +26,50 @@ export const stockSlice = createSlice({
             state.stockPageParams = action.payload
         },
         stockParamsLimitReducer: (state, action) => {
+            state.stockPageParams = 1
             state.stockLimitParams = action.payload
         },
         stockParamsGuidCategoryReducer: (state, action) => {
+            state.stockPageParams = 1
             state.stockGuidCategoryParams = action.payload
         },
         stockParamsNameReducer: (state, action) => {
+            state.stockPageParams = 1
             state.stockNameParams = action.payload
         },
         stockParamsReportReducer: (state, action) => {
+            state.stockPageParams = 1
             state.stockReportParams = action.payload
         },
         stockParamsSortReducer: (state, action) => {
+            state.stockPageParams = 1
             state.stockSortParams = action.payload
         },
         stockParamsSortDirectionReducer: (state, action) => {
+            state.stockPageParams = 1
             state.stockSortDirection = action.payload
         },
         stockParamsArticleReducer: (state, action) => {
+            state.stockPageParams = 1
             state.stockArticleParams = action.payload
         },
+        stockTriggerApiDataReducer: (state, action) => {
+            state.stockTriggerApiData = action.payload
+        },
         stockStateResetReducer: (state) => {
-            state.stockData = [];
-            state.stockApiLoader = false;
+            state.stockDat = []
+            state.stockApiLoade = false
+            state.stockPageParam = 1
+            state.stockLimitParam = 10
+            state.stockGuidCategoryParam = ""
+            state.stockNameParam = ""
+            state.stockReportParam = "group_by_size"
+            state.stockSortParam = "name"
+            state.stockSortDirectio = -1
+            state.stockArticleParam = ""
+            state.stockTriggerApiData = ""
         }
-    },
+    }
 });
 export const {
     stockGetDataReducer,
@@ -62,5 +82,6 @@ export const {
     stockParamsPageReducer,
     stockParamsReportReducer,
     stockParamsLimitReducer,
-    stockParamsArticleReducer
+    stockParamsArticleReducer,
+    stockTriggerApiDataReducer
 } = stockSlice.actions;

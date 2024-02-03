@@ -50,6 +50,7 @@ function StockPageForm(props) {
         stockSortParams,
         stockSortDirection,
         stockArticleParams,
+        stockTriggerApiData
     } = useAppSelector(state => state.stock)
 
     const [date, setDate] = useState({
@@ -88,7 +89,7 @@ function StockPageForm(props) {
     useEffect(() => {
         if (stockData.length === 0) return
         fetchStockData()
-    }, [stockPageParams, stockLimitParams, stockSortParams, stockSortDirection]);
+    }, [stockTriggerApiData]);
 
     return (
         <>

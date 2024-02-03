@@ -12,8 +12,10 @@ export const productsSlice = createSlice({
         productsCategoryParams: "",
         productsDetailByStore: false,
         productsArticleParams: "",
+        productsParamsTriggerApi: "",
         productParamsSortName: "",
-        productParamsSortDirection: -1
+        productParamsSortDirection: -1,
+        productParamsStores: []
     },
     reducers: {
         getProductsData: (state, action) => {
@@ -26,28 +28,43 @@ export const productsSlice = createSlice({
             state.productsPageParams = action.payload;
         },
         productsReportParamsReducer: (state, action) => {
+            state.productsPageParams = 1
             state.productsReportParams = action.payload;
         },
         productsDownloadParamsReducer: (state, action) => {
             state.productsDownloadParams = action.payload;
         },
         productsCategoryParamsReducer: (state, action) => {
+            state.productsPageParams = 1
             state.productsCategoryParams = action.payload;
         },
         productsLimitParamsReducer: (state, action) => {
+            state.productsPageParams = 1
             state.productsLimitParams = action.payload;
         },
         productsDetailByStoreReducer: (state, action) => {
+            state.productParamsStores = []
+            state.productsPageParams = 1
             state.productsDetailByStore = action.payload;
         },
         productsArticleParamsReducer: (state, action) => {
+            state.productsPageParams = 1
             state.productsArticleParams = action.payload;
         },
         productParamsSortNameReducer: (state, action) => {
+            state.productsPageParams = 1
             state.productParamsSortName = action.payload;
         },
         productParamsSortDirectionReducer: (state, action) => {
+            state.productsPageParams = 1
             state.productParamsSortDirection = action.payload;
+        },
+        productParamsStoresReducer: (state, action) => {
+            state.productsPageParams = 1
+            state.productParamsStores = action.payload;
+        },
+        productsParamsTriggerApiReducer: (state, action) => {
+            state.productsParamsTriggerApi = action.payload;
         },
         productsResetDataReducer: (state) => {
             state.productsData = [];
@@ -58,6 +75,10 @@ export const productsSlice = createSlice({
             state.productsCategoryParams = "";
             state.productsDetailByStore = "";
             state.productsArticleParams = ""
+            state.productParamsStores = []
+            state.productParamsSortDirection = -1
+            state.productParamsSortName = ""
+            state.productsParamsTriggerApi = ""
         }
     },
 });
@@ -73,5 +94,7 @@ export const {
     productsDownloadParamsReducer,
     productsArticleParamsReducer,
     productParamsSortNameReducer,
-    productParamsSortDirectionReducer
+    productParamsSortDirectionReducer,
+    productParamsStoresReducer,
+    productsParamsTriggerApiReducer
 } = productsSlice.actions;

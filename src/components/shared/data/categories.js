@@ -214,7 +214,7 @@ const itemsShoes = [
 export const categories = [
     {
         id: 1,
-        category: ".",
+        category: "all",
         title: "Все"
     },
     {

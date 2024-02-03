@@ -10,6 +10,8 @@ import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useColorWithOpacity, useDispatchActionHandle} from "@/components/shared/hooks";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import {CaretSortIcon} from "@radix-ui/react-icons";
 
 /**
  * @author Zholaman Zhumanov
@@ -34,7 +36,6 @@ function ProductsData() {
     const sortHandler = (type) => {
         try {
             const sortItem = productsData?.table?.head?.[type]
-            console.log(sortItem)
             events.productParamsSortNameAction(type)
             events.productParamsSortDirectionAction(sortItem?.sort !== 1 ? 1 : -1)
         } catch (error) {
@@ -70,7 +71,7 @@ function ProductsData() {
                                 <Heading type={'h4'}>{row?.["original"]?.["article"]}</Heading>
                             </div>
                         ),
-                        enableSorting: false,
+                        enableSorting: !!(productsData?.["table"]?.["head"]?.[key]?.["sort"]),
                         "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
                     }
                 } else if (productsReportParams === 'by_colors' || productsReportParams === 'by_sizes' && productsDetailByStore && key !== 'store' && key !== 'total') {
@@ -89,13 +90,17 @@ function ProductsData() {
                                 </div>
                             )
                         },
-                        enableSorting: false,
+                        enableSorting: !!(productsData?.["table"]?.["head"]?.[key]?.["sort"]),
                     }
                 } else {
                     return {
                         "accessorKey": key,
-                        "header": productsData?.["table"]?.["head"]?.[key]?.["label"],
-                        enableSorting: !productsDetailByStore || key !== 'store' || key !== 'total'
+                        enableSorting: !!(productsData?.["table"]?.["head"]?.[key]?.["sort"]),
+                        "header": ({column}) => {
+                            return (
+                                <h4 dangerouslySetInnerHTML={{__html: productsData?.["table"]?.["head"]?.[key]?.["label"]}}></h4>
+                            )
+                        },
                     }
                 }
             })
@@ -120,7 +125,7 @@ function ProductsData() {
         </div>
     }
 
-    if (productsData.length === 0) {
+    if (productsData.length === 0 || productsData?.["table"]?.["data"]?.length === 0) {
         return <NotData/>
     }
 
