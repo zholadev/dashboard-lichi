@@ -23,6 +23,7 @@ import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {useApiRequest, useDispatchActionHandle, usePreviousFriday} from "@/components/shared/hooks";
 import {apiGetOfflineCountryData, apiGetOfflineSchemaDetail} from "@/components/shared/services/axios/clientRequests";
+import {offlineChartList} from "@/components/shared/data/charts";
 
 /**
  * @author Zholaman Zhumanov
@@ -55,17 +56,17 @@ function OfflinePageForm(props) {
 
     const fetchGetAllSchemaReportData = async (e) => {
         if (e) e.preventDefault()
+        events.offSchemaReportApiLoaderAction(true)
 
-        Object.values(offSchemaData?.["schema"] || {}).map((schema, index) => {
+        Object.values(offlineChartList || {}).map((schema, index) => {
             const timer = 400 * index
-            Object.values(schema?.["content"] || {}).map((content) => {
-                setTimeout(() => {
-                    fetchOfflineSchema(e, content, index)
-                }, timer)
-            })
+            setTimeout(() => {
+                fetchOfflineSchema(e, schema?.key, index)
+            }, timer)
         })
 
         events.offSchemaRenderToggle(true)
+        events.offSchemaReportApiLoaderAction(false)
     }
 
     const fetchOfflineSchema = async (e, schema_type, index) => {
@@ -89,7 +90,7 @@ function OfflinePageForm(props) {
         await apiFetchHandler(
             apiGetOfflineSchemaDetail,
             [schema_type, apiParams],
-            events.offSchemaReportApiLoaderAction,
+            false,
             {
                 onGetData: (params) => {
                     if (params.success) {

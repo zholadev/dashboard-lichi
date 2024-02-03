@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {NotData} from "@/components/shared/uikit/templates";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {offlineChartList} from "@/components/shared/data/charts";
@@ -8,6 +8,7 @@ import ReportTableData from "@/components/pages/offline/ui/components/ReportTabl
 import ReportProductTop from "@/components/pages/offline/ui/components/ReportProductTop";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {cn} from "@/lib/utils";
+import {useDispatchActionHandle} from "@/components/shared/hooks";
 
 
 /**
@@ -19,20 +20,21 @@ import {cn} from "@/lib/utils";
  * @constructor
  */
 function OfflinePageReportData(props) {
+    const events = useDispatchActionHandle()
+
     const {
         offEditBoard,
+        offSchemaSavesData,
         offSchemaReportData,
         offBoardReportUseData,
         offSchemaReportApiLoader
     } = useAppSelector(state => state?.offline)
 
-    const [reportSchemaData, setReportSchemaData] = useState([])
-
     const schemaShowSavesLocalStorage = localStorage.getItem("schema_show_reports_saves")
 
     const getSchemaGridData = () => {
         try {
-            setReportSchemaData(JSON.parse(schemaShowSavesLocalStorage))
+            events.offSchemaSavesDataAction(JSON.parse(schemaShowSavesLocalStorage))
         } catch (error) {
             errorHandler("offlinePageReportData", "func/getSchemaGridData", error)
         }
@@ -52,6 +54,14 @@ function OfflinePageReportData(props) {
         )
     }
 
+    // if (!offSchemaSavesData && offSchemaReportData.length > 0) {
+    //     return (
+    //         <div className={cn("w-full flex items-center justify-center my-4")}>
+    //             Отредактируйте доску, чтобы увидеть данные
+    //         </div>
+    //     )
+    // }
+
     if (offSchemaReportData.length === 0) {
         return <NotData/>
     }
@@ -60,7 +70,7 @@ function OfflinePageReportData(props) {
         offEditBoard ? null :
             <>
                 {
-                    Object.values(reportSchemaData || {}).map((schema, schemaId) => {
+                    Object.values(offSchemaSavesData || {}).map((schema, schemaId) => {
                         return (
                             <div key={schemaId}
                                  className={cn(`w-full grid gap-5 md:grid-cols-${schema?.grid} grid-cols-1`)}>

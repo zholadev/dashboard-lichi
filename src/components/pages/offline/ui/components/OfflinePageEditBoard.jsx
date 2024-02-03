@@ -39,13 +39,9 @@ function OfflinePageEditBoard() {
     } = useAppSelector(state => state?.offline)
 
     const [useListBoard, setUseListBoard] = useState({})
-
     const toggleDrag = (value) => events.offDragStartBoardAction(value)
 
     const onDragStart = () => toggleDrag(true)
-
-    const schemaHideSavesLocalStorage = localStorage.getItem("schema_hide_reports_saves")
-    const schemaShowSavesLocalStorage = localStorage.getItem("schema_show_reports_saves")
 
     const saveSchemaHandle = () => {
         localStorage.setItem("schema_hide_reports_saves", JSON.stringify(offBoardNotUseList))
@@ -181,15 +177,23 @@ function OfflinePageEditBoard() {
                 return;
             }
 
-            if (Object.values(fromContainer?.[0]?.items || {}).length > 0) {
-                Object.values(fromContainer?.[0]?.items || {}).map((value) => {
-                    const itemType = value.type;
-                    moveElementToNotUsed(id, itemType, true);
-                });
-            } else {
-                const getOtherElements = Object.values(useListBoard || {}).filter((item) => item?.container !== id)
-                setUseListBoard(getOtherElements)
-            }
+            const getOtherElements = Object.values(useListBoard || {}).filter((item) => item?.container !== id)
+            setUseListBoard(getOtherElements)
+
+            let updatedOffBoardNotUseList = [...offBoardNotUseList];
+
+            Object.values(fromContainer?.[0]?.items || {}).map((value) => {
+                updatedOffBoardNotUseList = [
+                    ...updatedOffBoardNotUseList,
+                    {
+                        id: value.data.id,
+                        title: value.data.title,
+                        key: value.data.key
+                    }
+                ];
+            });
+
+            events.offBoardNotUseListAction(updatedOffBoardNotUseList);
         } catch (error) {
             errorHandler("editBoard", "deleteContainer", error)
         }
@@ -241,6 +245,12 @@ function OfflinePageEditBoard() {
         }
     }, [useListBoard, offBoardNotUseList])
 
+    /**
+     * @author Zholaman Zhumanov
+     * @created 02.02.2024
+     * @description Сохранение нового элемента для container
+     * @type {(function(*): void)|*}
+     */
     const saveDataToAContainer = useCallback((droppableData) => {
         try {
             const {containerId, grid, itemType, dropId} = droppableData
@@ -292,12 +302,18 @@ function OfflinePageEditBoard() {
         }
     }, [useListBoard, offBoardNotUseList])
 
+    /**
+     * @author Zholaman Zhumanov
+     * @created 02.02.2024
+     * @description Добавление нового контейнера в доску
+     * @type {(function(*): void)|*}
+     */
     const addNewContainer = useCallback((childCount) => {
         try {
             if (Object.values(useListBoard || {}).length === 0) {
                 setUseListBoard({
                     1: {
-                        "container": 1,
+                        "container": '1',
                         "type": "container",
                         "grid": childCount,
                         "items": []
@@ -308,7 +324,7 @@ function OfflinePageEditBoard() {
                     return {
                         ...container,
                         [Object.values(useListBoard || {}).length + 1]: {
-                            "container": Object.values(useListBoard || {}).length + 1,
+                            "container": (Object.values(useListBoard || {}).length + 1).toString(),
                             "type": "container",
                             "grid": childCount,
                             "items": []
@@ -321,8 +337,19 @@ function OfflinePageEditBoard() {
         }
     }, [useListBoard, offBoardNotUseList])
 
+    // Проверка обновление листов и на items
+    const checkEmptyList = () => {
+        if (Object.values(useListBoard || {}).length === 0) {
+            events.offBoardNotUseListAction(offlineChartList)
+        }
+    }
+
+    useEffect(() => {
+        checkEmptyList()
+    }, [useListBoard, offBoardNotUseList]);
+
     // Инициализация данных
-    const initialDataStates = useCallback(() => {
+    const initialDataStates = () => {
         try {
             if (Object.values(localStorage.getItem("schema_hide_reports_saves") || {}).length === 0) {
                 events.offBoardNotUseListAction([...offlineChartList])
@@ -331,14 +358,14 @@ function OfflinePageEditBoard() {
 
             setUseListBoard(JSON.parse(localStorage.getItem("schema_show_reports_saves")))
             events.offBoardNotUseListAction(JSON.parse(localStorage.getItem("schema_hide_reports_saves")))
-        } catch (e) {
+        } catch (error) {
             errorHandler("offlinePageEditBoard", "func/initialDataStates", `__error: ${error}`)
         }
-    }, [schemaHideSavesLocalStorage, schemaShowSavesLocalStorage])
+    }
 
     useEffect(() => {
         initialDataStates()
-    }, [schemaHideSavesLocalStorage, schemaShowSavesLocalStorage])
+    }, [])
 
     return (
         <>
@@ -416,8 +443,10 @@ function OfflinePageEditBoard() {
                                     <Button variant={'secondary'}
                                             onClick={() => deleteContainer(container?.["container"])}><TrashIcon/></Button>
                                 </div>
-                                <Droppable key={containerId}
-                                           droppableId={`container_${containerId + 1}_grid_${container?.grid}`}>
+                                <Droppable
+                                    key={containerId}
+                                    droppableId={`container_${containerId + 1}_grid_${container?.grid}`}
+                                >
                                     {(provided, snapshot) => {
                                         return (
                                             <div className={
