@@ -41,7 +41,7 @@ function Logout(props) {
                         </Button>
                     </DialogClose>
                     <DialogClose asChild>
-                        <Button type={"button"} onClick={logout}>Да</Button>
+                        <Button type={"button"} variant={"destructive"} onClick={logout}>Да</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>
