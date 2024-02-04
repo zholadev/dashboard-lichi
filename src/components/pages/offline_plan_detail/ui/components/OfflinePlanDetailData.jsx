@@ -18,7 +18,6 @@ const ChartReact = dynamic(() => import("@/components/shared/uikit/chart/ui/Char
  * @todo refactoring
  * @todo date get is redux
  * @todo sum counts formatted
- * @param props
  * @returns {Element}
  * @constructor
  */
@@ -31,11 +30,7 @@ function OfflinePlanDetailData() {
     const chartApexOptions = useChartApexOptions()
 
     if (offPlanDetailApiLoader) {
-        return (
-            <div>
-                <Skeleton className="w-[100%] h-[450px] rounded-2 mb-3"/>
-            </div>
-        )
+        return <Skeleton className="w-[100%] h-[450px] rounded-2 mb-3"/>
     }
 
     if (offPlanDetailData?.length === 0) {

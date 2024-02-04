@@ -27,12 +27,13 @@ import {apiGetProductsListData} from "@/components/shared/services/axios/clientR
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {useApiRequest, useDispatchActionHandle, useGetDomain, usePreviousFriday} from "@/components/shared/hooks";
 import {storesStaticData} from "@/components/shared/data/stores";
+import {FormSelectCategories} from "@/components/shared/form";
 
 /**
  * @author Zholaman Zhumanov
  * @created 26.01.2024
- * @last-updated 03.02.2024
- * @update-description multi select and refactoring
+ * @last-updated 04.02.2024
+ * @update-description select categories make global components
  * @param props
  * @returns {Element}
  * @constructor
@@ -185,46 +186,7 @@ function ProductsForm(props) {
                     </Select>
                 </div>
 
-                <div className={cn("w-full flex flex-col gap-3")}>
-                    <Label>Категория товара</Label>
-                    <Select onValueChange={value => events.productsCategoryParamsAction(value)}>
-                        <SelectTrigger className="w-100">
-                            <SelectValue placeholder="Категория товара"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {
-                                categories.map((categoryItem, index) => {
-                                    return (
-                                        categoryItem?.["is_submenu"] ? (
-                                            <SelectGroup className={cn("mb-3")} key={index}>
-                                                <SelectLabel
-                                                    className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
-                                                {
-                                                    categoryItem.items.map((childCategory) => {
-                                                        return (
-                                                            <SelectItem
-                                                                key={childCategory.id}
-                                                                value={childCategory.category}>
-                                                                {childCategory.title}
-                                                            </SelectItem>
-                                                        )
-                                                    })
-                                                }
-                                            </SelectGroup>
-                                        ) : (
-                                            <SelectItem
-                                                key={index}
-                                                value={categoryItem.category}
-                                            >
-                                                {categoryItem.title}
-                                            </SelectItem>
-                                        )
-                                    )
-                                })
-                            }
-                        </SelectContent>
-                    </Select>
-                </div>
+                <FormSelectCategories onValuesChange={events.productsCategoryParamsAction}/>
 
                 <div className={cn("w-full flex flex-col gap-3")}>
                     <Label>Артикул</Label>

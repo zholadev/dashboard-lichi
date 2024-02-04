@@ -1,17 +1,16 @@
 import React, {useCallback} from 'react';
 import {cn} from "@/lib/utils";
-import Link from "next/link";
 import {Pencil1Icon} from "@radix-ui/react-icons";
 import {hl_get_random_colors} from "@/lib/random_colors";
 import {Badge} from "@/components/shared/shadcn/ui/badge";
 import {Heading} from "@/components/shared/uikit/heading";
-import {NotData} from "@/components/shared/uikit/templates";
-import {routerPagesList} from "@/components/entities/router";
-import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
+import OfflinePageDetailSheet from "./OfflinePageDetailSheet";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {ListSkeleton, NotData} from "@/components/shared/uikit/templates";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/shared/shadcn/ui/tooltip";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/shared/shadcn/ui/table";
+import {format} from "date-fns";
 
 
 /**
@@ -22,8 +21,13 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
  * @constructor
  */
 function OfflinePageData(props) {
-    const {apiLoader, offlinePlanData} = useAppSelector(state => state.offline_plan)
+    const {apiLoader, offlinePlanData, offPlanDateParams} = useAppSelector(state => state.offline_plan)
 
+    /**
+     * @author Zholaman Zhumanov
+     * @description берем процент выполнение для плана продажи (план и итоги)
+     * @type {(function(*, *): (number|undefined))|*}
+     */
     const calculatePercent = useCallback((fact, plan) => {
         try {
             return Math.floor((Math.floor(fact) / Math.floor(plan)) * 100);
@@ -32,6 +36,11 @@ function OfflinePageData(props) {
         }
     }, [])
 
+    /**
+     * @author Zholaman Zhumanov
+     * @description берем рандомные цвета для каждого элемента данных
+     * @type {(function(*): (*|undefined))|*}
+     */
     const getRandomColor = useCallback((index) => {
         try {
             return hl_get_random_colors(offlinePlanData?.["fact"]?.length)?.[index]
@@ -41,24 +50,7 @@ function OfflinePageData(props) {
     }, [offlinePlanData])
 
     if (apiLoader) {
-        return <div className={cn("w-full flex justify-center items-center my-4")}>
-            <div className={cn("w-full flex flex-row flex-wrap md:gap-3 gap-1 items-center")}>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-                <Skeleton className="w-full h-[30px] rounded-2 mb-1"/>
-            </div>
-        </div>
+        return <ListSkeleton/>
     }
 
     if (offlinePlanData.length === 0) {
@@ -99,15 +91,18 @@ function OfflinePageData(props) {
                                                     <TooltipTrigger>
                                                         {
                                                             value?.["guid"] ? (
-                                                                <Link
-                                                                    href={`${routerPagesList.offline_plan_detail}/${value?.["guid"]}?date=03/2023`}>
+                                                                <OfflinePageDetailSheet
+                                                                    id={value?.["guid"]}
+                                                                    date={format(offPlanDateParams, 'MM/yyyy')}
+                                                                    title={value?.["name"]}
+                                                                >
                                                                     <Heading
                                                                         cls={cn("cursor-pointer select-none hover:opacity-40 transition-opacity duration-100 ease-in-out")}
                                                                         type={"h4"}
                                                                     >
                                                                         {value?.["name"]}
                                                                     </Heading>
-                                                                </Link>
+                                                                </OfflinePageDetailSheet>
                                                             ) : (
                                                                 <Heading
                                                                     cls={cn("cursor-pointer select-none hover:opacity-40 transition-opacity duration-100 ease-in-out")}
