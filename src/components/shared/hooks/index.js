@@ -1,4 +1,5 @@
 import useLogout from "./model/useLogout";
+import useDarkMode from "./model/useDarkMode";
 import useGetDomain from "./model/useGetDomain";
 import useApiRequest from "./model/useApiRequest";
 import useCalcPercent from "./model/useCalcPercent";
@@ -12,6 +13,7 @@ import useDispatchActionHandle from "./model/useDispatchActionHandle";
 
 export {
     useLogout,
+    useDarkMode,
     useGetDomain,
     useApiRequest,
     useCalcPercent,

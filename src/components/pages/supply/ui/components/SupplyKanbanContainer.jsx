@@ -205,12 +205,3 @@ function SupplyKanbanContainer(props) {
 }
 
 export default SupplyKanbanContainer;
-
-
-// kanban_item_save
-// {
-//     "sk_id": "",
-//     "sk_item_id": "sddsd",
-//     "sk_network_id": "1",
-//     "sk_week_id": "2024-05"
-// }

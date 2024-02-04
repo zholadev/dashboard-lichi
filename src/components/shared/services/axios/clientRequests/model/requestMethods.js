@@ -202,6 +202,50 @@ export const apiGetItemSizes = async (article) => {
     )
 }
 
+/**
+ * @author Zholaman Zhumanov
+ * @created 04.02.2024
+ * @param id
+ * @param network_id
+ * @param week_id
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetKanbanRemoveItem = async (id, network_id, week_id) => {
+    return await sendApiPostRequest({
+            method: "kanban_item_remove",
+            object: "supply",
+            params: {
+                id: id,
+                network_id: network_id,
+                week_id: week_id
+            }
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
+ * @created 04.02.2024
+ * @param id
+ * @param network_id
+ * @param week_id
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiGetSupplyKanbanItem = async (id, network_id, week_id) => {
+    return await sendApiPostRequest({
+            method: "kanban_item_get",
+            object: "supply",
+            params: {
+                id: id,
+                network_id: network_id,
+                week_id: week_id
+            }
+        },
+        true
+    )
+}
+
 
 /**
  * @author Zholaman Zhumanov

@@ -14,10 +14,11 @@ import {routerPagesList} from "@/components/entities/router";
 function PageBreadcrumbs(props) {
     const {page, title} = props
 
-    const firstPage =  {
+    const firstPage = {
         "id": 1,
         "title": "Главная",
-        "link": routerPagesList.main
+        "link": routerPagesList.main,
+        "slash": true
     }
 
     const pageList = {
@@ -29,7 +30,8 @@ function PageBreadcrumbs(props) {
             {
                 "id": 2,
                 "title": "Событие",
-                "link": false
+                "link": false,
+                "slash": false
             }
         ],
         "offline_plan": [
@@ -37,7 +39,8 @@ function PageBreadcrumbs(props) {
             {
                 "id": 2,
                 "title": "План продаж",
-                "link": false
+                "link": false,
+                "slash": false
             }
         ],
         "products": [
@@ -45,7 +48,8 @@ function PageBreadcrumbs(props) {
             {
                 "id": 2,
                 "title": "Отчет по товарам",
-                "link": false
+                "link": false,
+                "slash": false
             }
         ],
         "offline": [
@@ -53,7 +57,8 @@ function PageBreadcrumbs(props) {
             {
                 "id": 2,
                 "title": "Розница",
-                "link": false
+                "link": false,
+                "slash": false
             }
         ],
         "supply": [
@@ -61,7 +66,8 @@ function PageBreadcrumbs(props) {
             {
                 "id": 2,
                 "title": "Поставки",
-                "link": false
+                "link": false,
+                "slash": false
             }
         ],
         "stock": [
@@ -69,7 +75,8 @@ function PageBreadcrumbs(props) {
             {
                 "id": 2,
                 "title": "Состояние склада",
-                "link": false
+                "link": false,
+                "slash": false
             }
         ],
     }
@@ -79,7 +86,7 @@ function PageBreadcrumbs(props) {
     }
 
     return (
-        <ul className={"flex items-center gap-1 text-xs mt-5 mb-10 text-slate-500"}>
+        <ul className={"flex items-center md:justify-start justify-center gap-1 md:text-xs text-sm mt-5 mb-10 text-slate-500"}>
             {
                 Object.values(pageList[page] || {}).map((pageItem) => (
                     pageItem.link ? (
@@ -88,7 +95,7 @@ function PageBreadcrumbs(props) {
                             className={"cursor-pointer hover:text-primary"}
                         >
                             <Link href={pageItem.link}>
-                                / {pageItem?.["title"]}
+                                {pageItem?.["title"]} {pageItem?.["slash"] && <span>/</span>}
                             </Link>
                         </li>
                     ) : (
@@ -96,7 +103,7 @@ function PageBreadcrumbs(props) {
                             key={pageItem?.["id"]}
                             className={"cursor-pointer hover:text-primary"}
                         >
-                            / {pageItem?.["title"]}
+                            {pageItem?.["title"]} {pageItem?.["slash"] && <span>/</span>}
                         </li>
                     )
                 ))

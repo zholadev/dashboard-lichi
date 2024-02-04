@@ -10,6 +10,8 @@ import {
 } from "@/components/shared/shadcn/ui/dialog";
 import {useLogout} from "@/components/shared/hooks";
 import {Button} from "@/components/shared/shadcn/ui/button";
+import {ExitIcon} from "@radix-ui/react-icons";
+import {cn} from "@/lib/utils";
 
 /**
  * @author Zholaman Zhumanov
@@ -26,8 +28,8 @@ function Logout(props) {
     return (
         <Dialog open={openDialog} onOpenChange={onChangeToggleDialog}>
             <DialogTrigger asChild>
-                <Button variant={"ghost"} type={"button"}>
-                    Log out
+                <Button variant={"ghost"} type={"button"} className={cn("flex items-center flex-row gap-2")}>
+                    Выйти <ExitIcon/>
                 </Button>
             </DialogTrigger>
             <DialogContent>
@@ -46,7 +48,6 @@ function Logout(props) {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-
     );
 }
 

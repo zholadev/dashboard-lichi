@@ -1,6 +1,7 @@
 'use client'
 
 import React, {useEffect} from 'react';
+import {cn} from "@/lib/utils";
 import EventsToolbar from "./components/EventsToolbar";
 import {Table} from "@/components/shared/shadcn/ui/table"
 import {Heading} from "@/components/shared/uikit/heading";
@@ -64,7 +65,7 @@ function EventsPage() {
 
     return (
         <>
-            <Heading type={"h1"}>Настройка событий</Heading>
+            <Heading type={"h1"} cls={cn("w-full md:text-left text-center mb-9")}>Настройка событий</Heading>
             <EventsToolbar updateEventData={fetchApiEventsData}/>
             <Table>
                 <EventsTableHeader/>

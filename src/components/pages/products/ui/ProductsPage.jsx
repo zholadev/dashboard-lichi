@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react';
+import {cn} from "@/lib/utils";
 import ProductsForm from "./components/ProductsForm";
 import ProductsData from "./components/ProductsData";
 import {Heading} from "@/components/shared/uikit/heading";
-import ProductsPagination from "./components/ProductsPagination";
 
 /**
  * @author Zholaman Zhumanov
@@ -18,7 +18,7 @@ import ProductsPagination from "./components/ProductsPagination";
 function ProductsPage(props) {
     return (
         <>
-            <Heading type={"h1"}>Отчет по товарам</Heading>
+            <Heading type={"h1"} cls={cn("w-full md:text-left text-center mb-9")}>Отчет по товарам</Heading>
             <ProductsForm/>
             <ProductsData/>
         </>

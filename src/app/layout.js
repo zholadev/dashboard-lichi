@@ -1,4 +1,4 @@
-import {Montserrat} from "next/font/google";
+import {Montserrat, Rubik} from "next/font/google";
 import "./globals.css";
 import {cn} from "@/lib/utils";
 import 'react-toastify/dist/ReactToastify.css'
@@ -9,6 +9,7 @@ import {ThemeProvider} from "@/components/shared/theme-provider";
 import {StoreProvider} from "@/components/entities/store";
 
 const inter = Montserrat({subsets: ["latin"]});
+const rubik = Rubik({subsets: ["latin"]});
 
 export const metadata = {
     title: "Lichi Dashboard",
@@ -22,7 +23,7 @@ export default function RootLayout({children}) {
             <body
                 className={cn(
                     "min-h-screen bg-background antialiased",
-                    inter.className
+                    rubik.className
                 )}
                 translate={"no"}
             >

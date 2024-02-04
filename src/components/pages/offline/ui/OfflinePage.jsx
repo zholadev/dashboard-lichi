@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {cn} from "@/lib/utils";
-import dynamic from "next/dynamic";
 import {Heading} from '@/components/shared/uikit/heading'
 import OfflinePageForm from "@/components/pages/offline/ui/components/OfflinePageForm";
 import OfflinePageData from "@/components/pages/offline/ui/components/OfflinePageData";
@@ -18,7 +17,7 @@ import OfflinePageData from "@/components/pages/offline/ui/components/OfflinePag
 function OfflinePage(props) {
     return (
         <div className={cn("w-full")}>
-            <Heading type={"h1"}>Розница</Heading>
+            <Heading type={"h1"} cls={cn("w-full md:text-left text-center mb-9")}>Розница</Heading>
 
             <OfflinePageForm/>
             <OfflinePageData/>

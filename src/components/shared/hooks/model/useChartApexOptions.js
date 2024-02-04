@@ -2,6 +2,7 @@
 
 import {useCallback} from 'react';
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
+import {useDarkMode} from "@/components/shared/hooks";
 
 /**
  * @author Zholaman Zhumanov
@@ -9,6 +10,8 @@ import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
  * @returns {*}
  */
 function useChartApexOptions() {
+    const isDarkMode = useDarkMode()
+
     return useCallback((chartData) => {
         try {
             const CHART_HEIGHT = chartData?.chart?.height || 350
@@ -17,7 +20,16 @@ function useChartApexOptions() {
             let optionsValues = {}
 
             if ("chart" in chartData) {
-                optionsValues['chart'] = {...chartData?.chart}
+                optionsValues['chart'] = {
+                    ...chartData?.chart,
+                    forceColor: isDarkMode ? "#ffffff" : "#000000",
+                    tooltip: {
+                        ...chartData?.chart?.tooltip,
+                        style: {
+                            color:  isDarkMode ? "#000000" : "#ffffff",
+                        }
+                    }
+                }
             }
 
             if ("stroke" in chartData) {
@@ -77,7 +89,7 @@ function useChartApexOptions() {
         } catch (error) {
             errorHandler("useChartApexOptions", "useChartApexOptions", error)
         }
-    }, [])
+    }, [isDarkMode])
 }
 
 export default useChartApexOptions;

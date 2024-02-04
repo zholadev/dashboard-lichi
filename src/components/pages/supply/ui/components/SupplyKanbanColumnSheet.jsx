@@ -6,12 +6,12 @@ import Image from "next/image";
 import {TableData} from "@/components/shared/uikit/table";
 import {Heading} from "@/components/shared/uikit/heading";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {ListSkeleton, NotData} from "@/components/shared/uikit/templates";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/shared/shadcn/ui/sheet";
-import {ListSkeleton, NotData} from "@/components/shared/uikit/templates";
 import SupplyColumnModal from "@/components/pages/supply/ui/components/SupplyColumnModal";
-import {Button} from "@/components/shared/shadcn/ui/button";
-import {Pencil1Icon, TrashIcon} from "@radix-ui/react-icons";
+import SupplyUpdateItemKanban from "@/components/pages/supply/ui/components/SupplyUpdateItemKanban";
+import SupplyRemoveKanbanDialog from "@/components/pages/supply/ui/components/SupplyRemoveKanbanDialog";
 
 /**
  * @author Zholaman Zhumanov
@@ -93,11 +93,19 @@ function SupplyKanbanColumnSheet(props) {
                     "header": 'Дата поставки',
                 },
                 {
-                    "accessorKey": "",
+                    "accessorKey": "sk_actions",
                     cell: ({row}) => (
                         <div className={cn("")}>
-                            <Button variant={"ghost"} className={cn("mb-3")}><Pencil1Icon/></Button>
-                            <Button variant={"ghost"} className={cn("text-red-500")}><TrashIcon/></Button>
+                            <SupplyUpdateItemKanban
+                                updateKanbanData={updateKanbanData}
+                                id={row?.original?.["sk_actions"]?.["sk_id"]}
+                                weekId={row?.original?.["sk_actions"]?.["sk_week_id"]}
+                            />
+                            <SupplyRemoveKanbanDialog
+                                updateKanbanData={updateKanbanData}
+                                id={row?.original?.["sk_actions"]?.["sk_id"]}
+                                weekId={row?.original?.["sk_actions"]?.["sk_week_id"]}
+                            />
                         </div>
                     ),
                     "header": 'Изменить/Удалить',
@@ -121,6 +129,10 @@ function SupplyKanbanColumnSheet(props) {
                     "sk_created_display": item?.["sk_created_display"],
                     "sk_updated_display": item?.["sk_updated_display"],
                     "sk_date_display": item?.["sk_date_display"],
+                    "sk_actions": {
+                        "sk_id": item?.["sk_id"],
+                        "sk_week_id": item?.["sk_week_id"]
+                    }
                 }
             })
         } catch (error) {

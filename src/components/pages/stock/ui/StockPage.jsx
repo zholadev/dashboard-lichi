@@ -4,6 +4,7 @@ import React from 'react';
 import StockPageForm from "./components/StockPageForm";
 import {Heading} from "@/components/shared/uikit/heading";
 import StockPageData from "@/components/pages/stock/ui/components/StockPageData";
+import {cn} from "@/lib/utils";
 
 /**
  * @author Zholaman Zhumanov
@@ -17,7 +18,7 @@ import StockPageData from "@/components/pages/stock/ui/components/StockPageData"
 function StockPage({data}) {
     return (
         <>
-            <Heading type={"h1"}>Состояние склада</Heading>
+            <Heading type={"h1"} cls={cn("w-full md:text-left text-center mb-9")}>Состояние склада</Heading>
             <StockPageForm/>
             <StockPageData/>
         </>

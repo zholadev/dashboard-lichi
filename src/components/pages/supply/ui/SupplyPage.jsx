@@ -3,6 +3,7 @@
 import React from 'react';
 import {Heading} from "@/components/shared/uikit/heading";
 import SupplyForm from "@/components/pages/supply/ui/components/SupplyForm";
+import {cn} from "@/lib/utils";
 
 /**
  * @author Zholaman Zhumanov
@@ -16,7 +17,7 @@ import SupplyForm from "@/components/pages/supply/ui/components/SupplyForm";
 function SupplyPage(props) {
     return (
         <>
-            <Heading type={"h1"}>Поставки</Heading>
+            <Heading type={"h1"} cls={cn("w-full md:text-left text-center mb-9")}>Поставки</Heading>
             <SupplyForm/>
         </>
     );

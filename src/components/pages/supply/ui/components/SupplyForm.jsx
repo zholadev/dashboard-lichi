@@ -18,7 +18,7 @@ import {LoaderButton} from "@/components/shared/uikit/loader";
 import useYearWeeks from "@/components/pages/supply/lib/useYearWeeks";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
-import {useApiRequest, useDispatchActionHandle} from "@/components/shared/hooks";
+import {useApiRequest, useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
 import {apiGetSupplyKanbanData, apiGetSupplyNetworkData} from "@/components/shared/services/axios/clientRequests";
 
 /**
@@ -33,6 +33,7 @@ import {apiGetSupplyKanbanData, apiGetSupplyNetworkData} from "@/components/shar
 function SupplyForm() {
     const events = useDispatchActionHandle()
 
+    const toastMessage = useToastMessage()
     const {apiFetchHandler} = useApiRequest()
 
     const yearWeakData = useYearWeeks(new Date().getFullYear())
@@ -68,6 +69,11 @@ function SupplyForm() {
 
     const fetchSupplyKanbanData = async (event, disabledLoader) => {
         if (event) event?.preventDefault()
+
+        if (!supplyParamsNetworkId || !supplyParamsDateStart || !supplyParamsDateEnd) {
+            toastMessage("Заполните данные", "error")
+            return
+        }
 
         await apiFetchHandler(
             apiGetSupplyKanbanData,
@@ -133,7 +139,7 @@ function SupplyForm() {
                                     Object.values(countryData || {}).map((country, id) => {
                                         return (
                                             <SelectItem
-                                                key={country?.["key"]}
+                                                key={id}
                                                 value={country?.["key"]}
                                             >
                                                 {country?.["value"]}

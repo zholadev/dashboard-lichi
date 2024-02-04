@@ -5,13 +5,11 @@ import Link from "next/link";
 import {cn} from "@/lib/utils";
 import Logout from "./components/Logout";
 import {usePathname} from "next/navigation";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger,} from "@/components/shared/shadcn/ui/dropdown-menu";
 import {HamburgerMenuIcon} from "@radix-ui/react-icons";
 import {useScrollAction} from "@/components/shared/hooks";
 import {Input} from "@/components/shared/shadcn/ui/input";
 import {ModeToggle} from "@/components/shared/theme-switch";
 import {routerPagesList} from "@/components/entities/router/model/routerPagesList";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/shared/shadcn/ui/avatar";
 import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/shared/shadcn/ui/sheet"
 
 /**
@@ -123,24 +121,24 @@ function Header(props) {
                                 </li>
                             ))
                         }
-
                     </ul>
                 </nav>
                 <div className={"flex items-center justify-center gap-5"}>
                     <Input placeholder={'Search...'} className={cn("w-[340px] max-sm:hidden")}/>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Avatar className={'cursor-pointer'}>
-                                <AvatarImage
-                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKZSiWQB-GfxbTtElgRZnQM264qZhkf6LoIZTvuMWkr8BpGxc6MVfwcy_C6UA3LlIfmX8&usqp=CAU"/>
-                                <AvatarFallback>Z</AvatarFallback>
-                            </Avatar>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56">
-                            <Logout/>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    {/*<DropdownMenu>*/}
+                    {/*    <DropdownMenuTrigger asChild>*/}
+                    {/*        <Avatar className={'cursor-pointer'}>*/}
+                    {/*            <AvatarImage*/}
+                    {/*                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKZSiWQB-GfxbTtElgRZnQM264qZhkf6LoIZTvuMWkr8BpGxc6MVfwcy_C6UA3LlIfmX8&usqp=CAU"/>*/}
+                    {/*            <AvatarFallback>Z</AvatarFallback>*/}
+                    {/*        </Avatar>*/}
+                    {/*    </DropdownMenuTrigger>*/}
+                    {/*    <DropdownMenuContent className="w-56">*/}
+                    {/*        <Logout/>*/}
+                    {/*    </DropdownMenuContent>*/}
+                    {/*</DropdownMenu>*/}
                     <ModeToggle/>
+                    <Logout/>
                 </div>
             </header>
         </>

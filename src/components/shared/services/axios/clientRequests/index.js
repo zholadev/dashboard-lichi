@@ -5,6 +5,7 @@ import {
     apiGetEventsData,
     apiGetItemSizes,
     apiGetKanbanColumnData,
+    apiGetKanbanRemoveItem,
     apiGetOfflineCountryData,
     apiGetOfflinePlanData,
     apiGetOfflinePlanDetailData,
@@ -13,6 +14,7 @@ import {
     apiGetProductsListData,
     apiGetStockData,
     apiGetSupplyKanbanData,
+    apiGetSupplyKanbanItem,
     apiGetSupplyNetworkData,
     apiLogin,
     apiRemoveEventItem,
@@ -37,5 +39,7 @@ export {
     apiGetOfflineCountryData,
     apiGetKanbanColumnData,
     apiCreateKanbanColumn,
-    apiGetItemSizes
+    apiGetItemSizes,
+    apiGetKanbanRemoveItem,
+    apiGetSupplyKanbanItem
 }

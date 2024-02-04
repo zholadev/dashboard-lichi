@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react';
+import {cn} from "@/lib/utils";
 import dynamic from "next/dynamic";
 import {Button} from "@/components/shared/shadcn/ui/button";
 import {Heading} from "@/components/shared/uikit/heading";
@@ -45,7 +46,7 @@ function MainPage(props) {
     return (
         <>
             <div className={"w-100"}>
-                <Heading type={"h1"}>Overview</Heading>
+                <Heading type={"h1"} cls={cn("w-full md:text-left text-center mb-9")}>Overview</Heading>
 
                 <div className={"w-100 grid 2xl:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-3 mb-6"}>
                     <div className={"rounded p-5 border flex items-end justify-between"}>

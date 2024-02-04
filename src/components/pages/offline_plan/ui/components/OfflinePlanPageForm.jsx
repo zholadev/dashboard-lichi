@@ -36,7 +36,7 @@ function OfflinePlanPageForm(props) {
         if (e) e.preventDefault()
 
         if (!offPlanCategoryParams || !offPlanDateParams) {
-            toastMessage("заполните данные", "error")
+            toastMessage("Заполните данные", "error")
             return
         }
 
