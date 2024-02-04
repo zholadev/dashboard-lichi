@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {cn} from "@/lib/utils";
 import Image from "next/image";
 import {TableData} from "@/components/shared/uikit/table";
@@ -12,6 +12,9 @@ import {Sheet, SheetContent, SheetTrigger} from "@/components/shared/shadcn/ui/s
 import SupplyColumnModal from "@/components/pages/supply/ui/components/SupplyColumnModal";
 import SupplyUpdateItemKanban from "@/components/pages/supply/ui/components/SupplyUpdateItemKanban";
 import SupplyRemoveKanbanDialog from "@/components/pages/supply/ui/components/SupplyRemoveKanbanDialog";
+import {Button} from "@/components/shared/shadcn/ui/button";
+import SupplyKanbanItemSortedBoard from "@/components/pages/supply/ui/components/SupplyKanbanItemSortedBoard";
+import {CaretSortIcon} from "@radix-ui/react-icons";
 
 /**
  * @author Zholaman Zhumanov
@@ -27,6 +30,10 @@ function SupplyKanbanColumnSheet(props) {
         supplyKanbanColumnData,
         supplyKanbanColumnApiLoader
     } = useAppSelector(state => state?.supply)
+
+    const [openSortedModal, setSortedModal] = useState(false)
+
+    const toggleSortedModalHandle = () => setSortedModal(!openSortedModal)
 
     const tableColumns = useMemo(() => {
         try {
@@ -149,6 +156,17 @@ function SupplyKanbanColumnSheet(props) {
                 <div className={cn("border-b w-full text-center")}>
                     <Heading type={'h2'}>{year}</Heading>
                     <Heading type={'h4'}>{week}</Heading>
+                </div>
+
+                <div className={cn("w-full flex justify-end items-center mb-9 mt-5")}>
+                    <Button type={"button"} variant={"outline"} className={cn("flex items-center gap-2")} onClick={toggleSortedModalHandle}>Сортировать <CaretSortIcon/></Button>
+                    <SupplyKanbanItemSortedBoard
+                        weekId={weekId}
+                        open={openSortedModal}
+                        data={supplyKanbanColumnData}
+                        updateKanbanData={updateKanbanData}
+                        onOpenChange={toggleSortedModalHandle}
+                    />
                 </div>
 
                 <div className={cn("mt-5 mb-8")}>

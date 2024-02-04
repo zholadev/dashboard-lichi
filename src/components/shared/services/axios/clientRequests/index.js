@@ -18,6 +18,7 @@ import {
     apiGetSupplyNetworkData,
     apiLogin,
     apiRemoveEventItem,
+    apiSupplyKanbanSortItems,
     apiUpdateSupplyKanbanData
 } from "./model/requestMethods";
 
@@ -41,5 +42,6 @@ export {
     apiCreateKanbanColumn,
     apiGetItemSizes,
     apiGetKanbanRemoveItem,
-    apiGetSupplyKanbanItem
+    apiGetSupplyKanbanItem,
+    apiSupplyKanbanSortItems
 }

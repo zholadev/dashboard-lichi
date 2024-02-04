@@ -1,14 +1,13 @@
 import {Montserrat, Rubik} from "next/font/google";
 import "./globals.css";
 import {cn} from "@/lib/utils";
+import NextTopLoader from "nextjs-toploader";
 import 'react-toastify/dist/ReactToastify.css'
 import {Header} from "@/components/widgets/header";
-import NextTopLoader from "nextjs-toploader";
 import {Slide, ToastContainer} from "react-toastify";
-import {ThemeProvider} from "@/components/shared/theme-provider";
 import {StoreProvider} from "@/components/entities/store";
+import {ThemeProvider} from "@/components/shared/theme-provider";
 
-const inter = Montserrat({subsets: ["latin"]});
 const rubik = Rubik({subsets: ["latin"]});
 
 export const metadata = {
@@ -53,7 +52,7 @@ export default function RootLayout({children}) {
                 disableTransitionOnChange
             >
                 <Header/>
-                <main>
+                <main className={cn("mb-10")}>
                     {children}
                 </main>
             </ThemeProvider>

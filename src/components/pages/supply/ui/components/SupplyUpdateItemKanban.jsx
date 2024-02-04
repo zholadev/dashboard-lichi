@@ -1,3 +1,5 @@
+'use client'
+
 import React, {useState} from 'react';
 import {cn} from "@/lib/utils";
 import {Pencil1Icon} from "@radix-ui/react-icons";
@@ -25,8 +27,9 @@ function SupplyUpdateItemKanban(props) {
         supplyParamsNetworkId
     } = useAppSelector(state => state?.supply)
 
-    const [toggleDialog, setToggleDialog] = useState(false)
     const [kanbanGetData, setKanbanGetData] = useState([])
+    const [toggleDialog, setToggleDialog] = useState(false)
+
     const fetchRemoveItem = async () => {
         await apiFetchHandler(
             apiGetSupplyKanbanItem,

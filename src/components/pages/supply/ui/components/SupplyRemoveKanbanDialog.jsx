@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import {cn} from "@/lib/utils";
 import {
@@ -52,7 +54,7 @@ function SupplyRemoveKanbanDialog(props) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Вы действительно хотите выйти?</DialogTitle>
+                    <DialogTitle>Вы действительно хотите удалить?</DialogTitle>
                 </DialogHeader>
                 <DialogFooter>
                     <DialogClose asChild>

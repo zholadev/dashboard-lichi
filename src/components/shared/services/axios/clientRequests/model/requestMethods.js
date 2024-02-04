@@ -170,6 +170,28 @@ export const apiGetKanbanColumnData = async (network_id = 1, id = {}) => {
 
 /**
  * @author Zholaman Zhumanov
+ * @created 04.02.2024
+ * @param network_id
+ * @param id
+ * @param sort
+ * @returns {Promise<*|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
+ */
+export const apiSupplyKanbanSortItems = async (network_id = 1, id = {}, sort = {}) => {
+    return await sendApiPostRequest({
+            method: "kanban_set_column_item_sort",
+            object: "supply",
+            params: {
+                "network_id": network_id,
+                "id": id,
+                "sort": {...sort}
+            }
+        },
+        true
+    )
+}
+
+/**
+ * @author Zholaman Zhumanov
  * @created 01.02.2024
  * @param data
  * @returns {Promise<AxiosResponse<any>|{data: *, success: boolean, message_fail: string}|{data: *, success: boolean, message_fail: string, error: *}|undefined>}
