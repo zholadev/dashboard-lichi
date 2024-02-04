@@ -4,26 +4,18 @@ import React, {useEffect} from 'react';
 import {cn} from "@/lib/utils";
 import {format} from "date-fns";
 import {CalendarIcon} from "lucide-react";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue
-} from "@/components/shared/shadcn/ui/select";
 import {Input} from "@/components/shared/shadcn/ui/input";
 import {Label} from "@/components/shared/shadcn/ui/label";
 import {Button} from "@/components/shared/shadcn/ui/button";
 import {LoaderButton} from "@/components/shared/uikit/loader";
-import {categories} from "@/components/shared/data/categories";
+import {FormSelectCategories} from "@/components/shared/form";
 import {Calendar} from "@/components/shared/shadcn/ui/calendar";
+import {offlineChartList} from "@/components/shared/data/charts";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {useApiRequest, useDispatchActionHandle, usePreviousFriday} from "@/components/shared/hooks";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
 import {apiGetOfflineCountryData, apiGetOfflineSchemaDetail} from "@/components/shared/services/axios/clientRequests";
-import {offlineChartList} from "@/components/shared/data/charts";
 
 /**
  * @author Zholaman Zhumanov
@@ -236,46 +228,7 @@ function OfflinePageForm(props) {
                     </Select>
                 </div>
 
-                <div className={cn("w-full flex flex-col gap-3")}>
-                    <Label>Категория товара</Label>
-                    <Select onValueChange={value => events.offCategoryParamsReducerAction(value)}>
-                        <SelectTrigger className="w-100">
-                            <SelectValue placeholder="Выберите категорию"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {
-                                categories.map((categoryItem, categoryId) => {
-                                    return (
-                                        categoryItem?.["is_submenu"] ? (
-                                            <SelectGroup className={cn("mb-3")} key={categoryId}>
-                                                <SelectLabel
-                                                    className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
-                                                {
-                                                    categoryItem.items.map((childCategory, index) => {
-                                                        return (
-                                                            <SelectItem
-                                                                key={index}
-                                                                value={childCategory.category}>
-                                                                {childCategory.title}
-                                                            </SelectItem>
-                                                        )
-                                                    })
-                                                }
-                                            </SelectGroup>
-                                        ) : (
-                                            <SelectItem
-                                                key={categoryId}
-                                                value={categoryItem.category}
-                                            >
-                                                {categoryItem.title}
-                                            </SelectItem>
-                                        )
-                                    )
-                                })
-                            }
-                        </SelectContent>
-                    </Select>
-                </div>
+                <FormSelectCategories onValueChange={events.offCategoryParamsReducerAction}/>
 
                 <div className={cn("w-full flex flex-col gap-3 md:col-span-2")}>
                     <Label>Артикул</Label>

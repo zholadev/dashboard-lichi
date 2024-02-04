@@ -133,7 +133,7 @@ function SupplyKanbanColumnSheet(props) {
             <SheetTrigger asChild>
                 {children}
             </SheetTrigger>
-            <SheetContent className={cn("outline-0 md:max-w-[2000px] w-full h-full overflow-y-auto")} side={"left"}>
+            <SheetContent className={cn("outline-0 md:max-w-[2000px] w-full h-full overflow-y-auto")} side={"right"}>
                 <div className={cn("border-b w-full text-center")}>
                     <Heading type={'h2'}>{year}</Heading>
                     <Heading type={'h4'}>{week}</Heading>

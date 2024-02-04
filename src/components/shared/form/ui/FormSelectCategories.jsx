@@ -3,7 +3,8 @@ import {cn} from "@/lib/utils";
 import {
     Select,
     SelectContent,
-    SelectGroup, SelectItem,
+    SelectGroup,
+    SelectItem,
     SelectLabel,
     SelectTrigger,
     SelectValue
@@ -35,7 +36,7 @@ function FormSelectCategories(props) {
                                 categoryItem?.["is_submenu"] ? (
                                     <SelectGroup className={cn("mb-3")} key={index}>
                                         <SelectLabel
-                                            className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
+                                            className={cn("mb-2 text-xs")}>{categoryItem.title}</SelectLabel>
                                         {
                                             categoryItem.items.map((childCategory) => {
                                                 return (

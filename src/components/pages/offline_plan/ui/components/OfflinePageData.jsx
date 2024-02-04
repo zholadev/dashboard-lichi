@@ -21,7 +21,7 @@ import {format} from "date-fns";
  * @constructor
  */
 function OfflinePageData(props) {
-    const {apiLoader, offlinePlanData, offPlanDateParams} = useAppSelector(state => state.offline_plan)
+    const {offPlanApiLoader, offlinePlanData, offPlanDateParams} = useAppSelector(state => state.offline_plan)
 
     /**
      * @author Zholaman Zhumanov
@@ -49,7 +49,7 @@ function OfflinePageData(props) {
         }
     }, [offlinePlanData])
 
-    if (apiLoader) {
+    if (offPlanApiLoader) {
         return <ListSkeleton/>
     }
 

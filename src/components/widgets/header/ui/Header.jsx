@@ -1,22 +1,17 @@
 'use client'
 
-import React from 'react';
+import React, {useState} from 'react';
 import Link from "next/link";
 import {cn} from "@/lib/utils";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/shared/shadcn/ui/dropdown-menu";
-import {Input} from "@/components/shared/shadcn/ui/input";
-import {Button} from "@/components/shared/shadcn/ui/button";
+import Logout from "./components/Logout";
 import {usePathname} from "next/navigation";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger,} from "@/components/shared/shadcn/ui/dropdown-menu";
 import {HamburgerMenuIcon} from "@radix-ui/react-icons";
-import {useLogout, useScrollAction} from "@/components/shared/hooks";
+import {useScrollAction} from "@/components/shared/hooks";
+import {Input} from "@/components/shared/shadcn/ui/input";
 import {ModeToggle} from "@/components/shared/theme-switch";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/shared/shadcn/ui/avatar";
 import {routerPagesList} from "@/components/entities/router/model/routerPagesList";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/shared/shadcn/ui/avatar";
 import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/shared/shadcn/ui/sheet"
 
 /**
@@ -28,11 +23,11 @@ import {Sheet, SheetClose, SheetContent, SheetTrigger,} from "@/components/share
  * @constructor
  */
 function Header(props) {
-
-    const logout = useLogout()
     const pathname = usePathname()
 
     const isScroll = useScrollAction({position: 20})
+
+    const [openLogoutDialog, setOpenLogoutDialog] = useState(false)
 
 
     const menuList = [
@@ -142,15 +137,7 @@ function Header(props) {
                             </Avatar>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56">
-                            <DropdownMenuItem>
-                                <Button
-                                    type={"button"}
-                                    variant={'ghost'}
-                                    onClick={logout}
-                                >
-                                    Log out
-                                </Button>
-                            </DropdownMenuItem>
+                            <Logout/>
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <ModeToggle/>

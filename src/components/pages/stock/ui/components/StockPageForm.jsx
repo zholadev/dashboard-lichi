@@ -7,22 +7,14 @@ import {CalendarIcon} from "lucide-react";
 import {Label} from "@/components/shared/shadcn/ui/label";
 import {Input} from "@/components/shared/shadcn/ui/input";
 import {Button} from "@/components/shared/shadcn/ui/button";
-import {Calendar} from "@/components/shared/shadcn/ui/calendar";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue
-} from "@/components/shared/shadcn/ui/select";
+import {FormSelectCategories} from "@/components/shared/form";
 import {LoaderButton} from "@/components/shared/uikit/loader";
-import {categories} from "@/components/shared/data/categories";
+import {Calendar} from "@/components/shared/shadcn/ui/calendar";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {apiGetStockData} from "@/components/shared/services/axios/clientRequests";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/shared/shadcn/ui/popover";
 import {useApiRequest, useDispatchActionHandle, usePreviousFriday} from "@/components/shared/hooks";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/shared/shadcn/ui/select";
 
 /**
  * @author Zholaman Zhumanov
@@ -149,46 +141,7 @@ function StockPageForm(props) {
                         </Popover>
                     </div>
 
-                    <div className={cn("w-full flex flex-col gap-3")}>
-                        <Label>Категория товара</Label>
-                        <Select onValueChange={value => events.stockParamsGuidCategoryAction(value)}>
-                            <SelectTrigger className="w-100">
-                                <SelectValue placeholder="Выберите категорию"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {
-                                    categories.map((categoryItem) => {
-                                        return (
-                                            categoryItem?.["is_submenu"] ? (
-                                                <SelectGroup className={cn("mb-3")} key={categoryItem.id}>
-                                                    <SelectLabel
-                                                        className={cn("mb-2 text-lg")}>{categoryItem.title}</SelectLabel>
-                                                    {
-                                                        categoryItem.items.map((childCategory) => {
-                                                            return (
-                                                                <SelectItem
-                                                                    key={childCategory.id}
-                                                                    value={childCategory.category}>
-                                                                    {childCategory.title}
-                                                                </SelectItem>
-                                                            )
-                                                        })
-                                                    }
-                                                </SelectGroup>
-                                            ) : (
-                                                <SelectItem
-                                                    key={categoryItem.id}
-                                                    value={categoryItem.category}
-                                                >
-                                                    {categoryItem.title}
-                                                </SelectItem>
-                                            )
-                                        )
-                                    })
-                                }
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    <FormSelectCategories onValueChange={events.stockParamsGuidCategoryAction}/>
 
                     <div className={cn("w-full flex flex-col gap-3")}>
                         <Label>Наименование</Label>
