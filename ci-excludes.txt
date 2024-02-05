@@ -1,0 +1,7 @@
+/ci-excludes.txt
+/.git
+/.gitlab-ci.yml
+/.well-known
+/.DS_Store
+/.update
+/.user.ini

@@ -1,0 +1,31 @@
+stages:
+  - prod
+
+.prod_ssh: &prod_ssh |
+  mkdir -p ~/.ssh
+  echo "$SERVER_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  chown 600 ~/.ssh/id_rsa
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_rsa
+  eval ssh-keyscan -H '$SERVER_IP' >> ~/.ssh/known_hosts
+
+prod_deploy:
+  stage: prod
+  only:
+    - master
+  image: alpine:latest
+  before_script:
+    - export PROJECT_PATH="/www/wwwroot/dashboard.blackmonday.xyz/"
+    - export PM2="sudo /www/server/nvm/versions/node/v18.16.0/bin/pm2"
+    - export NPM="sudo /www/server/nvm/versions/node/v18.16.0/bin/npm"
+    - apk update && apk add openssh-client rsync
+    - *prod_ssh
+  script:
+    - ssh $SERVER_USER@$SERVER_IP "sudo touch $PROJECT_PATH.update"
+    - echo "Deploying application..."
+    - ssh $SERVER_USER@$SERVER_IP "cd $PROJECT_PATH && $PM2 stop $CI_PROJECT_NAME --silent || true"
+    - ssh $SERVER_USER@$SERVER_IP "cd $PROJECT_PATH && $PM2 delete $CI_PROJECT_NAME --silent || true"
+    - rsync --rsync-path 'sudo rsync' --chown=www:www --chmod=D0755,F0644 --exclude-from 'ci-excludes.txt' -atv --delete --progress ./ $SERVER_USER@$SERVER_IP:$PROJECT_PATH
+    - ssh $SERVER_USER@$SERVER_IP "cd $PROJECT_PATH && $NPM install"
+    - ssh $SERVER_USER@$SERVER_IP "cd $PROJECT_PATH && $NPM run build"
+    - ssh $SERVER_USER@$SERVER_IP "sudo rm $PROJECT_PATH.update"

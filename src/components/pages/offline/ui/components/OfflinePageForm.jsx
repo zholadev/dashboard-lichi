@@ -50,14 +50,11 @@ function OfflinePageForm(props) {
         if (e) e.preventDefault()
         events.offSchemaReportApiLoaderAction(true)
 
-        Object.values(offlineChartList || {}).map((schema, index) => {
-            const timer = 400 * index
-            setTimeout(() => {
-                fetchOfflineSchema(e, schema?.key, index)
-            }, timer)
-        })
+        for (let index in offlineChartList) {
+            let schema = offlineChartList[index];
+            await fetchOfflineSchema(e, schema?.key, index);
+        }
 
-        events.offSchemaRenderToggle(true)
         events.offSchemaReportApiLoaderAction(false)
     }
 
