@@ -2,7 +2,6 @@
 
 import React, {useMemo} from 'react';
 import {cn} from "@/lib/utils";
-import Image from 'next/image'
 import {CaretSortIcon} from "@radix-ui/react-icons";
 import {Heading} from "@/components/shared/uikit/heading";
 import {TableData} from "@/components/shared/uikit/table";
@@ -51,7 +50,7 @@ function ProductsData() {
                         "accessorKey": key,
                         cell: ({row}) => (
                             <div className={cn("min-w-[200px] flex justify-center items-center")}>
-                                <Image
+                                <img
                                     width={90}
                                     height={120}
                                     src={row.original[key]}
@@ -87,7 +86,8 @@ function ProductsData() {
                 } else if (productsReportParams === 'by_colors' || productsReportParams === 'by_sizes' && productsDetailByStore && key !== 'store' || key !== 'total') {
                     return {
                         "accessorKey": key,
-                        "header": <h4 dangerouslySetInnerHTML={{__html: productsData?.["table"]?.["head"]?.[key]?.["label"]}}></h4>,
+                        "header": <h4
+                            dangerouslySetInnerHTML={{__html: productsData?.["table"]?.["head"]?.[key]?.["label"]}}></h4>,
                         cell: ({row}) => {
                             return (
                                 <div className={cn("w-full h-full relative")}>

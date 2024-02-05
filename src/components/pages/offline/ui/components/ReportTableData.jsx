@@ -1,6 +1,5 @@
 import React, {useMemo} from 'react';
 import {cn} from "@/lib/utils";
-import Image from "next/image";
 import {CaretSortIcon} from "@radix-ui/react-icons";
 import {Badge} from "@/components/shared/shadcn/ui/badge";
 import {Heading} from "@/components/shared/uikit/heading";
@@ -31,7 +30,7 @@ function ReportTableData(props) {
                         "accessorKey": key,
                         cell: ({row}) => (
                             <div className={cn("min-w-[200px] flex justify-center items-center")}>
-                                <Image
+                                <img
                                     width={60}
                                     height={90}
                                     src={row.original[key]}
@@ -159,7 +158,7 @@ function ReportTableData(props) {
                         "accessorKey": key,
                         cell: ({row}) => (
                             <div>
-                                <Image
+                                <img
                                     width={60}
                                     height={90}
                                     src={row.original[key]}

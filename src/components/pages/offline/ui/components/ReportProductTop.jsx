@@ -1,7 +1,6 @@
 import React, {useCallback, useMemo} from 'react';
 import {Heading} from "@/components/shared/uikit/heading";
 import {cn} from "@/lib/utils";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 import {CaretSortIcon} from "@radix-ui/react-icons";
 import {TableData} from "@/components/shared/uikit/table";
@@ -38,7 +37,7 @@ function ReportProductTop(props) {
                     "accessorKey": "photo",
                     cell: ({row}) => (
                         <div className={cn("min-w-[200px] flex justify-center items-center")}>
-                            <Image
+                            <img
                                 width={120}
                                 height={140}
                                 loading={"lazy"}

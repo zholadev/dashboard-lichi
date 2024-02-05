@@ -42,7 +42,7 @@ function SupplyKanbanColumnSheet(props) {
                     "accessorKey": "sk_photo",
                     cell: ({row}) => (
                         <div className={cn("min-w-[200px] w-full flex justify-center items-center")}>
-                            <Image
+                            <img
                                 width={90}
                                 height={100}
                                 loading={"lazy"}

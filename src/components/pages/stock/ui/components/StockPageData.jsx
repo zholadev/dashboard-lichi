@@ -1,6 +1,5 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 import {useDispatchActionHandle, useToastMessage} from "@/components/shared/hooks";
-import Image from "next/image";
 import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
 import {cn} from "@/lib/utils";
@@ -52,7 +51,7 @@ function StockPageData(props) {
                         accessorKey: key,
                         cell: ({row}) => (
                             <div className={cn("min-w-[200px] flex justify-center items-center")}>
-                                <Image
+                                <img
                                     width={60}
                                     height={90}
                                     src={row.original[key]}
