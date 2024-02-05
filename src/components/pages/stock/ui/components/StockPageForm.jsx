@@ -83,6 +83,12 @@ function StockPageForm(props) {
         fetchStockData()
     }, [stockTriggerApiData]);
 
+    useEffect(() => {
+        return () => {
+            events.stockStateResetAction()
+        }
+    }, []);
+
     return (
         <>
             <div className={cn("border mb-20 p-4 rounded mt-3")}>

@@ -57,17 +57,17 @@ export const stockSlice = createSlice({
             state.stockTriggerApiData = action.payload
         },
         stockStateResetReducer: (state) => {
-            state.stockDat = []
-            state.stockApiLoade = false
-            state.stockPageParam = 1
-            state.stockLimitParam = 10
-            state.stockGuidCategoryParam = ""
-            state.stockNameParam = ""
-            state.stockReportParam = "group_by_size"
-            state.stockSortParam = "name"
-            state.stockSortDirectio = -1
-            state.stockArticleParam = ""
+            state.stockData = []
+            state.stockApiLoader = false
+            state.stockPageParams = 1
+            state.stockLimitParams = 10
+            state.stockGuidCategoryParams = ""
+            state.stockNameParams = ""
+            state.stockReportParams = "group_by_size"
+            state.stockSortParams = "name"
+            state.stockSortDirection = -1
             state.stockTriggerApiData = ""
+            state.stockArticleParams = ""
         }
     }
 });

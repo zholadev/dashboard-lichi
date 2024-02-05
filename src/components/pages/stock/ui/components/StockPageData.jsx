@@ -51,7 +51,7 @@ function StockPageData(props) {
                     return {
                         accessorKey: key,
                         cell: ({row}) => (
-                            <div className={cn("flex justify-center items-center")}>
+                            <div className={cn("min-w-[200px] flex justify-center items-center")}>
                                 <Image
                                     width={60}
                                     height={90}

@@ -50,10 +50,10 @@ function ProductsData() {
                     return {
                         "accessorKey": key,
                         cell: ({row}) => (
-                            <div className={cn("w-[200px] flex justify-center items-center")}>
+                            <div className={cn("min-w-[200px] flex justify-center items-center")}>
                                 <Image
-                                    width={60}
-                                    height={90}
+                                    width={90}
+                                    height={120}
                                     src={row.original[key]}
                                     alt={'...'}
                                 />
@@ -66,7 +66,7 @@ function ProductsData() {
                     return {
                         "accessorKey": key,
                         cell: ({row}) => (
-                            <div> 
+                            <div>
                                 <Heading type={'h4'} cls={cn("mb-1")}>{row?.["original"]?.["category"]}</Heading>
                                 <Heading type={'h4'}>{row?.["original"]?.["article"]}</Heading>
                             </div>

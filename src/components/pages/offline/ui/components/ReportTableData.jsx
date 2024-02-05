@@ -30,7 +30,7 @@ function ReportTableData(props) {
                     return {
                         "accessorKey": key,
                         cell: ({row}) => (
-                            <div>
+                            <div className={cn("min-w-[200px] flex justify-center items-center")}>
                                 <Image
                                     width={60}
                                     height={90}

@@ -1,10 +1,11 @@
-import {Montserrat, Rubik} from "next/font/google";
+import {Rubik} from "next/font/google";
 import "./globals.css";
 import {cn} from "@/lib/utils";
 import NextTopLoader from "nextjs-toploader";
 import 'react-toastify/dist/ReactToastify.css'
 import {Header} from "@/components/widgets/header";
 import {Slide, ToastContainer} from "react-toastify";
+import {useDarkMode} from "@/components/shared/hooks";
 import {StoreProvider} from "@/components/entities/store";
 import {ThemeProvider} from "@/components/shared/theme-provider";
 
@@ -16,6 +17,8 @@ export const metadata = {
 };
 
 export default function RootLayout({children}) {
+    const isDarkMode = useDarkMode
+
     return (
         <StoreProvider>
             <html lang="en" suppressHydrationWarning>
@@ -27,10 +30,11 @@ export default function RootLayout({children}) {
                 translate={"no"}
             >
             <NextTopLoader
-                color="#000"
+                color={isDarkMode ? "#fff" : "#000"}
                 showSpinner={false}
-                zIndex={10010}
+                zIndex={10000}
             />
+
             <ToastContainer
                 position={'top-right'}
                 autoClose={3000}

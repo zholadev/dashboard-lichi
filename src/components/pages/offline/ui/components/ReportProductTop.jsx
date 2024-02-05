@@ -37,7 +37,7 @@ function ReportProductTop(props) {
                     "id": "photo",
                     "accessorKey": "photo",
                     cell: ({row}) => (
-                        <div className={cn("w-[200px] flex justify-center items-center")}>
+                        <div className={cn("min-w-[200px] flex justify-center items-center")}>
                             <Image
                                 width={120}
                                 height={140}
@@ -84,12 +84,14 @@ function ReportProductTop(props) {
                     "accessorKey": "chart",
                     "header": "",
                     cell: ({row}) => (
-                        <ChartReact
-                            optionsData={chartApexOptions(row?.original?.["chart"])?.options}
-                            seriesData={chartApexOptions(row?.original?.["chart"])?.series}
-                            type={chartApexOptions(row?.original?.["chart"])?.type}
-                            height={chartApexOptions(row?.original?.["chart"])?.height}
-                        />
+                        <div className={cn("min-w-[200px]")}>
+                            <ChartReact
+                                optionsData={chartApexOptions(row?.original?.["chart"])?.options}
+                                seriesData={chartApexOptions(row?.original?.["chart"])?.series}
+                                type={chartApexOptions(row?.original?.["chart"])?.type}
+                                height={chartApexOptions(row?.original?.["chart"])?.height}
+                            />
+                        </div>
                     )
                 },
             ]
