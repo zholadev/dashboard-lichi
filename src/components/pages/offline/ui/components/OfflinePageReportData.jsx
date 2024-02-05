@@ -1,14 +1,14 @@
 import React, {useEffect} from 'react';
+import {cn} from "@/lib/utils";
 import {NotData} from "@/components/shared/uikit/templates";
 import {Skeleton} from "@/components/shared/shadcn/ui/skeleton";
 import {offlineChartList} from "@/components/shared/data/charts";
+import {useDispatchActionHandle} from "@/components/shared/hooks";
 import {useAppSelector} from "@/components/entities/store/hooks/hooks";
+import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
 import ReportChartData from "@/components/pages/offline/ui/components/ReportChartData";
 import ReportTableData from "@/components/pages/offline/ui/components/ReportTableData";
 import ReportProductTop from "@/components/pages/offline/ui/components/ReportProductTop";
-import {errorHandler} from "@/components/entities/errorHandler/errorHandler";
-import {cn} from "@/lib/utils";
-import {useDispatchActionHandle} from "@/components/shared/hooks";
 
 
 /**
@@ -55,13 +55,13 @@ function OfflinePageReportData(props) {
         )
     }
 
-    // if (!offSchemaSavesData && offSchemaReportData.length > 0) {
-    //     return (
-    //         <div className={cn("w-full flex items-center justify-center my-4")}>
-    //             Отредактируйте доску, чтобы увидеть данные
-    //         </div>
-    //     )
-    // }
+    if (offSchemaSavesData?.length === 0 && offSchemaReportData.length > 0) {
+        return (
+            <div className={cn("w-full flex items-center justify-center my-10")}>
+                Отредактируйте доску, чтобы увидеть данные
+            </div>
+        )
+    }
 
     if (offSchemaReportData.length === 0) {
         return <NotData/>

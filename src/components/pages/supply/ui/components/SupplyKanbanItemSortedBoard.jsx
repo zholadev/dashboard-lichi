@@ -126,7 +126,10 @@ function SupplyKanbanItemSortedBoard(props) {
                             <DragDropContext onDragEnd={onDragEnd}>
                                 <Droppable droppableId="goods_sorted" type={"vertical"}>
                                     {(provided, snapshot) => (
-                                        <ul className={cn("overflow-hidden overflow-x-hidden relative")}
+                                        <ul className={cn("max-w-[700px] overflow-auto")}
+                                            style={{
+                                                maxHeight: Object.values(data || {}).length === 7 ? 'calc(100% - 10%)' : 'h-full'
+                                            }}
                                             {...provided.droppableProps}
                                             ref={provided.innerRef}>
                                             {
@@ -164,7 +167,7 @@ function SupplyKanbanItemSortedBoard(props) {
                                     )}
                                 </Droppable>
 
-                                <div className={cn("w-full flex flex-row flex-wrap gap-4")}>
+                                <div className={cn("w-full flex flex-row flex-wrap gap-4 mt-4")}>
                                     <Button variant={"outline"} onClick={onOpenChange}>Отменить</Button>
                                     <Button className={cn("flex items-center gap-3")} onClick={sortedIsSetHandle}>
                                         <LoaderButton loading={loading}/>
